@@ -40,6 +40,31 @@ const writer = csvWriter.createObjectCsvWriter({
         console.error('Error writing to CSV:', error);
         res.status(500).json({ error: 'Failed to save person details' });
       });
+
+      
+
+      const { Client } = require('pg');
+
+      const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1';
+
+// Create a PostgreSQL client
+const client = new Client({
+  connectionString: connectionString,
+});
+
+
+
+      client.connect()
+  .then(() => {
+    console.log('Connected to PostgreSQL');
+  })
+  .catch((err) => {
+    console.error('Error connecting to PostgreSQL:', err);
+  });
+  
+
+
+
   });
 
 app.listen(port, () => {
