@@ -4,6 +4,11 @@ const port = 3000;
 const csvWriter = require('csv-writer');
 
 
+app.use(express.json());
+
+// Use the CORS middleware
+app.use(cors());
+
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
@@ -19,7 +24,8 @@ const writer = csvWriter.createObjectCsvWriter({
     append: true, // Append data to an existing file
   });
   
-  app.use(express.json());
+
+
   
   // Define a route to handle POST requests
   app.post('/save', (req, res) => {
