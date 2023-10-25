@@ -4,12 +4,25 @@ const port = 3000;
 const csvWriter = require('csv-writer');
 const cors = require('cors');
 const sendEmail = require('./emailSender');
+const sendEmailToUs = require('./emailSenderUs');
+const googleSheets = require('./googleSheet'); // Import the module
 
 
 app.use(express.json());
 
 // Use the CORS middleware
 app.use(cors());
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Promise Rejection:', reason);
+  // Additional error handling logic can be added here, such as logging or responding to the error.
+});
+
+// Handle uncaught exceptions
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  // Additional error handling logic can be added here, such as logging or responding to the error.
+});
 
 
 app.get('/test', (req, res) => {
@@ -19,6 +32,17 @@ app.get('/test', (req, res) => {
   res.status(200).json({ message: 'Email sent successfully' });
 
 });
+
+app.get('/sheet', (req, res) => {
+
+  
+
+  res.send("Successfully submitted! Thank you!");
+
+
+});
+
+
 
 app.post('/save', (req, res) => {
 
@@ -114,7 +138,9 @@ pool1.connect((connectionError, client) => {
    
   });
   pool1.end();
-  sendEmail(req.body.email);
+  sendEmail(req.body);
+  sendEmailToUs(req.body);
+  googleSheets(req.body);
   res.status(200).json({ message: 'Registration Successful' });
 
   });
@@ -149,6 +175,7 @@ const pool = new Pool({
 
           if (!classes[class_id]) {
             classes[class_id] = {
+
                 class_id,
               slots: [],
             };

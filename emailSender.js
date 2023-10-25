@@ -1,6 +1,6 @@
 const nodemailer = require('nodemailer');
 
-const sendEmail = (to) => {
+const sendEmail = (personDetails) => {
    
     const transporter = nodemailer.createTransport({
         service: 'Gmail', // Use your email service provider
@@ -9,6 +9,23 @@ const sendEmail = (to) => {
           pass: 'tsjm idxn abvb lfho',
         },
       });
+
+      let classes = '';
+
+      const classDetails = personDetails.classDetails;
+      classDetails.forEach((classDetail) => {
+        const { className, timeslot } = classDetail;
+        if(timeslot){
+            classes += `
+                <li><strong>${className}</strong>
+                <ul>
+                    <li>Date & Time: ${timeslot}</li>
+                </ul>
+                </li>
+                `;
+        }
+      });
+      
       const emailContent = `
       <html>
       <head>
@@ -56,20 +73,17 @@ const sendEmail = (to) => {
       </head>
       <body>
         <div class="container">
-          <h1>Demo Registration Confirmation</h1>
-          <p>Dear User,</p>
-          <p>Thank you for registering for our demo classes. We are excited to have you!</p>
-          <p><strong>Event Details:</strong></p>
+          <p>Dear ${personDetails.parentName},</p>
+          <p>We appreciate your registration for our upcoming demo classes and are thrilled to have you on
+          board!</p>
+          <p>Here are the class details for ${personDetails.childName} :</p>
           <ul>
-            <li><strong>Date:</strong> [Event Date]</li>
-            <li><strong>Location:</strong> [Event Location]</li>
-            <li><strong>Time:</strong> [Event Time]</li>
-            <li><strong>Confirmation Number:</strong> [Confirmation Number]</li>
+            ${classes}
           </ul>
-          <p>We look forward to seeing you there.</p>
-          <p>Best regards,</p>
-          <p>Coral Academy Team</p>
-          <p><a class="btn" href="[Event Details URL]">View Event Details</a></p>
+          <p>We're excited to see you in class. If any unforeseen circumstances prevent you from attending
+          the class, please don't hesitate to notify us promptly at support@coralacademy.com</p>
+          <p>Warm Regards,</p>
+          <p>The Coral Academy Team</p>
         </div>
       </body>
       </html>
@@ -78,7 +92,7 @@ const sendEmail = (to) => {
       // Email content
       const mailOptions = {
         from: 'jitender091kumar@gmail.com', // Sender's email address
-        to,
+        to:personDetails.email,
         subject: 'Thanks for choosing Coral Academy',
         // text: 'This is the email body text.',
         html:emailContent,
