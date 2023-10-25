@@ -6,9 +6,21 @@ const googleSheets = async (personDetails) => {
   try {
     
     console.log(personDetails);
-    const values = [personDetails.parentName, personDetails.childName,personDetails.email, personDetails.childAge,personDetails.classDetails[0].timeslot,personDetails.classDetails[1].timeslot,personDetails.classDetails[2].timeslot];
-    console.log('values');
-    console.log(values);
+    // const values = [personDetails.parentName, personDetails.childName,personDetails.email, personDetails.childAge,personDetails.classDetails[0].timeslot,personDetails.classDetails[1].timeslot,personDetails.classDetails[2].timeslot];
+    
+    const values = [personDetails.parentName, personDetails.childName, personDetails.email, personDetails.childAge,personDetails.phoneNumber];
+
+    personDetails.classDetails.forEach((classDetail) => {
+        // const { classid, timeslot } = classDetail;
+        const classId = parseInt(classDetail.classid, 10)+4; // Convert to a number with base 10
+        console.log('classId', classId);
+        const timeslot = classDetail.timeslot;
+        values[classId] = timeslot;
+    });
+    
+
+    console.log('values', values);
+
     const auth = new google.auth.GoogleAuth({
       keyFile: 'credentials.json',
       scopes: 'https://www.googleapis.com/auth/spreadsheets',
