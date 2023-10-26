@@ -5,8 +5,8 @@ const sendEmail = (personDetails) => {
     const transporter = nodemailer.createTransport({
         service: 'Gmail', // Use your email service provider
         auth: {
-          user: 'jitender091kumar@gmail.com',
-          pass: 'tsjm idxn abvb lfho',
+          user: 'support@coralacademy.com',
+          pass: 'wbao qowd tfcc hpua',
         },
       });
 

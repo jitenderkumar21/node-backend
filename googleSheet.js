@@ -30,7 +30,7 @@ const googleSheets = async (personDetails) => {
     // Create client instance for auth
     const client = await auth.getClient();
 
-    const spreadsheetId = '17GklRP73wG7dALq98qjtNrH_N_igeWc52i-lDRjdKWM';
+    const spreadsheetId = '1zBKa0aa_P3M-Zq-x3lDh4jI9b7s--L4QYsNYqfVaJ-Y';
 
     // Get metadata about spreadsheet
     const metaData = await google.sheets({ version: 'v4', auth: client }).spreadsheets.get({

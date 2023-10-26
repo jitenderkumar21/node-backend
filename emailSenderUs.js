@@ -5,8 +5,8 @@ const sendEmailToUs = (personDetails) => {
     const transporter = nodemailer.createTransport({
         service: 'Gmail', // Use your email service provider
         auth: {
-          user: 'jitender091kumar@gmail.com',
-          pass: 'tsjm idxn abvb lfho',
+          user: 'support@coralacademy.com',
+          pass: 'wbao qowd tfcc hpua',
         },
       });
 
@@ -82,8 +82,8 @@ const sendEmailToUs = (personDetails) => {
       
       // Email content
       const mailOptions = {
-        from: 'jitender091kumar@gmail.com', // Sender's email address
-        to:'jitender.kumar@iitgn.ac.in',
+        from: 'support@coralacademy.com', // Sender's email address
+        to:'support@coralacademy.com',
         subject: 'New Registration For Demo',
         html:emailContent,
       };
