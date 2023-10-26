@@ -6,6 +6,7 @@ const cors = require('cors');
 const sendEmail = require('./emailSender');
 const sendEmailToUs = require('./emailSenderUs');
 const googleSheets = require('./googleSheet'); // Import the module
+const classesInfo = require('./classesInfo'); // Import the module
 
 
 app.use(express.json());
@@ -33,13 +34,10 @@ app.get('/test', (req, res) => {
 
 });
 
-app.get('/sheet', (req, res) => {
-
-  
-
-  res.send("Successfully submitted! Thank you!");
-
-
+app.get('/info', async (req, res) => {
+  const classes = await classesInfo();
+  console.log('classes',classes);
+  res.json(classes);
 });
 
 
