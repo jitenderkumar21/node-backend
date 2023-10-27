@@ -10,7 +10,7 @@ const sendEmail = (personDetails) => {
         },
       });
 
-      const prefix = "want another slot";
+      const prefix = "want another slot:";
       let flag = false;
       
       let classes = '';
@@ -27,21 +27,29 @@ const sendEmail = (personDetails) => {
             //     </li>
                 // `;
 
-                if(timeslot.toLowerCase().startsWith(prefix)){
-                    flag=true;
-                }
-
+            
                 let regex = new RegExp(prefix, "gi"); // "gi" stands for global and case-insensitive
 
-                let modifiedTimeslot = timeslot.replace(regex, "Preferred time slot");
+                let modifiedTimeslot = timeslot.replace(regex, "Preferred Slot : ");
                 console.log('timeslot is ',modifiedTimeslot);
+                if(timeslot.toLowerCase().startsWith(prefix)){
+                    flag=true;
+                    classes += `
+                    <div class="class_div">
+                    <p class="custom-para">Class Name : ${className}</p>
+                    <p class="custom-para">${modifiedTimeslot}</p>
+                    </div>
+                    `;
+                }else{
+                    classes += `
+                <div class="class_div">
+                <p class="custom-para">Class Name : ${className}</p>
+                <p class="custom-para">Date & Time : ${modifiedTimeslot}</p>
+                </div>
+                `;
 
-            classes += `
-            <div class="class_div">
-               <p class="custom-para">Class Name : ${className}</p>
-               <p class="custom-para">Date & Time : ${modifiedTimeslot}</p>
-            </div>
-            `;
+                }
+
             
         }
       });
