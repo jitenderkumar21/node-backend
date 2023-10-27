@@ -129,7 +129,7 @@ const sendEmail = (personDetails) => {
       
       // Email content
       const mailOptions = {
-        from: 'jitender091kumar@gmail.com', // Sender's email address
+        from: 'support@coralacademy.com', // Sender's email address
         to:personDetails.email,
         subject: 'Confirmation Mail for '+personDetails.childName,
         // text: 'This is the email body text.',
