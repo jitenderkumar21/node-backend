@@ -167,7 +167,8 @@ const pool = new Pool({
           const { class_id, slot, count } = row;
           console.log(class_id, slot, count);
           var isFull = false;
-          if(count >=3){
+          const prefix = "want another slot";
+          if(count >=8 && !(slot.toLowerCase().startsWith(prefix))){
             isFull = true;
           }
 
