@@ -37,8 +37,10 @@ const sendEmail = (personDetails) => {
                 console.log('timeslot is ',modifiedTimeslot);
 
             classes += `
-               <p class="custom-para"><strong>${className}:</strong></p>
-               <p class="custom-para">- Date & Time: ${modifiedTimeslot}</p>
+            <div class="class_div">
+               <p class="custom-para">Class Name : ${className} :</p>
+               <p class="custom-para">Date & Time : ${modifiedTimeslot}</p>
+            </div>
             `;
             
         }
@@ -85,7 +87,10 @@ const sendEmail = (personDetails) => {
             color: #666;
             font-size: 16px;
             line-height: 0.6;
-            margin-left:5%;
+          }
+          .class_div{
+            margin-top: 20px;
+            margin-bottom:25px;
           }
         </style>
       </head>
@@ -96,7 +101,8 @@ const sendEmail = (personDetails) => {
           <p>Here are your selected classes for ${personDetails.childName} :</p>
             ${classes}
             ${message}
-          <p>We will get back to you with more details shortly.  We understand that plans change - In case you would like to alter your selection, please don't hesitate to email us at support@coralacademy.com</p>
+          <p>We will get back to you with more details shortly.</p>  
+          <p>We understand that plans change - In case you would like to unenroll your child for any class, please don't hesitate to email us at support@coralacademy.com.</p>
           <p>Warm Regards,</p>
           <p>The Coral Academy Team</p>
         </div>
@@ -108,7 +114,7 @@ const sendEmail = (personDetails) => {
       const mailOptions = {
         from: 'jitender091kumar@gmail.com', // Sender's email address
         to:personDetails.email,
-        subject: 'Confirmation Mail',
+        subject: 'Confirmation Mail for '+personDetails.childName,
         // text: 'This is the email body text.',
         html:emailContent,
       };
