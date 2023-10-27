@@ -38,7 +38,7 @@ const sendEmail = (personDetails) => {
 
             classes += `
             <div class="class_div">
-               <p class="custom-para">Class Name : ${className} :</p>
+               <p class="custom-para">Class Name : ${className}</p>
                <p class="custom-para">Date & Time : ${modifiedTimeslot}</p>
             </div>
             `;
@@ -92,17 +92,26 @@ const sendEmail = (personDetails) => {
             margin-top: 20px;
             margin-bottom:25px;
           }
+          @media screen and (max-width: 600px) {
+            .class_div p{
+                line-height: 1.4;
+                font-size: 14px;
+
+              }
+        }
+          
+          
         </style>
       </head>
       <body>
         <div class="container">
           <p>Dear ${personDetails.parentName},</p>
-          <p>We appreciate your registration for our upcoming demo classes and are thrilled to have you on board!</p>
+          <p>We appreciate your registration for our upcoming demo classes and are thrilled to have you onboard!</p>
           <p>Here are your selected classes for ${personDetails.childName} :</p>
             ${classes}
             ${message}
           <p>We will get back to you with more details shortly.</p>  
-          <p>We understand that plans change - In case you would like to unenroll your child for any class, please don't hesitate to email us at support@coralacademy.com.</p>
+          <p>We understand that plans change - In case you would like to unenroll your child for any class, please email us at support@coralacademy.com.</p>
           <p>Warm Regards,</p>
           <p>The Coral Academy Team</p>
         </div>
