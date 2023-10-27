@@ -52,7 +52,8 @@ const classesInfo = async () => {
             }
             // console.log(row);
             jsonObject['expand']=true;
-            jsonObject['timeslots']=[row[12],row[13],row[14]];
+            jsonObject['timeslots']=[row[12],row[14]];
+            jsonObject['isSlotOpen']=[row[13],'yes']
             arrayOfObjects.push(jsonObject);
         });
       } else {
