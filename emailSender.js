@@ -119,7 +119,7 @@ const sendEmail = (personDetails) => {
             ${classes}
             ${message}
           <p>We will get back to you with more details shortly.</p>  
-          <p>We understand that plans change - In case you would like to unenroll your child for any class, please email us at support@coralacademy.com.</p>
+          <p>We understand that plans change - In case you would like to unenroll your child for any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643</p>
           <p>Warm Regards,</p>
           <p>The Coral Academy Team</p>
         </div>

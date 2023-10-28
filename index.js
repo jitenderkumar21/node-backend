@@ -7,6 +7,7 @@ const sendEmail = require('./emailSender');
 const sendEmailToUs = require('./emailSenderUs');
 const googleSheets = require('./googleSheet'); // Import the module
 const classesInfo = require('./classesInfo'); // Import the module
+const maxLearners = require('./maxLearners'); // Import the module
 
 
 app.use(express.json());
@@ -26,11 +27,11 @@ process.on('uncaughtException', (error) => {
 });
 
 
-app.get('/test', (req, res) => {
+app.get('/test', async (req, res) => {
 
-  sendEmail('jitender.kumar@iitgn.ac.in'); // Call the sendEmail function
-
-  res.status(200).json({ message: 'Email sent successfully' });
+  const maxLearnersCount = await maxLearners();
+  console.log('maxLearners',maxLearnersCount);
+  res.json(maxLearnersCount);
 
 });
 
@@ -145,7 +146,9 @@ pool1.connect((connectionError, client) => {
 
 
 
-  app.get('/classes', (req, res) => {
+  app.get('/classes', async (req, res) => {
+
+    const maxLearnersCount = await maxLearners();
 
     // Query to fetch data from the "classes" table
     const query = 'SELECT class_id, slot, count FROM classes';
@@ -168,7 +171,10 @@ const pool = new Pool({
           console.log(class_id, slot, count);
           var isFull = false;
           const prefix = "want another slot";
-          if(count >=8 && !(slot.toLowerCase().startsWith(prefix))){
+          console.log('maxlearnerscount is',maxLearnersCount);
+          console.log('classid is',class_id);
+          console.log('count is',maxLearnersCount[class_id]);
+          if(count >=maxLearnersCount[class_id] && !(slot.toLowerCase().startsWith(prefix))){
             isFull = true;
           }
 
