@@ -8,6 +8,7 @@ const sendEmailToUs = require('./emailSenderUs');
 const googleSheets = require('./googleSheet'); // Import the module
 const classesInfo = require('./classesInfo'); // Import the module
 const maxLearners = require('./maxLearners'); // Import the module
+const defaultTimeZone = require('./defaultTimeSlot'); // Import the module
 
 
 app.use(express.json());
@@ -27,23 +28,58 @@ process.on('uncaughtException', (error) => {
 });
 
 
-app.get('/test', async (req, res) => {
+app.get('/test', (req, res) => {
 
-  const maxLearnersCount = await maxLearners();
-  console.log('maxLearners',maxLearnersCount);
-  res.json(maxLearnersCount);
+  const moment = require('moment-timezone');
+
+// Function to convert IANA time zone to abbreviation
+function getAbbreviationForTimeZone(timeZone) {
+  console.log(moment.tz(timeZone).format('z'));
+  const now = moment.tz(timeZone).zoneAbbr();
+  console.log(now)
+  ;
+  console.log('hi');
+  console.log(moment.tz([2023, 0], 'America/Los_Angeles').format('zz'));
+  console.log(moment.tz([2023, 5], 'America/Los_Angeles').format('zz'));
+  console.log(moment.tz([2023, 0], 'America/New_York').zoneAbbr());
+  console.log(moment.tz([2023, 5], 'America/New_York').zoneAbbr());
+  console.log(moment.tz.zone('America/Los_Angeles').abbr(1403465838805));
+  console.log(moment.tz.zone('America/Los_Angeles'));
+
+  // Check if daylight saving time is currently in effect
+  const isDST = now.isDST();
+  
+  if (isDST) {
+    // Subtract an hour to get standard time abbreviation
+    console.log("yes")
+    now.subtract(1, 'hours');
+  }
+
+  return now.format('z');
+}
+
+// Usage
+const userTimeZone = 'America/Los_Angeles'; // Replace with the user's time zone
+const timeZoneAbbreviation = getAbbreviationForTimeZone(userTimeZone);
+console.log(timeZoneAbbreviation);
+
+
 
 });
 
 app.get('/info', async (req, res) => {
-  const classes = await classesInfo();
+  const userTimeZone = req.query.timezone;
+  console.log(userTimeZone);
+  const classes = await classesInfo(userTimeZone);
   console.log('classes',classes);
   res.json(classes);
 });
 
 
 
-app.post('/save', (req, res) => {
+app.post('/save', async (req, res) => {
+
+  const defaultTimeZoneMap =  await defaultTimeZone();
 
   // Create a connection pool
   const { Pool } = require('pg');
@@ -111,8 +147,10 @@ pool1.connect((connectionError, client) => {
     const classDetails = personDetails.classDetails;
     
     classDetails.forEach((classDetail) => {
-      const { classid, timeslot } = classDetail;
+      const { classid } = classDetail;
+      let timeslot = classDetail.timeslot;
       if (timeslot){
+        timeslot = defaultTimeZoneMap[classid];
       // Try to update the count, and if no rows are updated, insert a new row
       client.query(updateQuery, [classid, timeslot], (updateErr, updateResult) => {
         if (updateErr) {
@@ -148,7 +186,9 @@ pool1.connect((connectionError, client) => {
 
   app.get('/classes', async (req, res) => {
 
-    const maxLearnersCount = await maxLearners();
+    const overAllMap = await maxLearners();
+    const maxLearnersCount = overAllMap['classIdToValue'];
+    const classIdToSlots = overAllMap['classIdToSlots'];
 
     // Query to fetch data from the "classes" table
     const query = 'SELECT class_id, slot, count FROM classes';
@@ -185,10 +225,16 @@ const pool = new Pool({
               slots: [],
             };
           }
-          classes[class_id].slots.push({
-            slot,
-            isFull,
-          });
+          if(isFull==true){
+              var totalClassSlots = classIdToSlots[class_id];
+              for (var i = 0; i < totalClassSlots.length; i++) {
+                classes[class_id].slots.push({
+                  slot:totalClassSlots[i],
+                  isFull,
+                });
+              }
+          }
+          
         });
   
         // Convert classes object to an array
