@@ -84,7 +84,7 @@ app.post('/save', async (req, res) => {
   // Create a connection pool
   const { Pool } = require('pg');
   const pool = new Pool({
-    connectionString: 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true',
+    connectionString: 'postgres://user:72shv8LChRLMzJWdNMcukOySe3DQbtLl@dpg-ckvnuuramefc73ad432g-a.oregon-postgres.render.com/user_demo?ssl=true',
   });
 
   // Acquire a connection from the pool
@@ -123,7 +123,7 @@ app.post('/save', async (req, res) => {
 });
 pool.end();
 const pool1 = new Pool({
-  connectionString: 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true',
+  connectionString: 'postgres://user:72shv8LChRLMzJWdNMcukOySe3DQbtLl@dpg-ckvnuuramefc73ad432g-a.oregon-postgres.render.com/user_demo?ssl=true',
 });
 pool1.connect((connectionError, client) => {
     if (connectionError) {
@@ -175,8 +175,9 @@ pool1.connect((connectionError, client) => {
    
   });
   pool1.end();
-  sendEmail(req.body);
-  sendEmailToUs(req.body);
+  console.log('before sending mail ', req.body);
+  // sendEmail(req.body);
+  // sendEmailToUs(req.body);
   googleSheets(req.body);
   res.status(200).json({ message: 'Registration Successful' });
 
@@ -194,7 +195,7 @@ pool1.connect((connectionError, client) => {
     const query = 'SELECT class_id, slot, count FROM classes';
   const { Pool } = require('pg');
 const pool = new Pool({
-  connectionString: 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true',
+  connectionString: 'postgres://user:72shv8LChRLMzJWdNMcukOySe3DQbtLl@dpg-ckvnuuramefc73ad432g-a.oregon-postgres.render.com/user_demo?ssl=true',
 });
 
     pool.query(query, (error, result) => {
