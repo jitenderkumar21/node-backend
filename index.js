@@ -150,7 +150,10 @@ pool1.connect((connectionError, client) => {
       const { classid } = classDetail;
       let timeslot = classDetail.timeslot;
       if (timeslot){
-        timeslot = defaultTimeZoneMap[classid];
+        const prefix = "want another slot";
+        if(!(timeslot.toLowerCase().startsWith(prefix))){
+          timeslot = defaultTimeZoneMap[classid];
+        }
       // Try to update the count, and if no rows are updated, insert a new row
       client.query(updateQuery, [classid, timeslot], (updateErr, updateResult) => {
         if (updateErr) {
