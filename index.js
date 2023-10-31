@@ -28,44 +28,7 @@ process.on('uncaughtException', (error) => {
 });
 
 
-app.get('/test', (req, res) => {
 
-  const moment = require('moment-timezone');
-
-// Function to convert IANA time zone to abbreviation
-function getAbbreviationForTimeZone(timeZone) {
-  console.log(moment.tz(timeZone).format('z'));
-  const now = moment.tz(timeZone).zoneAbbr();
-  console.log(now)
-  ;
-  console.log('hi');
-  console.log(moment.tz([2023, 0], 'America/Los_Angeles').format('zz'));
-  console.log(moment.tz([2023, 5], 'America/Los_Angeles').format('zz'));
-  console.log(moment.tz([2023, 0], 'America/New_York').zoneAbbr());
-  console.log(moment.tz([2023, 5], 'America/New_York').zoneAbbr());
-  console.log(moment.tz.zone('America/Los_Angeles').abbr(1403465838805));
-  console.log(moment.tz.zone('America/Los_Angeles'));
-
-  // Check if daylight saving time is currently in effect
-  const isDST = now.isDST();
-  
-  if (isDST) {
-    // Subtract an hour to get standard time abbreviation
-    console.log("yes")
-    now.subtract(1, 'hours');
-  }
-
-  return now.format('z');
-}
-
-// Usage
-const userTimeZone = 'America/Los_Angeles'; // Replace with the user's time zone
-const timeZoneAbbreviation = getAbbreviationForTimeZone(userTimeZone);
-console.log(timeZoneAbbreviation);
-
-
-
-});
 
 app.get('/info', async (req, res) => {
   const userTimeZone = req.query.timezone;
@@ -84,7 +47,7 @@ app.post('/save', async (req, res) => {
   // Create a connection pool
   const { Pool } = require('pg');
   const pool = new Pool({
-    connectionString: 'postgres://user:72shv8LChRLMzJWdNMcukOySe3DQbtLl@dpg-ckvnuuramefc73ad432g-a.oregon-postgres.render.com/user_demo?ssl=true',
+    connectionString: 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true',
   });
 
   // Acquire a connection from the pool
@@ -123,7 +86,7 @@ app.post('/save', async (req, res) => {
 });
 pool.end();
 const pool1 = new Pool({
-  connectionString: 'postgres://user:72shv8LChRLMzJWdNMcukOySe3DQbtLl@dpg-ckvnuuramefc73ad432g-a.oregon-postgres.render.com/user_demo?ssl=true',
+  connectionString: 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true',
 });
 pool1.connect((connectionError, client) => {
     if (connectionError) {
@@ -178,9 +141,8 @@ pool1.connect((connectionError, client) => {
    
   });
   pool1.end();
-  console.log('before sending mail ', req.body);
-  // sendEmail(req.body);
-  // sendEmailToUs(req.body);
+  sendEmail(req.body);
+  sendEmailToUs(req.body);
   googleSheets(req.body);
   res.status(200).json({ message: 'Registration Successful' });
 
@@ -198,7 +160,7 @@ pool1.connect((connectionError, client) => {
     const query = 'SELECT class_id, slot, count FROM classes';
   const { Pool } = require('pg');
 const pool = new Pool({
-  connectionString: 'postgres://user:72shv8LChRLMzJWdNMcukOySe3DQbtLl@dpg-ckvnuuramefc73ad432g-a.oregon-postgres.render.com/user_demo?ssl=true',
+  connectionString: 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true',
 });
 
     pool.query(query, (error, result) => {

@@ -15,7 +15,7 @@ const maxLearners = async () => {
     // Create client instance for auth
     const client = await auth.getClient();
 
-    const spreadsheetId = '1PEWxWS0HzyFgwMdOTktj9eh8o0WQS2z7azKHs5zMjk4';
+    const spreadsheetId = '1S0TqlZmzF-U2id7XsNnUXQxTPxqxMDqMez3RIhIZJf4';
 
     const readResult = await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.get({
         auth,
