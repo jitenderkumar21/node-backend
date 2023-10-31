@@ -20,24 +20,30 @@ const maxLearners = async () => {
     const readResult = await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.get({
         auth,
         spreadsheetId,
-        range: 'Sheet1!A:P', // Specify the range you want to read
+        range: 'Sheet1!A:S', // Specify the range you want to read
       });
 
-  
+      
       const rows = readResult.data.values;
+      var overAllMap = {};
       var classIdToValue = {};
+      var classIdToSlots = {};
 
       if (rows.length) {
         rows.slice(1).forEach((row) => {
             var classId = row[0];
             var value = row[15];
             classIdToValue[classId] = value;
+            classIdToSlots[classId] = [row[12],row[16],row[17],row[18]];
         });
       } else {
         console.log('No data found.');
       }
       console.log(classIdToValue);
-      return classIdToValue;
+      overAllMap['classIdToValue']=classIdToValue;
+      overAllMap['classIdToSlots']=classIdToSlots;
+      console.log('overAllMap',overAllMap);
+      return overAllMap;
 
 
   } catch (err) {

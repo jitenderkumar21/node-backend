@@ -8,6 +8,7 @@ const sendEmailToUs = require('./emailSenderUs');
 const googleSheets = require('./googleSheet'); // Import the module
 const classesInfo = require('./classesInfo'); // Import the module
 const maxLearners = require('./maxLearners'); // Import the module
+const defaultTimeZone = require('./defaultTimeSlot'); // Import the module
 
 
 app.use(express.json());
@@ -27,23 +28,21 @@ process.on('uncaughtException', (error) => {
 });
 
 
-app.get('/test', async (req, res) => {
 
-  const maxLearnersCount = await maxLearners();
-  console.log('maxLearners',maxLearnersCount);
-  res.json(maxLearnersCount);
-
-});
 
 app.get('/info', async (req, res) => {
-  const classes = await classesInfo();
+  const userTimeZone = req.query.timezone;
+  console.log(userTimeZone);
+  const classes = await classesInfo(userTimeZone);
   console.log('classes',classes);
   res.json(classes);
 });
 
 
 
-app.post('/save', (req, res) => {
+app.post('/save', async (req, res) => {
+
+  const defaultTimeZoneMap =  await defaultTimeZone();
 
   // Create a connection pool
   const { Pool } = require('pg');
@@ -111,8 +110,13 @@ pool1.connect((connectionError, client) => {
     const classDetails = personDetails.classDetails;
     
     classDetails.forEach((classDetail) => {
-      const { classid, timeslot } = classDetail;
+      const { classid } = classDetail;
+      let timeslot = classDetail.timeslot;
       if (timeslot){
+        const prefix = "want another slot";
+        if(!(timeslot.toLowerCase().startsWith(prefix))){
+          timeslot = defaultTimeZoneMap[classid];
+        }
       // Try to update the count, and if no rows are updated, insert a new row
       client.query(updateQuery, [classid, timeslot], (updateErr, updateResult) => {
         if (updateErr) {
@@ -148,7 +152,9 @@ pool1.connect((connectionError, client) => {
 
   app.get('/classes', async (req, res) => {
 
-    const maxLearnersCount = await maxLearners();
+    const overAllMap = await maxLearners();
+    const maxLearnersCount = overAllMap['classIdToValue'];
+    const classIdToSlots = overAllMap['classIdToSlots'];
 
     // Query to fetch data from the "classes" table
     const query = 'SELECT class_id, slot, count FROM classes';
@@ -185,10 +191,16 @@ const pool = new Pool({
               slots: [],
             };
           }
-          classes[class_id].slots.push({
-            slot,
-            isFull,
-          });
+          if(isFull==true){
+              var totalClassSlots = classIdToSlots[class_id];
+              for (var i = 0; i < totalClassSlots.length; i++) {
+                classes[class_id].slots.push({
+                  slot:totalClassSlots[i],
+                  isFull,
+                });
+              }
+          }
+          
         });
   
         // Convert classes object to an array

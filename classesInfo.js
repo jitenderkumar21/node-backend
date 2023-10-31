@@ -1,10 +1,22 @@
 // googleSheets.js
 
 const { google } = require('googleapis');
+const moment = require('moment-timezone');
 
-const classesInfo = async () => {
+const classesInfo = async (userTimeZone) => {
   try {
-    
+
+    const timeZoneAbbreviation = moment.tz([2023, 0], userTimeZone).zoneAbbr();
+    console.log('timeZoneAbbreviation',timeZoneAbbreviation);
+    let userTimeZoneColumn = 12;
+    if(timeZoneAbbreviation=='MST'){
+        userTimeZoneColumn=16;
+    }else if(timeZoneAbbreviation=='EST'){
+        userTimeZoneColumn=17;
+    }else if(timeZoneAbbreviation=='CST'){
+        userTimeZoneColumn=18;
+    }
+    console.log('userTimeZoneColumn',userTimeZoneColumn);
 
     const auth = new google.auth.GoogleAuth({
       keyFile: 'credentials.json',
@@ -20,7 +32,7 @@ const classesInfo = async () => {
     const readResult = await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.get({
         auth,
         spreadsheetId,
-        range: 'Sheet1!A:O', // Specify the range you want to read
+        range: 'Sheet1!A:S', // Specify the range you want to read
       });
 
       const keys = [
@@ -52,7 +64,7 @@ const classesInfo = async () => {
             }
             // console.log(row);
             jsonObject['expand']=true;
-            jsonObject['timeslots']=[row[12],row[14]];
+            jsonObject['timeslots']=[row[userTimeZoneColumn],row[14]];
             jsonObject['isSlotOpen']=[row[13],'yes']
             arrayOfObjects.push(jsonObject);
         });
