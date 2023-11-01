@@ -56,7 +56,7 @@ const sendEmail = (personDetails) => {
       });
       let message = '';
       if(flag==true){
-        message = '<p>We noticed that you have also requested for additional time slots for the some classes. We will try our best to schedule classes that work for you.</p>';
+        message = '<p>We noticed that you have also requested for additional time slots for some classes. We will try our best to schedule classes that work for you.</p>';
       }
       
       const emailContent = `
