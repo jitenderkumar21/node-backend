@@ -28,7 +28,10 @@ process.on('uncaughtException', (error) => {
 });
 
 
-
+app.post('/test', (req, res) => {
+  sendEmail(req.body);
+  res.send('email sent');
+});
 
 app.get('/info', async (req, res) => {
   const userTimeZone = req.query.timezone;
