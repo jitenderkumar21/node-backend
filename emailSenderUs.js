@@ -71,6 +71,7 @@ const sendEmailToUs = (personDetails) => {
             <li><strong>Learner's Name :</strong> ${personDetails.childName}</li>
             <li><strong>Learner's Age :</strong> ${personDetails.childAge}</li>
             <li><strong>Phone Number :</strong> ${personDetails.phoneNumber}</li>
+            <li><strong>How did you get to know about us ? :</strong> ${personDetails.knowabout}</li>
             ${classes}
           </ul>
           <p>Thank you!</p>
