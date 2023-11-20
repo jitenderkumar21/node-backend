@@ -9,6 +9,11 @@ const googleSheets = require('./googleSheet'); // Import the module
 const classesInfo = require('./classesInfo'); // Import the module
 const maxLearners = require('./maxLearners'); // Import the module
 const defaultTimeZone = require('./defaultTimeSlot'); // Import the module
+const calendarInvite = require('./calender'); // Import the module
+const inviteInfo = require('./inviteInfo'); // Import the module
+const { google } = require('googleapis');
+const moment = require('moment-timezone');
+const momentTime = require('moment');
 
 
 app.use(express.json());
@@ -31,13 +36,10 @@ process.on('uncaughtException', (error) => {
 
 
 app.get('/info', async (req, res) => {
-  const userTimeZone = req.query.timezone;
-  console.log(userTimeZone);
-  const classes = await classesInfo(userTimeZone);
-  console.log('classes',classes);
-  res.json(classes);
+  calendarInvite(req.body);
+ 
+  res.json('invite sent');
 });
-
 
 
 app.post('/save', async (req, res) => {
