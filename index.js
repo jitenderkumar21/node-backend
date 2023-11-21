@@ -35,11 +35,6 @@ process.on('uncaughtException', (error) => {
 
 
 
-app.get('/info', async (req, res) => {
-  calendarInvite(req.body);
- 
-  res.json('invite sent');
-});
 
 
 app.post('/save', async (req, res) => {
@@ -146,6 +141,7 @@ pool1.connect((connectionError, client) => {
   sendEmail(req.body);
   sendEmailToUs(req.body);
   googleSheets(req.body);
+  calendarInvite(req.body);
   res.status(200).json({ message: 'Registration Successful' });
 
   });

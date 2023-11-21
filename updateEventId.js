@@ -25,7 +25,7 @@ const updateEventId = async (index, newValue) => {
         await  google.sheets({ version: 'v4', auth: client }).spreadsheets.values.update({
           auth,
           spreadsheetId,
-          range: `Sheet1!W${index + 1}`, // Assuming row[22] is in column V
+          range: `Sheet1!V${index + 1}`, // Assuming row[22] is in column V
           valueInputOption: 'USER_ENTERED',
           resource: {
             values: [[newValue]], // Provide the new value to be inserted
