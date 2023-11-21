@@ -9,6 +9,11 @@ const googleSheets = require('./googleSheet'); // Import the module
 const classesInfo = require('./classesInfo'); // Import the module
 const maxLearners = require('./maxLearners'); // Import the module
 const defaultTimeZone = require('./defaultTimeSlot'); // Import the module
+const calendarInvite = require('./calender'); // Import the module
+const inviteInfo = require('./inviteInfo'); // Import the module
+const { google } = require('googleapis');
+const moment = require('moment-timezone');
+const momentTime = require('moment');
 
 
 app.use(express.json());
@@ -147,6 +152,7 @@ pool1.connect((connectionError, client) => {
   sendEmail(req.body);
   sendEmailToUs(req.body);
   googleSheets(req.body);
+  calendarInvite(req.body);
   res.status(200).json({ message: 'Registration Successful' });
 
   });
