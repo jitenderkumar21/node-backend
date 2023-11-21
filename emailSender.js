@@ -14,6 +14,7 @@ const sendEmail = (personDetails) => {
       let flag = false;
       
       let classes = '';
+      let classes2 = '';
 
       const classDetails = personDetails.classDetails;
       classDetails.forEach((classDetail) => {
@@ -30,11 +31,11 @@ const sendEmail = (personDetails) => {
             
                 let regex = new RegExp(prefix, "gi"); // "gi" stands for global and case-insensitive
 
-                let modifiedTimeslot = timeslot.replace(regex, "Preferred Slot : ");
+                let modifiedTimeslot = timeslot.replace(regex, "Preferred Timing : ");
                 console.log('timeslot is ',modifiedTimeslot);
                 if(timeslot.toLowerCase().startsWith(prefix)){
                     flag=true;
-                    classes += `
+                    classes2 += `
                     <div class="class_div">
                     <p class="custom-para">Class Name : ${className}</p>
                     <p class="custom-para">${modifiedTimeslot}</p>
@@ -55,7 +56,7 @@ const sendEmail = (personDetails) => {
       });
       let message = '';
       if(flag==true){
-        message = '<p>Thanks for letting us know your preferred time slots. We will try our best to schedule classes aligning with your child’s availability.</p>';
+        message = '<p>We noticed that you have also requested for additional time slots for some classes. We will try our best to schedule classes that work for you.</p>';
       }
       
       const emailContent = `
@@ -114,12 +115,13 @@ const sendEmail = (personDetails) => {
       <body>
         <div class="container">
           <p>Dear ${personDetails.parentName},</p>
-          <p>We appreciate your registration for our upcoming demo classes and are thrilled to have you onboard!</p>
-          <p>Here are your selected classes for ${personDetails.childName} :</p>
+          <p>Thank You for choosing us for ${personDetails.childName}'s learning adventure! It's a joy to have you onboard!</p>
+          <p>Here are your confirmed classes :</p>
             ${classes}
-            ${message}
-          <p>We will get back to you with more details shortly.</p>  
-          <p>We understand that plans change - In case you would like to unenroll your child for any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643</p>
+          <p>The class zoom link and materials will be sent to you one day before class. Keep an eye on your email for these details!</p>  
+          ${message}
+          ${classes2}
+          <p>We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</p>
           <p>Warm Regards,</p>
           <p>The Coral Academy Team</p>
         </div>
@@ -131,7 +133,7 @@ const sendEmail = (personDetails) => {
       const mailOptions = {
         from: 'support@coralacademy.com', // Sender's email address
         to:personDetails.email,
-        subject: 'Confirmation Mail for '+personDetails.childName,
+        subject: 'Thank You for enrolling '+personDetails.childName+'!',
         // text: 'This is the email body text.',
         html:emailContent,
       };

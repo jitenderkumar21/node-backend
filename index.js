@@ -33,7 +33,10 @@ process.on('uncaughtException', (error) => {
 });
 
 
-
+app.post('/test', (req, res) => {
+  sendEmail(req.body);
+  res.send('email sent');
+});
 
 
 
