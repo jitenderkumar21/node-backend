@@ -134,7 +134,7 @@ try{
                         console.log('userEndDateTime',userEndDateTime);
 
                         const convertToDateTimeFormat = (userDateTime) => {
-                        const formattedDateTime = momentTime(userDateTime, 'YYYY-MM-DD HH:mm').format();
+                        const formattedDateTime = momentTime.utc(userDateTime, 'YYYY-MM-DD HH:mm').format();
                         return formattedDateTime;
                         };
 
