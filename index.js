@@ -38,6 +38,14 @@ app.post('/test', (req, res) => {
   res.send('email sent');
 });
 
+app.get('/info', async (req, res) => {
+  const userTimeZone = req.query.timezone;
+  console.log(userTimeZone);
+  const classes = await classesInfo(userTimeZone);
+  console.log('classes',classes);
+  res.json(classes);
+});
+
 
 
 app.post('/save', async (req, res) => {
