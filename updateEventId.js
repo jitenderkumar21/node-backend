@@ -16,7 +16,7 @@ const updateEventId = async (index, newValue) => {
     // Create client instance for auth
     const client = await auth.getClient();
 
-    const spreadsheetId = '1zBKa0aa_P3M-Zq-x3lDh4jI9b7s--L4QYsNYqfVaJ-Y';
+    const spreadsheetId = '1S0TqlZmzF-U2id7XsNnUXQxTPxqxMDqMez3RIhIZJf4';
 
     console.log('saving event to cell',index,newValue);
     if (index!=undefined && newValue!=undefined) {

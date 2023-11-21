@@ -46,6 +46,9 @@ const sendEmail = (personDetails) => {
                 <div class="class_div">
                 <p class="custom-para">Class Name : ${className}</p>
                 <p class="custom-para">Date & Time : ${modifiedTimeslot}</p>
+                <p class="custom-para">Zoom Link : https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09</p>
+                <p class="custom-para">Meeting ID :  329 424 0234 </p>
+                <p class="custom-para">Passcode : 123456</p>
                 </div>
                 `;
 
@@ -118,10 +121,11 @@ const sendEmail = (personDetails) => {
           <p>Thank You for choosing us for ${personDetails.childName}'s learning adventure! It's a joy to have you onboard!</p>
           <p>Here are your confirmed classes :</p>
             ${classes}
-          <p>The class zoom link and materials will be sent to you one day before class. Keep an eye on your email for these details!</p>  
+          <p>We will block your Calendars as well. The class materials, if any, will be sent to you one day before class. Keep an eye on your email for these details. Excited to see you in class!</p>  
           ${message}
           ${classes2}
           <p>We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</p>
+          <p>Also, we're committed to continuous improvement. Got suggestions? Share them in this form: <a href="https://docs.google.com/forms/d/e/1FAIpQLSflsLJJuG74V1jjS29B-R1TVPbD74e9H5CkKVQMX6CzM87AZQ/viewform">Link</a></p>
           <p>Warm Regards,</p>
           <p>The Coral Academy Team</p>
         </div>
