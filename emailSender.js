@@ -12,6 +12,7 @@ const sendEmail = (personDetails) => {
 
       const prefix = "want another slot:";
       let flag = false;
+      let confirmedClassesFlag = false;
       
       let classes = '';
       let classes2 = '';
@@ -19,16 +20,7 @@ const sendEmail = (personDetails) => {
       const classDetails = personDetails.classDetails;
       classDetails.forEach((classDetail) => {
         const { className, timeslot } = classDetail;
-        if(timeslot){
-            // classes += `
-            //     <li><strong>${className}</strong>
-            //     <ul>
-            //         <li>Date & Time: ${timeslot}</li>
-            //     </ul>
-            //     </li>
-                // `;
-
-            
+        if(timeslot){  
                 let regex = new RegExp(prefix, "gi"); // "gi" stands for global and case-insensitive
 
                 let modifiedTimeslot = timeslot.replace(regex, "Preferred Timing : ");
@@ -42,6 +34,7 @@ const sendEmail = (personDetails) => {
                     </div>
                     `;
                 }else{
+                  confirmedClassesFlag = true;
                     classes += `
                 <div class="class_div">
                 <p class="custom-para">Class Name : ${className}</p>
@@ -60,6 +53,16 @@ const sendEmail = (personDetails) => {
       let message = '';
       if(flag==true){
         message = '<p>We noticed that you have also requested for additional time slots for some classes. We will try our best to schedule classes that work for you.</p>';
+      }
+      let confirmedClassMessage1 = '';
+      let confirmedClassMessage2 = '';
+      if(confirmedClassesFlag==true){
+        confirmedClassMessage1 = 'Here are your confirmed classes :';
+        confirmedClassMessage2 = 'We will block your Calendars as well. The class materials, if any, will be sent to you one day before class. Keep an eye on your email for these details. Excited to see you in class!';
+      }else{
+        if(flag==true){
+          message = '<p>We noticed that you have requested for additional time slots for some classes. We will try our best to schedule classes that work for you.</p>';
+        }
       }
       
       const emailContent = `
@@ -119,9 +122,9 @@ const sendEmail = (personDetails) => {
         <div class="container">
           <p>Dear ${personDetails.parentName},</p>
           <p>Thank You for choosing us for ${personDetails.childName}'s learning adventure! It's a joy to have you onboard!</p>
-          <p>Here are your confirmed classes :</p>
+          <p>${confirmedClassMessage1}</p>
             ${classes}
-          <p>We will block your Calendars as well. The class materials, if any, will be sent to you one day before class. Keep an eye on your email for these details. Excited to see you in class!</p>  
+          <p>${confirmedClassMessage2}</p>  
           ${message}
           ${classes2}
           <p>We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</p>

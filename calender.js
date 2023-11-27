@@ -172,9 +172,11 @@ Happy Learning!
                             'timeZone': 'Asia/Kolkata',
                         },
                         'attendees': [
-                            {'email': personDetails.email,
-                            'visibility': 'private', // Set visibility to private for each attendee
-                        },
+                            {'email': personDetails.email,'visibility': 'private',},
+                            {'email': 'aishwarya@coralacademy.com', 'visibility': 'private'},
+                            {'email': 'shagun@coralacademy.com', 'visibility': 'private'},
+                            {'email': 'aneesh@coralacademy.com', 'visibility': 'private'},
+                            
                         ],
                         'reminders': {
                             'useDefault': false,
