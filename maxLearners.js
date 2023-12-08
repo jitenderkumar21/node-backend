@@ -1,6 +1,7 @@
 // googleSheets.js
 
 const { google } = require('googleapis');
+const moment = require('moment-timezone');
 
 const maxLearners = async () => {
   try {
@@ -20,7 +21,7 @@ const maxLearners = async () => {
     const readResult = await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.get({
         auth,
         spreadsheetId,
-        range: 'Sheet1!A:S', // Specify the range you want to read
+        range: 'Sheet1!A:V', // Specify the range you want to read
       });
 
       
@@ -34,12 +35,55 @@ const maxLearners = async () => {
             var classId = row[0];
             var value = row[15];
             classIdToValue[classId] = value;
-            classIdToSlots[classId] = [row[12],row[16],row[17],row[18]];
+            let slots = [];
+            let displayClassTime = "";
+            let timeZoneAbbreviation = 'PST';
+            let classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+            let classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+            if (classStartTime.isValid() && classEndTime.isValid()) {
+              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h A');
+              const formattedClassEndTime = classEndTime.format('h A');
+
+              // Format the final string
+              displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
+              slots.push(displayClassTime);
+            }
+            classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+            classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+            if (classStartTime.isValid() && classEndTime.isValid()) {
+              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h A');
+              const formattedClassEndTime = classEndTime.format('h A');
+              timeZoneAbbreviation = 'MST';
+              // Format the final string
+              displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
+              slots.push(displayClassTime);
+            }
+            classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
+            classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
+            if (classStartTime.isValid() && classEndTime.isValid()) {
+              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h A');
+              const formattedClassEndTime = classEndTime.format('h A');
+              timeZoneAbbreviation = 'EST';
+              // Format the final string
+              displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
+              slots.push(displayClassTime);
+            }
+            classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
+            classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
+            if (classStartTime.isValid() && classEndTime.isValid()) {
+              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h A');
+              const formattedClassEndTime = classEndTime.format('h A');
+              timeZoneAbbreviation = 'CST';
+              // Format the final string
+              displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
+              slots.push(displayClassTime);
+            }
+
+            classIdToSlots[classId] = slots;
         });
       } else {
         console.log('No data found.');
       }
-      console.log(classIdToValue);
       overAllMap['classIdToValue']=classIdToValue;
       overAllMap['classIdToSlots']=classIdToSlots;
       console.log('overAllMap',overAllMap);
