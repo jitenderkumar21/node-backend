@@ -6,7 +6,7 @@ const moment = require('moment-timezone');
 const classesInfo = async (userTimeZone) => {
   try {
 
-    const timeZoneAbbreviation = moment.tz([2023, 0], userTimeZone).zoneAbbr();
+    let timeZoneAbbreviation = moment.tz([2023, 0], userTimeZone).zoneAbbr();
     console.log('timeZoneAbbreviation',timeZoneAbbreviation);
     let userTimeZoneColumn = 12;
     if(timeZoneAbbreviation=='MST'){
@@ -32,7 +32,7 @@ const classesInfo = async (userTimeZone) => {
     const readResult = await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.get({
         auth,
         spreadsheetId,
-        range: 'Sheet1!A:S', // Specify the range you want to read
+        range: 'Sheet1!A:U', // Specify the range you want to read
       });
 
       const keys = [
@@ -64,19 +64,54 @@ const classesInfo = async (userTimeZone) => {
             }
             // console.log(row);
             jsonObject['expand']=true;
-            jsonObject['timeslots']=[row[userTimeZoneColumn],row[14]];
+
+            let classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+            let classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+            
+            
+            if(timeZoneAbbreviation=='MST'){
+              classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+              classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+            }else if(timeZoneAbbreviation=='EST'){
+              classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
+              classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
+            }else if(timeZoneAbbreviation=='CST'){
+              classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
+              classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
+            }else{
+              timeZoneAbbreviation = 'PST';
+            }
+            let displayClassTime = "";
+
+            if (classStartTime.isValid() && classEndTime.isValid()) {
+              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h A');
+              const formattedClassEndTime = classEndTime.format('h A');
+              let currentTime = moment(); // current time
+              let classStartTimeIST = moment(row[19], 'YYYY-MM-DD HH:mm');
+            
+
+              if (classStartTimeIST.isBefore(currentTime)) {
+                  displayClassTime = "";
+              }else{
+                  // Format the final string
+                  displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
+              }
+            }
+
+
+            jsonObject['timeslots']=[displayClassTime,row[14]];
             jsonObject['isSlotOpen']=[row[13],'yes']
             arrayOfObjects.push(jsonObject);
         });
       } else {
         console.log('No data found.');
       }
-      console.log(arrayOfObjects);
+    
       return arrayOfObjects;
 
 
   } catch (err) {
-    console.error('Error writing to Google Sheets:', err);
+    console.error('Error reading from to Google Sheets:', err);
   }
 };
 
