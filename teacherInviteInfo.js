@@ -2,7 +2,7 @@
 
 const { google } = require('googleapis');
 
-const inviteInfo = async () => {
+const teacherInviteInfo = async () => {
   try {
     
 
@@ -25,25 +25,25 @@ const inviteInfo = async () => {
 
       
       const rows = readResult.data.values;
-      var inviteInfo = {};
+      var teacherInviteInfo = {};
 
       if (rows.length) {
         rows.slice(1).forEach((row) => {
             var classId = row[0];
-            var value = [row[1],row[19],row[20],row[21],rows.indexOf(row),row[16]];
-            inviteInfo[classId] = value;
+            var value = [row[1],row[11],row[12],row[19],row[20],row[21]];
+            teacherInviteInfo[classId] = value;
         });
       } else {
         console.log('No data found.');
       }
-      console.log('inviteInfo',inviteInfo);
+      console.log('teacherInviteInfo',teacherInviteInfo);
 
-      return inviteInfo;
+      return teacherInviteInfo;
 
 
   } catch (err) {
-    console.error('Error reading maxLearners from sheet', err);
+    console.error('Error reading teacherInviteInfo from sheet', err);
   }
 };
 
-module.exports = inviteInfo;
+module.exports = teacherInviteInfo;

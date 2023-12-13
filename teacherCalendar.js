@@ -1,6 +1,7 @@
-const inviteInfo = require('./inviteInfo'); // Import the module
-const saveEventId = require('./updateEventId'); // Import the module
-const calendarInvite = async (personDetails) => {
+const teacherInviteInfo = require('./teacherInviteInfo'); // Import the module
+const moment = require('moment-timezone');
+
+const teacherCalendar = async (personDetails) => {
 
 try{
     const fs = require('fs').promises;
@@ -71,40 +72,6 @@ try{
     return client;
     }
 
-    const updateEventAndAttendees = async (auth, calendar, eventId, personDetails) => {
-        try {
-          // Get the existing attendees from the event before updating
-          const existingEvent = await calendar.events.get({
-            auth: auth,
-            calendarId: 'primary',
-            eventId: eventId,
-          });
-      
-          const existingAttendees = existingEvent.data.attendees || [];
-      
-          // Add the new attendee to the list
-          const newAttendee = {'email': personDetails.email};
-          const updatedAttendees = [...existingAttendees, newAttendee];
-      
-          // Create the update object with the updated attendees
-          const updateEvent = {
-            'attendees': updatedAttendees,
-          };
-      
-          // Perform the update
-          const updatedEvent = await calendar.events.patch({
-            auth: auth,
-            calendarId: 'primary',
-            eventId: eventId,
-            resource: updateEvent,
-          });
-      
-          console.log('Event updated:', updatedEvent.data.id);
-        } catch (err) {
-          console.log('Error updating event:', err);
-        }
-      };
-
 
     /**
      * Lists the next 10 events on the user's primary calendar.
@@ -114,22 +81,24 @@ try{
     const calendar = google.calendar({version: 'v3', auth});
     
 
-    const invitesInfo =  await inviteInfo();
+    const invitesInfo =  await teacherInviteInfo();
+    console.log(personDetails);
 
     personDetails.classDetails.forEach((classDetail) => {
         const { classid } = classDetail;
         const inviteClassInfo = invitesInfo[classid];
+        console.log('Sending invite for ',inviteClassInfo);
         if(inviteClassInfo!=undefined){
             
-            let timeslot = classDetail.timeslot;
-            if (timeslot){
+            if (inviteClassInfo[5]==undefined){
                 const prefix = "want another slot";
-                if(!(timeslot.toLowerCase().startsWith(prefix))){
-                    if(inviteClassInfo[3]==undefined){
+                let timeslot = classDetail.timeslot;
+                if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix))){
+                    if(inviteClassInfo[3]!=undefined && inviteClassInfo[4]!=undefined){
                         // const userStartDateTime = '2023-11-19 17:00';  // Replace this with the user's input
                         // const userEndDateTime = '2023-11-19 18:00';    // Replace this with the user's input
-                        const userStartDateTime =inviteClassInfo[1];  // Replace this with the user's input
-                        const userEndDateTime = inviteClassInfo[2];    // Replace this with the user's input
+                        const userStartDateTime =inviteClassInfo[3];  // Replace this with the user's input
+                        const userEndDateTime = inviteClassInfo[4];    // Replace this with the user's input
                         console.log('userStartDateTime',userStartDateTime);
                         console.log('userEndDateTime',userEndDateTime);
 
@@ -137,30 +106,38 @@ try{
                         const formattedDateTime = momentTime.utc(userDateTime, 'YYYY-MM-DD HH:mm').format();
                         return formattedDateTime;
                         };
+                        let classStartTime = moment(userStartDateTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+                        let classEndTime = moment(userEndDateTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+                        let displayClassTime = '';
+                        const timeZoneAbbreviation = 'PST';
+                        if (classStartTime.isValid() && classEndTime.isValid()) {
+                            const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h A');
+                            const formattedClassEndTime = classEndTime.format('h A');
+                            displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
+                          }
 
                         const startDateTime = convertToDateTimeFormat(userStartDateTime);
                         const endDateTime = convertToDateTimeFormat(userEndDateTime);
                         
+
+                        let eventSummary = `Coral Academy: ${inviteClassInfo[0]}`;
+                        
 const eventDescription = `
-Hello there!
+Hi ${inviteClassInfo[1]},
 
-Thank you for registering your child for "${inviteClassInfo[0]}" Class!
+We are blocking your calendar for ${displayClassTime}. Kindly find the joining details here as well:
 
-Here's everything you need to know:
-
-Class Duration: (50 Minutes Class + 10 Minutes Feedback)
-
-${inviteClassInfo[5] ? `Class Material: ${inviteClassInfo[5]}\n` : ''}
 Zoom Meeting Link: https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09
 
-Meeting ID: 329 424 0234
+Meeting ID: 329 424 0234 
 Passcode: 123456
 
-Happy Learning!
+Thank You!
 `;
 
+
                         var event = {
-                        'summary': inviteClassInfo[0],
+                        'summary': eventSummary,
                         'location': 'https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09',
                         'description': eventDescription,
                         'start': {
@@ -172,7 +149,7 @@ Happy Learning!
                             'timeZone': 'Asia/Kolkata',
                         },
                         'attendees': [
-                            {'email': personDetails.email,'visibility': 'private',},
+                            {'email': inviteClassInfo[2],'visibility': 'private',},
                             {'email': 'aishwarya@coralacademy.com', 'visibility': 'private'},
                             {'email': 'shagun@coralacademy.com', 'visibility': 'private'},
                             {'email': 'aneesh@coralacademy.com', 'visibility': 'private'},
@@ -184,8 +161,7 @@ Happy Learning!
                             {'method': 'email', 'minutes': 2 * 60},
                             {'method': 'popup', 'minutes': 10},
                             ],
-                        },
-                        'guestsCanSeeOtherGuests':false
+                        }
                         };
                         calendar.events.insert(
                             {
@@ -201,17 +177,10 @@ Happy Learning!
                         
                             // Extract the event ID from the response
                             const eventId = response.data.id;
-                            console.log('Event created successfully. Event ID:', eventId);
-                            saveEventId(inviteClassInfo[4],eventId);
+                            console.log('Teacher Event created successfully. Event ID:', eventId);
                             }
                         );
                         
-                    }else{
-                        console.log('updating event');
-
-                        updateEventAndAttendees(auth, calendar, inviteClassInfo[3], personDetails);
-
-
                     }
                      
             
@@ -234,4 +203,4 @@ authorize().then(listEvents).catch(console.error);
 };
 
 
-module.exports = calendarInvite;
+module.exports = teacherCalendar;
