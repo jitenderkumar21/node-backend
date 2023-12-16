@@ -101,11 +101,11 @@ const sendEmail = (personDetails) => {
           .custom-para {
             color: #666;
             font-size: 16px;
-            line-height: 0.6;
+            line-height: 1.4;
           }
           .class_div{
             margin-top: 20px;
-            margin-bottom:25px;
+            margin-bottom:50px;
           }
           @media screen and (max-width: 600px) {
             .class_div p{

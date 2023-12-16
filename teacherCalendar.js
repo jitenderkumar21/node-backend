@@ -168,6 +168,7 @@ Thank You!
                             auth: auth,
                             calendarId: 'primary', // or the calendar ID where you want to create the event
                             resource: event,
+                            sendUpdates: 'all',
                             },
                             (err, response) => {
                             if (err) {
