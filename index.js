@@ -11,6 +11,7 @@ const maxLearners = require('./maxLearners'); // Import the module
 const defaultTimeZone = require('./defaultTimeSlot'); // Import the module
 const calendarInvite = require('./calender'); // Import the module
 const teacherCalendarInvite = require('./teacherCalendar'); // Import the module
+const classCancelltionInfo = require('./sheets/classCancellationInfo'); // Import the module
 const inviteInfo = require('./inviteInfo'); // Import the module
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
@@ -223,6 +224,41 @@ const pool = new Pool({
   });
 
 
+  const cron = require('node-cron');
+
+  // Define your task to be executed every minute
+  const myCronJob = cron.schedule('* * * * *', async () => {
+    try {
+      const currentTime = new Date();
+      console.log(`Cron job is running every minute at ${currentTime}`);
+  
+      const cancellationInfo = await classCancelltionInfo();
+      for (const [id, info] of Object.entries(cancellationInfo)) {
+        console.log(`ID: ${id}, Array:`, info);
+        if(info[1]!=undefined && info[2]==undefined) {
+          let classTime = moment(info[1], 'YYYY-MM-DD HH:mm').subtract(48,'hours');
+          let classStartTimeIST = moment(info[1], 'YYYY-MM-DD HH:mm');
+          if(classStartTimeIST.isValid() && classStartTimeIST.isAfter(currentTime)) {
+            if(classTime.isValid() && classTime.isBefore(currentTime)) {
+              console.log('Cancelling class for id:', id);
+
+              }
+
+          }
+
+        }
+      }
+      
+    } catch (error) {
+      console.error('Error in cron job:', error);
+    }
+  });
+  
+  // Start the cron job
+  
+
+
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
+  myCronJob.start();
 });
