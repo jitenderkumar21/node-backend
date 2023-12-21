@@ -1,6 +1,7 @@
 // googleSheets.js
 
 const { google } = require('googleapis');
+const moment = require('moment-timezone');
 
 const defaultTimeZone = async () => {
   try {
@@ -20,7 +21,7 @@ const defaultTimeZone = async () => {
     const readResult = await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.get({
         auth,
         spreadsheetId,
-        range: 'Sheet1!A:S', // Specify the range you want to read
+        range: 'Sheet1!A:V', // Specify the range you want to read
       });
 
       
@@ -30,8 +31,17 @@ const defaultTimeZone = async () => {
       if (rows.length) {
         rows.slice(1).forEach((row) => {
             var classId = row[0];
-            var value = row[12];
-            defaultTimeZone[classId] = value;
+            let classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+            let classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+            let displayClassTime = "";
+            if (classStartTime.isValid() && classEndTime.isValid()) {
+              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h A');
+              const formattedClassEndTime = classEndTime.format('h A');
+              // Format the final string
+              let timeZoneAbbreviation = 'PST';
+              displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
+            }
+            defaultTimeZone[classId] = displayClassTime;
         });
       } else {
         console.log('No data found.');

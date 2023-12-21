@@ -147,6 +147,7 @@ Here's everything you need to know:
 
 Class Duration: (50 Minutes Class + 10 Minutes Feedback)
 
+${inviteClassInfo[5] ? `Class Material: ${inviteClassInfo[5]}\n` : ''}
 Zoom Meeting Link: https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09
 
 Meeting ID: 329 424 0234
@@ -154,7 +155,6 @@ Passcode: 123456
 
 Happy Learning!
 `;
-
 
                         var event = {
                         'summary': inviteClassInfo[0],
@@ -169,9 +169,11 @@ Happy Learning!
                             'timeZone': 'Asia/Kolkata',
                         },
                         'attendees': [
-                            {'email': personDetails.email,
-                            'visibility': 'private', // Set visibility to private for each attendee
-                        },
+                            {'email': personDetails.email,'visibility': 'private',},
+                            {'email': 'aishwarya@coralacademy.com', 'visibility': 'private'},
+                            {'email': 'shagun@coralacademy.com', 'visibility': 'private'},
+                            {'email': 'aneesh@coralacademy.com', 'visibility': 'private'},
+                            
                         ],
                         'reminders': {
                             'useDefault': false,

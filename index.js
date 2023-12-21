@@ -10,6 +10,7 @@ const classesInfo = require('./classesInfo'); // Import the module
 const maxLearners = require('./maxLearners'); // Import the module
 const defaultTimeZone = require('./defaultTimeSlot'); // Import the module
 const calendarInvite = require('./calender'); // Import the module
+const teacherCalendarInvite = require('./teacherCalendar'); // Import the module
 const inviteInfo = require('./inviteInfo'); // Import the module
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
@@ -34,7 +35,7 @@ process.on('uncaughtException', (error) => {
 
 
 app.post('/test', (req, res) => {
-  sendEmail(req.body);
+  calendarInvite(req.body);
   res.send('email sent');
 });
 
@@ -42,7 +43,6 @@ app.get('/info', async (req, res) => {
   const userTimeZone = req.query.timezone;
   console.log(userTimeZone);
   const classes = await classesInfo(userTimeZone);
-  console.log('classes',classes);
   res.json(classes);
 });
 
@@ -152,6 +152,7 @@ pool1.connect((connectionError, client) => {
   sendEmail(req.body);
   sendEmailToUs(req.body);
   googleSheets(req.body);
+  await teacherCalendarInvite(req.body);
   calendarInvite(req.body);
   res.status(200).json({ message: 'Registration Successful' });
 
