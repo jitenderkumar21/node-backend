@@ -32,7 +32,7 @@ const sendEmail = (personDetails) => {
                 let regex = new RegExp(prefix, "gi"); // "gi" stands for global and case-insensitive
 
                 let modifiedTimeslot = timeslot.replace(regex, "Preferred Timing : ");
-                console.log('timeslot is ',modifiedTimeslot);
+                
                 if(timeslot.toLowerCase().startsWith(prefix)){
                     flag=true;
                     classes2 += `
@@ -147,7 +147,7 @@ const sendEmail = (personDetails) => {
         if (error) {
           console.error('Error sending email:', error);
         } else {
-          console.log('Email sent:', info.response);
+          console.log('Email sent to parent:', info.response);
         }
       });
 

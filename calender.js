@@ -99,7 +99,6 @@ try{
             resource: updateEvent,
           });
       
-          console.log('Event updated:', updatedEvent.data.id);
         } catch (err) {
           console.log('Error updating event:', err);
         }
@@ -130,9 +129,7 @@ try{
                         // const userEndDateTime = '2023-11-19 18:00';    // Replace this with the user's input
                         const userStartDateTime =inviteClassInfo[1];  // Replace this with the user's input
                         const userEndDateTime = inviteClassInfo[2];    // Replace this with the user's input
-                        console.log('userStartDateTime',userStartDateTime);
-                        console.log('userEndDateTime',userEndDateTime);
-
+                
                         const convertToDateTimeFormat = (userDateTime) => {
                         const formattedDateTime = momentTime.utc(userDateTime, 'YYYY-MM-DD HH:mm').format();
                         return formattedDateTime;
@@ -205,7 +202,7 @@ Happy Learning!
                         );
                         
                     }else{
-                        console.log('updating event');
+                    
 
                         updateEventAndAttendees(auth, calendar, inviteClassInfo[3], personDetails);
 

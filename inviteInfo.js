@@ -36,13 +36,12 @@ const inviteInfo = async () => {
       } else {
         console.log('No data found.');
       }
-      console.log('inviteInfo',inviteInfo);
 
       return inviteInfo;
 
 
   } catch (err) {
-    console.error('Error reading maxLearners from sheet', err);
+    console.error('Error reading inviteInfo from sheet', err);
   }
 };
 

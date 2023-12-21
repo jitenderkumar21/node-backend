@@ -71,12 +71,11 @@ const classesInfo = async (userTimeZone) => {
       } else {
         console.log('No data found.');
       }
-      console.log(arrayOfObjects);
       return arrayOfObjects;
 
 
   } catch (err) {
-    console.error('Error writing to Google Sheets:', err);
+    console.error('Error reading Demo Classes from Google Sheets:', err);
   }
 };
 

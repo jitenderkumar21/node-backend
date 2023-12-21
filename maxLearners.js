@@ -39,10 +39,8 @@ const maxLearners = async () => {
       } else {
         console.log('No data found.');
       }
-      console.log(classIdToValue);
       overAllMap['classIdToValue']=classIdToValue;
       overAllMap['classIdToSlots']=classIdToSlots;
-      console.log('overAllMap',overAllMap);
       return overAllMap;
 
 

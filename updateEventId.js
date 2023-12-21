@@ -18,10 +18,9 @@ const updateEventId = async (index, newValue) => {
 
     const spreadsheetId = '1S0TqlZmzF-U2id7XsNnUXQxTPxqxMDqMez3RIhIZJf4';
 
-    console.log('saving event to cell',index,newValue);
     if (index!=undefined && newValue!=undefined) {
         // Update the cell in Google Sheets
-        console.log('saving event to cell',index,newValue);
+  
         await  google.sheets({ version: 'v4', auth: client }).spreadsheets.values.update({
           auth,
           spreadsheetId,
@@ -33,10 +32,8 @@ const updateEventId = async (index, newValue) => {
         });
       }
 
-    console.log('Event id saved');
-
   } catch (err) {
-    console.error('Error saving eventid', err);
+    console.error('Error saving eventid in google sheet', err);
   }
 };
 

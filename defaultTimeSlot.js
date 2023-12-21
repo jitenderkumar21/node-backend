@@ -36,12 +36,11 @@ const defaultTimeZone = async () => {
       } else {
         console.log('No data found.');
       }
-      console.log('defaultTimeZone',defaultTimeZone);
       return defaultTimeZone;
 
 
   } catch (err) {
-    console.error('Error reading maxLearners from sheet', err);
+    console.error('Error reading defaultTimeSlots from sheet', err);
   }
 };
 
