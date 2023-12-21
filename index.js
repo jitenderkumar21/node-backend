@@ -12,7 +12,7 @@ const defaultTimeZone = require('./defaultTimeSlot'); // Import the module
 const calendarInvite = require('./calender'); // Import the module
 const teacherCalendarInvite = require('./teacherCalendar'); // Import the module
 const classCancelltionInfo = require('./sheets/classCancellationInfo'); // Import the module
-const inviteInfo = require('./inviteInfo'); // Import the module
+const getBlockedEmails = require('./sheets/blockedEmails');
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
 const momentTime = require('moment');
@@ -35,9 +35,17 @@ process.on('uncaughtException', (error) => {
 });
 
 
-app.post('/test', (req, res) => {
-  calendarInvite(req.body);
-  res.send('email sent');
+app.post('/test', async (req, res) => {
+  let blockedEmails = await getBlockedEmails(req.body);
+  console.log(blockedEmails);
+  const emailToCheck = 'xyz@gmail.com';
+
+  if (blockedEmails.has(emailToCheck)) {
+    console.log(`${emailToCheck} is blocked.`);
+  } else {
+    console.log(`${emailToCheck} is not blocked.`);
+  }
+  res.send(blockedEmails);
 });
 
 app.get('/info', async (req, res) => {
@@ -50,6 +58,14 @@ app.get('/info', async (req, res) => {
 
 
 app.post('/save', async (req, res) => {
+  let blockedEmails = await getBlockedEmails(req.body);
+  const emailToCheck = req.body.email;
+
+  if (blockedEmails.has(emailToCheck)) {
+    console.log("Blocking user for email :",emailToCheck);
+    res.status(200).json({ message: 'Registration Successful' });
+    return;
+  }
 
   const defaultTimeZoneMap =  await defaultTimeZone();
 
@@ -224,35 +240,35 @@ const pool = new Pool({
   });
 
 
-  const cron = require('node-cron');
+  // const cron = require('node-cron');
 
   // Define your task to be executed every minute
-  const myCronJob = cron.schedule('* * * * *', async () => {
-    try {
-      const currentTime = new Date();
-      console.log(`Cron job is running every minute at ${currentTime}`);
+  // const myCronJob = cron.schedule('* * * * *', async () => {
+  //   try {
+  //     const currentTime = new Date();
+  //     console.log(`Cron job is running every minute at ${currentTime}`);
   
-      const cancellationInfo = await classCancelltionInfo();
-      for (const [id, info] of Object.entries(cancellationInfo)) {
-        console.log(`ID: ${id}, Array:`, info);
-        if(info[1]!=undefined && info[2]==undefined) {
-          let classTime = moment(info[1], 'YYYY-MM-DD HH:mm').subtract(48,'hours');
-          let classStartTimeIST = moment(info[1], 'YYYY-MM-DD HH:mm');
-          if(classStartTimeIST.isValid() && classStartTimeIST.isAfter(currentTime)) {
-            if(classTime.isValid() && classTime.isBefore(currentTime)) {
-              console.log('Cancelling class for id:', id);
+  //     const cancellationInfo = await classCancelltionInfo();
+  //     for (const [id, info] of Object.entries(cancellationInfo)) {
+  //       console.log(`ID: ${id}, Array:`, info);
+  //       if(info[1]!=undefined && info[2]==undefined) {
+  //         let classTime = moment(info[1], 'YYYY-MM-DD HH:mm').subtract(48,'hours');
+  //         let classStartTimeIST = moment(info[1], 'YYYY-MM-DD HH:mm');
+  //         if(classStartTimeIST.isValid() && classStartTimeIST.isAfter(currentTime)) {
+  //           if(classTime.isValid() && classTime.isBefore(currentTime)) {
+  //             console.log('Cancelling class for id:', id);
 
-              }
+  //             }
 
-          }
+  //         }
 
-        }
-      }
+  //       }
+  //     }
       
-    } catch (error) {
-      console.error('Error in cron job:', error);
-    }
-  });
+  //   } catch (error) {
+  //     console.error('Error in cron job:', error);
+  //   }
+  // });
   
   // Start the cron job
   
@@ -260,5 +276,5 @@ const pool = new Pool({
 
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
-  myCronJob.start();
+  // myCronJob.start();
 });
