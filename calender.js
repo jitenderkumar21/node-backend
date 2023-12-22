@@ -208,7 +208,7 @@ Happy Learning!
                     }else{
                     
 
-                        // updateEventAndAttendees(auth, calendar, inviteClassInfo[3], personDetails);
+                        updateEventAndAttendees(auth, calendar, inviteClassInfo[3], personDetails);
 
 
                     }
