@@ -127,6 +127,7 @@ const sendEmail = (personDetails) => {
           <p>${confirmedClassMessage2}</p>  
           ${message}
           ${classes2}
+          <p><b><i>Ensuring learner safety is our highest priority, we request you to switch on the learner's camera at the start of each class for a quick identity check. After confirmation, learners may choose to participate with the camera off.</i></b></p>
           <p>We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</p>
           <p>Also, we're committed to continuous improvement. Got suggestions? Share them in this form: <a href="https://docs.google.com/forms/d/e/1FAIpQLSflsLJJuG74V1jjS29B-R1TVPbD74e9H5CkKVQMX6CzM87AZQ/viewform">Link</a></p>
           <p>Warm Regards,</p>
