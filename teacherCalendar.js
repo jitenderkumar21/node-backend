@@ -125,7 +125,9 @@ try{
 const eventDescription = `
 Hi ${inviteClassInfo[1]},
 
-We are blocking your calendar for ${displayClassTime}. Kindly find the joining details here as well:
+We are blocking your calendar for ${displayClassTime}.<b><i>Additionally, we would request you to confirm the learner's identity by requesting them to turn their cameras on at the beginning of the class. They can disable video after this if they wish. If verification fails, our team will cross-check if they have attended past classes from our record, and take necessary action within the first 5 minutes of class</i></b>.
+
+Kindly find the joining details here as well:
 
 Zoom Meeting Link: https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09
 

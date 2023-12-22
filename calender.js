@@ -143,6 +143,8 @@ Hello there!
 
 Thank you for registering your child for "${inviteClassInfo[0]}" Class!
 
+<b><i>We kindly request you to switch on the learner's camera at the start of the class for a quick identity check. After confirmation, learners may choose to participate with the camera off</i></b>.
+
 Here's everything you need to know:
 
 Class Duration: (50 Minutes Class + 10 Minutes Feedback)
