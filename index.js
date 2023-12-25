@@ -46,7 +46,6 @@ app.post('/test', async (req, res) => {
 
 app.get('/info', async (req, res) => {
   const userTimeZone = req.query.timezone;
-  console.log(userTimeZone);
   const classes = await classesInfo(userTimeZone);
   res.json(classes);
 });
@@ -193,16 +192,12 @@ const pool = new Pool({
         return;
       } else {
         // Process the result and format it as needed
-        console.info(result);
         const classes = {};
         result.rows.forEach((row) => {
           const { class_id, slot, count } = row;
-          console.log(class_id, slot, count);
+          
           var isFull = false;
           const prefix = "want another slot";
-          console.log('maxlearnerscount is',maxLearnersCount);
-          console.log('classid is',class_id);
-          console.log('count is',maxLearnersCount[class_id]);
           if(count >=maxLearnersCount[class_id] && !(slot.toLowerCase().startsWith(prefix))){
             isFull = true;
           }
