@@ -1,7 +1,7 @@
 const nodemailer = require('nodemailer');
 
 const sendEmailToTeacher = (teacherInviteInfo) => {
-    console.log(teacherInviteInfo);
+    console.log('sending mail to teacher',teacherInviteInfo);
    
     const transporter = nodemailer.createTransport({
         service: 'Gmail', // Use your email service provider
