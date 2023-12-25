@@ -1,4 +1,5 @@
 const teacherInviteInfo = require('./teacherInviteInfo'); // Import the module
+const sendEmailToTeacher = require('./emails/teacherEmail');
 const moment = require('moment-timezone');
 
 const teacherCalendar = async (personDetails) => {
@@ -181,6 +182,7 @@ Thank You!
                             // Extract the event ID from the response
                             const eventId = response.data.id;
                             console.log('Teacher Event created successfully. Event ID:', eventId);
+                            sendEmailToTeacher([...inviteClassInfo,displayClassTime]);
                             }
                         );
                         

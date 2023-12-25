@@ -16,6 +16,7 @@ const getBlockedEmails = require('./sheets/blockedEmails');
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
 const momentTime = require('moment');
+const sendEmailToTeacher = require('./emails/teacherEmail');
 
 
 app.use(express.json());
@@ -36,16 +37,11 @@ process.on('uncaughtException', (error) => {
 
 
 app.post('/test', async (req, res) => {
-  let blockedEmails = await getBlockedEmails(req.body);
-  console.log(blockedEmails);
-  const emailToCheck = 'xyz@gmail.com';
+  let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
+  let classDisplayName = "Class on Sunday";
 
-  if (blockedEmails.has(emailToCheck)) {
-    console.log(`${emailToCheck} is blocked.`);
-  } else {
-    console.log(`${emailToCheck} is not blocked.`);
-  }
-  res.send(blockedEmails);
+  sendEmailToTeacher([...info,classDisplayName]);
+  res.send('Sent teacher mail');
 });
 
 app.get('/info', async (req, res) => {
