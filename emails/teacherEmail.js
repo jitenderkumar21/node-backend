@@ -93,7 +93,7 @@ const sendEmailToTeacher = (teacherInviteInfo) => {
         if (error) {
           console.error('Error sending email:', error);
         } else {
-          console.log('Email sent to us:', info.response);
+          console.log('Email sent to teacher:', info.response);
         }
       });
 
