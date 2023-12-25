@@ -96,6 +96,7 @@ try{
                 let timeslot = classDetail.timeslot;
                 if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix))){
                     if(inviteClassInfo[3]!=undefined && inviteClassInfo[4]!=undefined){
+                        sendEmailToTeacher([...inviteClassInfo,displayClassTime]);
                         // const userStartDateTime = '2023-11-19 17:00';  // Replace this with the user's input
                         // const userEndDateTime = '2023-11-19 18:00';    // Replace this with the user's input
                         const userStartDateTime =inviteClassInfo[3];  // Replace this with the user's input
@@ -182,7 +183,6 @@ Thank You!
                             // Extract the event ID from the response
                             const eventId = response.data.id;
                             console.log('Teacher Event created successfully. Event ID:', eventId);
-                            sendEmailToTeacher([...inviteClassInfo,displayClassTime]);
                             }
                         );
                         
