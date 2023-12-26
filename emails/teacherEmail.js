@@ -1,7 +1,9 @@
 const nodemailer = require('nodemailer');
+const path = require('path');
 
 const sendEmailToTeacher = (teacherInviteInfo) => {
     console.log('sending mail to teacher',teacherInviteInfo);
+    const ATTACHMENT_PATH = path.join(process.cwd(), 'assets/Coral Academy Background.png');
    
     const transporter = nodemailer.createTransport({
         service: 'Gmail', // Use your email service provider
@@ -82,7 +84,7 @@ const sendEmailToTeacher = (teacherInviteInfo) => {
         attachments: [
             {
                 filename: 'coral_academy_background.png',
-                path: 'C:/Users/jiten/Desktop/Learnings/Backend/assets/Coral Academy Background.png', // Path to the attachment file
+                path: ATTACHMENT_PATH,
                 cid: 'unique@coralacademy.com' // Optional content ID for embedding in the email
             }
         ],
