@@ -83,12 +83,11 @@ try{
     
 
     const invitesInfo =  await teacherInviteInfo();
-    console.log(personDetails);
 
     personDetails.classDetails.forEach((classDetail) => {
         const { classid } = classDetail;
         const inviteClassInfo = invitesInfo[classid];
-        console.log('Sending invite for ',inviteClassInfo);
+        console.log('Sending Teacher invite for ',inviteClassInfo);
         if(inviteClassInfo!=undefined){
             
             if (inviteClassInfo[5]==undefined){
@@ -101,9 +100,6 @@ try{
                         // const userEndDateTime = '2023-11-19 18:00';    // Replace this with the user's input
                         const userStartDateTime =inviteClassInfo[3];  // Replace this with the user's input
                         const userEndDateTime = inviteClassInfo[4];    // Replace this with the user's input
-                        console.log('userStartDateTime',userStartDateTime);
-                        console.log('userEndDateTime',userEndDateTime);
-
                         const convertToDateTimeFormat = (userDateTime) => {
                         const formattedDateTime = momentTime.utc(userDateTime, 'YYYY-MM-DD HH:mm').format();
                         return formattedDateTime;

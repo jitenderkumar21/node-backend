@@ -7,7 +7,6 @@ const classesInfo = async (userTimeZone) => {
   try {
 
     let timeZoneAbbreviation = moment.tz([2023, 0], userTimeZone).zoneAbbr();
-    console.log('timeZoneAbbreviation',timeZoneAbbreviation);
     let userTimeZoneColumn = 12;
     if(timeZoneAbbreviation=='MST'){
         userTimeZoneColumn=16;
@@ -16,7 +15,6 @@ const classesInfo = async (userTimeZone) => {
     }else if(timeZoneAbbreviation=='CST'){
         userTimeZoneColumn=18;
     }
-    console.log('userTimeZoneColumn',userTimeZoneColumn);
 
     const auth = new google.auth.GoogleAuth({
       keyFile: 'credentials.json',

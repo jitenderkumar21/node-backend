@@ -36,7 +36,6 @@ const teacherInviteInfo = async () => {
       } else {
         console.log('No data found.');
       }
-      console.log('teacherInviteInfo',teacherInviteInfo);
 
       return teacherInviteInfo;
 
