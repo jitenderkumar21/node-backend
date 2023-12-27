@@ -35,8 +35,8 @@ const defaultTimeZone = async () => {
             let classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
             let displayClassTime = "";
             if (classStartTime.isValid() && classEndTime.isValid()) {
-              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h A');
-              const formattedClassEndTime = classEndTime.format('h A');
+              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
+              const formattedClassEndTime = classEndTime.format('h:mm A');
               // Format the final string
               let timeZoneAbbreviation = 'PST';
               displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;

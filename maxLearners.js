@@ -41,8 +41,8 @@ const maxLearners = async () => {
             let classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
             let classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
             if (classStartTime.isValid() && classEndTime.isValid()) {
-              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h A');
-              const formattedClassEndTime = classEndTime.format('h A');
+              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
+              const formattedClassEndTime = classEndTime.format('h:mm A');
 
               // Format the final string
               displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
@@ -51,8 +51,8 @@ const maxLearners = async () => {
             classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
             classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
             if (classStartTime.isValid() && classEndTime.isValid()) {
-              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h A');
-              const formattedClassEndTime = classEndTime.format('h A');
+              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
+              const formattedClassEndTime = classEndTime.format('h:mm A');
               timeZoneAbbreviation = 'MST';
               // Format the final string
               displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
@@ -61,8 +61,8 @@ const maxLearners = async () => {
             classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
             classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
             if (classStartTime.isValid() && classEndTime.isValid()) {
-              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h A');
-              const formattedClassEndTime = classEndTime.format('h A');
+              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
+              const formattedClassEndTime = classEndTime.format('h:mm A');
               timeZoneAbbreviation = 'EST';
               // Format the final string
               displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
@@ -71,8 +71,8 @@ const maxLearners = async () => {
             classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
             classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
             if (classStartTime.isValid() && classEndTime.isValid()) {
-              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h A');
-              const formattedClassEndTime = classEndTime.format('h A');
+              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
+              const formattedClassEndTime = classEndTime.format('h:mm A');
               timeZoneAbbreviation = 'CST';
               // Format the final string
               displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;

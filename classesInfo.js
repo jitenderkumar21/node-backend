@@ -82,8 +82,8 @@ const classesInfo = async (userTimeZone) => {
             let displayClassTime = "";
 
             if (classStartTime.isValid() && classEndTime.isValid()) {
-              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h A');
-              const formattedClassEndTime = classEndTime.format('h A');
+              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
+              const formattedClassEndTime = classEndTime.format('h:mm A');
               let currentTime = moment(); // current time
               let classStartTimeIST = moment(row[19], 'YYYY-MM-DD HH:mm');
             
