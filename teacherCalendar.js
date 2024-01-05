@@ -113,7 +113,7 @@ try{
                             displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
                           }
 
-                        sendEmailToTeacher([...inviteClassInfo,displayClassTime]);
+                        // sendEmailToTeacher([...inviteClassInfo,displayClassTime]);
                         const startDateTime = convertToDateTimeFormat(userStartDateTime);
                         const endDateTime = convertToDateTimeFormat(userEndDateTime);
                         
@@ -149,7 +149,6 @@ Thank You!
                             'timeZone': 'Asia/Kolkata',
                         },
                         'attendees': [
-                            {'email': inviteClassInfo[2],'visibility': 'private',},
                             {'email': 'aishwarya@coralacademy.com', 'visibility': 'private'},
                             {'email': 'shagun@coralacademy.com', 'visibility': 'private'},
                             {'email': 'aneesh@coralacademy.com', 'visibility': 'private'},
@@ -163,6 +162,11 @@ Thank You!
                             ],
                         }
                         };
+                        var teacherEmails = inviteClassInfo[2].split(',');
+                        for (var i = 0; i < teacherEmails.length; i++) {
+                            event.attendees.push({'email': teacherEmails[i].trim(), 'visibility': 'private'});
+                        }
+
                         calendar.events.insert(
                             {
                             auth: auth,
