@@ -78,7 +78,7 @@ const sendEmailToTeacher = (teacherInviteInfo) => {
       // Email content
       const mailOptions = {
         from: 'support@coralacademy.com', // Sender's email address
-        to:teacherInviteInfo[2],
+        to:teacherInviteInfo[2].split(',')[0],
         subject: `Coral Academy: Class Confirmed - ${teacherInviteInfo[0]}`,
         html:emailContent,
         attachments: [
