@@ -113,7 +113,7 @@ try{
                             displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
                           }
 
-                        // sendEmailToTeacher([...inviteClassInfo,displayClassTime]);
+                        sendEmailToTeacher([...inviteClassInfo,displayClassTime]);
                         const startDateTime = convertToDateTimeFormat(userStartDateTime);
                         const endDateTime = convertToDateTimeFormat(userEndDateTime);
                         
