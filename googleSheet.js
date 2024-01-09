@@ -7,7 +7,7 @@ const googleSheets = async (personDetails) => {
     
     // const values = [personDetails.parentName, personDetails.childName,personDetails.email, personDetails.childAge,personDetails.classDetails[0].timeslot,personDetails.classDetails[1].timeslot,personDetails.classDetails[2].timeslot];
     
-    const values = [personDetails.parentName, personDetails.childName, personDetails.email, personDetails.childAge,personDetails.phoneNumber,personDetails.knowabout,personDetails.additionalInfo];
+    const values = [new Date().toLocaleString(),personDetails.parentName, personDetails.childName, personDetails.email, personDetails.childAge,personDetails.phoneNumber,personDetails.knowabout,personDetails.additionalInfo];
 
     personDetails.classDetails.forEach((classDetail) => {
         // const { classid, timeslot } = classDetail;
