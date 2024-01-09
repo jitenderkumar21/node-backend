@@ -17,6 +17,8 @@ const { google } = require('googleapis');
 const moment = require('moment-timezone');
 const momentTime = require('moment');
 const sendEmailToTeacher = require('./emails/teacherEmail');
+const whatsappReminderCron = require('./crons/whatsappReminderCron');
+const createWhatsappReminders = require('./createWhatsappReminders');
 
 
 app.use(express.json());
@@ -40,7 +42,7 @@ app.post('/test', async (req, res) => {
   let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
   let classDisplayName = "Class on Sunday";
 
-  sendEmailToTeacher([...info,classDisplayName]);
+  createWhatsappReminders(req.body);
   res.send('Sent teacher mail');
 });
 
@@ -268,4 +270,5 @@ const pool = new Pool({
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
   // myCronJob.start();
+  whatsappReminderCron.start();
 });
