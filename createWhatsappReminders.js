@@ -1,5 +1,6 @@
 const { Client } = require('pg');
 const classCancelltionInfo = require('./sheets/classCancellationInfo'); // Import the module
+const moment = require('moment-timezone');
 
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
@@ -20,7 +21,7 @@ function createAdditionalInfo(data, classStartTimesMap) {
     });
 }
 
-async function createReminder(info) {
+async function createReminder(info,reminderTime,reminderType) {
     const client = new Client({
         connectionString: connectionString,
     });
@@ -33,14 +34,11 @@ async function createReminder(info) {
         delete infoWithoutClassId.class_id;
         delete infoWithoutClassId.classStartTime;
 
-        // Calculate reminder_time
-        const reminderTime = calculateReminderTime(info.classStartTime);
-
         const query = {
             text: `
-                INSERT INTO reminders (additional_info, reminder_time, class_id, phone_number)
-                VALUES ($1, $2, $3, $4)
-                ON CONFLICT (class_id, phone_number)
+                INSERT INTO reminders (additional_info, reminder_time, class_id, phone_number,reminder_type)
+                VALUES ($1, $2, $3, $4,$6)
+                ON CONFLICT (class_id, phone_number,reminder_type)
                 DO UPDATE SET
                     additional_info = jsonb_set(
                         COALESCE(reminders.additional_info, '{}'::jsonb),
@@ -50,7 +48,7 @@ async function createReminder(info) {
                     ),
                     reminder_time = $2
             `,
-            values: [infoWithoutClassId, reminderTime, info.class_id, info.receiverNumber, info.kidName],
+            values: [infoWithoutClassId, reminderTime, info.class_id, info.receiverNumber, info.kidName,reminderType],
         };
 
         await client.query(query);
@@ -64,20 +62,60 @@ async function createReminder(info) {
 }
 
 function calculateReminderTime(classStartTime) {
-    // Assuming classStartTime is a string in "YYYY-MM-DD HH:mm" format
-    const classStartTimeUTC = new Date(`${classStartTime} UTC`);
-    const reminderTime = new Date(classStartTimeUTC);
-    reminderTime.setHours(reminderTime.getHours() - 2);
+    // Assuming classStartTime is a string in "YYYY-MM-DD HH:mm" format in UTC
+    let reminderTime = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(15, 'minutes');
+    console.log('reminderTime', reminderTime);
     return reminderTime.toISOString(); // Converts to PostgreSQL timestamp format
 }
+function calculateMorningReminderTime(classStartTime,userTimeZone) {
+    let timeZoneAbbreviation = moment.tz([2023, 0], userTimeZone).zoneAbbr();
+    let classStartTimeMoment;
+    let reminderTimeMoment;
+    if(timeZoneAbbreviation=='MST'){
+        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(8, 'hours');
+        if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
+            reminderTimeMoment.subtract(1, 'day');
+        }    
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(7, 'hours');
+    }else if(timeZoneAbbreviation=='EST'){
+        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(8, 'hours');
+        if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
+            reminderTimeMoment.subtract(1, 'day');
+        }    
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(5, 'hours');
+    }else if(timeZoneAbbreviation=='CST'){
+        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(8, 'hours');
+        if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
+            reminderTimeMoment.subtract(1, 'day');
+        }    
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(6, 'hours');
+    }else{
+        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(8, 'hours');
+        if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
+            reminderTimeMoment.subtract(1, 'day');
+        }    
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(8, 'hours');
+    }
+    return reminderTimeMoment.toISOString(); // Converts to PostgreSQL timestamp format
+}
 
-async function createWhatsappReminders(jsonData) {
+
+async function createWhatsappReminders(jsonData,userTimeZone) {
     const classStartTimesMap = await classCancelltionInfo();
     console.log('classStartTimesMap', classStartTimesMap);
     const additionalInfoArray = createAdditionalInfo(jsonData, classStartTimesMap);
     console.log('additionalInfo', additionalInfoArray);
     for (const info of additionalInfoArray) {
-        await createReminder(info);
+        const beforeClassReminderTime = calculateReminderTime(info.classStartTime);
+        const morningReminderTime = calculateMorningReminderTime(info.classStartTime,userTimeZone);
+        console.log('beforeClassReminderTime',beforeClassReminderTime);
+        console.log('morningReminderTime',morningReminderTime);
+        await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15');
+        await createReminder(info,morningReminderTime,'MORNING_8');
     }
 }
 
