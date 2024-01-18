@@ -168,6 +168,7 @@ pool1.connect((connectionError, client) => {
   googleSheets(req.body);
   await teacherCalendarInvite(req.body);
   calendarInvite(req.body);
+  createWhatsappReminders(req.body,req.query.timezone);
   res.status(200).json({ message: 'Registration Successful' });
 
   });
