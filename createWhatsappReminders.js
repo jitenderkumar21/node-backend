@@ -7,7 +7,7 @@ const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-c
 function createAdditionalInfo(data, classStartTimesMap) {
     return data.classDetails.map(detail => {
         const classTiming = detail.timeslot;
-        const classStartTime = classStartTimesMap[detail.classid][1] || null; // Fetch classStartTime from the map
+        const classStartTime = classStartTimesMap[detail.classid][2] || null; // Fetch classStartTime from the map
 
         return {
             parentName: data.parentName,
@@ -17,6 +17,10 @@ function createAdditionalInfo(data, classStartTimesMap) {
             classStartTime: classStartTime,
             class_id: detail.classid, // Add class_id to the object
             receiverNumber: data.phoneNumber,
+            prerequisites: classStartTimesMap[detail.classid][1],
+            zoomMeetingLink: classStartTimesMap[detail.classid][4],
+            meetingId: classStartTimesMap[detail.classid][5],
+            passcode:classStartTimesMap[detail.classid][6],
         };
     });
 }
@@ -64,7 +68,7 @@ async function createReminder(info,reminderTime,reminderType) {
 function calculateReminderTime(classStartTime) {
     // Assuming classStartTime is a string in "YYYY-MM-DD HH:mm" format in UTC
     let reminderTime = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(15, 'minutes');
-    console.log('reminderTime', reminderTime);
+    // console.log('reminderTime', reminderTime);
     return reminderTime.toISOString(); // Converts to PostgreSQL timestamp format
 }
 function calculateMorningReminderTime(classStartTime,userTimeZone) {
@@ -102,21 +106,28 @@ function calculateMorningReminderTime(classStartTime,userTimeZone) {
     }
     return reminderTimeMoment.toISOString(); // Converts to PostgreSQL timestamp format
 }
-
+function cleanPhoneNumber(phoneNumber) {
+    // Remove characters like '=', '(', ')' and keep only digits
+    return phoneNumber.replace(/[^0-9]/g, '');
+  }  
 
 async function createWhatsappReminders(jsonData,userTimeZone) {
     const classStartTimesMap = await classCancelltionInfo();
-    console.log('classStartTimesMap', classStartTimesMap);
+    // console.log('classStartTimesMap', classStartTimesMap);
+    jsonData.phoneNumber = cleanPhoneNumber(jsonData.phoneNumber);
     const additionalInfoArray = createAdditionalInfo(jsonData, classStartTimesMap);
-    console.log('additionalInfo', additionalInfoArray);
+    // console.log('additionalInfo', additionalInfoArray);
     for (const info of additionalInfoArray) {
         const beforeClassReminderTime = calculateReminderTime(info.classStartTime);
         const morningReminderTime = calculateMorningReminderTime(info.classStartTime,userTimeZone);
-        console.log('beforeClassReminderTime',beforeClassReminderTime);
-        console.log('morningReminderTime',morningReminderTime);
+        // console.log('beforeClassReminderTime',beforeClassReminderTime);
+        // console.log('morningReminderTime',morningReminderTime);
         await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15');
         await createReminder(info,morningReminderTime,'MORNING_8');
+        await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_P');
+        await createReminder(info,morningReminderTime,'MORNING_8_P');
     }
 }
+
 
 module.exports = createWhatsappReminders;
