@@ -6,7 +6,7 @@ const sendEmail = (personDetails) => {
         service: 'Gmail', // Use your email service provider
         auth: {
           user: 'support@coralacademy.com',
-          pass: 'wbao qowd tfcc hpua',
+          pass: 'xcvf sxnm yctg jvte',
         },
       });
 
