@@ -133,7 +133,7 @@ Coral Academy
     }
 };
 
-const whatsappReminderCron = cron.schedule('* * * * *', async () => {
+const whatsappReminderCron = cron.schedule('*/15 * * * *', async () => {
     const currentClient = new Client({
         connectionString: connectionString,
     });
