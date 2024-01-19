@@ -172,9 +172,9 @@ Happy Learning!
                         },
                         'attendees': [
                             {'email': personDetails.email,'visibility': 'private',},
-                            {'email': 'aishwarya@coralacademy.com', 'visibility': 'private'},
+                            {'email': 'shivam@coralacademy.com', 'visibility': 'private'},
                             {'email': 'shagun@coralacademy.com', 'visibility': 'private'},
-                            {'email': 'aneesh@coralacademy.com', 'visibility': 'private'},
+                            {'email': 'anisha@coralacademy.com', 'visibility': 'private'},
                             
                         ],
                         'reminders': {

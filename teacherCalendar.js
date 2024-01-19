@@ -149,9 +149,9 @@ Thank You!
                             'timeZone': 'Asia/Kolkata',
                         },
                         'attendees': [
-                            {'email': 'aishwarya@coralacademy.com', 'visibility': 'private'},
+                            {'email': 'shivam@coralacademy.com', 'visibility': 'private'},
                             {'email': 'shagun@coralacademy.com', 'visibility': 'private'},
-                            {'email': 'aneesh@coralacademy.com', 'visibility': 'private'},
+                            {'email': 'anisha@coralacademy.com', 'visibility': 'private'},
                             
                         ],
                         'reminders': {
