@@ -118,14 +118,18 @@ async function createWhatsappReminders(jsonData,userTimeZone) {
     const additionalInfoArray = createAdditionalInfo(jsonData, classStartTimesMap);
     // console.log('additionalInfo', additionalInfoArray);
     for (const info of additionalInfoArray) {
-        const beforeClassReminderTime = calculateReminderTime(info.classStartTime);
-        const morningReminderTime = calculateMorningReminderTime(info.classStartTime,userTimeZone);
-        // console.log('beforeClassReminderTime',beforeClassReminderTime);
-        // console.log('morningReminderTime',morningReminderTime);
-        await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15');
-        await createReminder(info,morningReminderTime,'MORNING_8');
-        await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_P');
-        await createReminder(info,morningReminderTime,'MORNING_8_P');
+        const prefix = "want another slot";
+        let timeslot = info.classTiming;
+        if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix))){
+            const beforeClassReminderTime = calculateReminderTime(info.classStartTime);
+            const morningReminderTime = calculateMorningReminderTime(info.classStartTime,userTimeZone);
+            // console.log('beforeClassReminderTime',beforeClassReminderTime);
+            // console.log('morningReminderTime',morningReminderTime);
+            await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15');
+            await createReminder(info,morningReminderTime,'MORNING_8');
+            await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_P');
+            await createReminder(info,morningReminderTime,'MORNING_8_P');
+        }
     }
 }
 
