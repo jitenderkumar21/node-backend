@@ -12,6 +12,7 @@ const defaultTimeZone = require('./defaultTimeSlot'); // Import the module
 const calendarInvite = require('./calender'); // Import the module
 const teacherCalendarInvite = require('./teacherCalendar'); // Import the module
 const classCancelltionInfo = require('./sheets/classCancellationInfo'); // Import the module
+const saveEnrollment = require('./sheets/saveEnrollments'); // Import the module
 const getBlockedEmails = require('./sheets/blockedEmails');
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
@@ -42,7 +43,7 @@ app.post('/test', async (req, res) => {
   let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
   let classDisplayName = "Class on Sunday";
 
-  createWhatsappReminders(req.body,req.query.timezone);
+  saveEnrollment(req.body);
   res.send('Sent teacher mail');
 });
 
