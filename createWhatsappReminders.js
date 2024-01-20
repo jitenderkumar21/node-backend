@@ -120,7 +120,7 @@ async function createWhatsappReminders(jsonData,userTimeZone) {
     for (const info of additionalInfoArray) {
         const prefix = "want another slot";
         let timeslot = info.classTiming;
-        if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix))){
+        if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix)) && info.receiverNumber!=undefined && info.receiverNumber!=''){
             const beforeClassReminderTime = calculateReminderTime(info.classStartTime);
             const morningReminderTime = calculateMorningReminderTime(info.classStartTime,userTimeZone);
             // console.log('beforeClassReminderTime',beforeClassReminderTime);
