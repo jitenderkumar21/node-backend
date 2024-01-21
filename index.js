@@ -39,7 +39,7 @@ process.on('uncaughtException', (error) => {
 });
 
 
-app.post('/test', async (req, res) => {
+app.get('/test', async (req, res) => {
   const ipAddress = req.ip || req.connection.remoteAddress;
   getIpInfo(ipAddress);
   res.send('User IP Address: ' + ipAddress);
