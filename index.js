@@ -26,6 +26,7 @@ app.use(express.json());
 
 // Use the CORS middleware
 app.use(cors());
+app.set('trust proxy', true); // Enable trusting of the X-Forwarded-For header
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Promise Rejection:', reason);
@@ -39,10 +40,38 @@ process.on('uncaughtException', (error) => {
 });
 
 
-app.get('/test', async (req, res) => {
+app.post('/test', async (req, res) => {
   const ipAddress = req.ip || req.connection.remoteAddress;
   getIpInfo(ipAddress);
   res.send('User IP Address: ' + ipAddress);
+});
+
+app.post('/teacher/invite', async (req, res) => {
+  const array =  [
+    'Historic Clashes: 5 Game Changing Battles',
+    'Clark Vandeventer',
+    '',
+    '2024-02-01 22:00',
+    '2024-02-01 23:00',
+    undefined,
+    '1 February, Thursday, 2:00 PM - 3:00 PM (PST)'
+  ]
+  sendEmailToTeacher(array);
+  res.send('Sent teacher Email');
+});
+
+
+app.get('/', (req, res) => {
+  const ipAddress = req.ip || req.connection.remoteAddress;
+
+  // Assuming getIpInfo is an asynchronous function
+  getIpInfo(ipAddress).then(ipInfo => {
+    console.log('IP Information:', ipInfo);
+    res.send('User IP Address: ' + ipAddress);
+  }).catch(error => {
+    console.error('Error fetching IP information:', error.message);
+    res.status(500).send('Internal Server Error');
+  });
 });
 
 app.get('/info', async (req, res) => {
