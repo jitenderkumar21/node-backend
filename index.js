@@ -42,7 +42,7 @@ process.on('uncaughtException', (error) => {
 
 app.post('/test', async (req, res) => {
   const ipAddress = req.ip || req.connection.remoteAddress;
-  getIpInfo(ipAddress);
+  getIpInfo('152.59.198.143');
   res.send('User IP Address: ' + ipAddress);
 });
 
@@ -75,6 +75,14 @@ app.get('/', (req, res) => {
 });
 
 app.get('/info', async (req, res) => {
+  const ipAddress = req.ip || req.connection.remoteAddress;
+
+  // Assuming getIpInfo is an asynchronous function
+  getIpInfo(ipAddress).then(ipInfo => {
+    console.log('IP Information:', ipInfo);
+  }).catch(error => {
+    console.error('Error fetching IP information:', error.message);
+  });
   const userTimeZone = req.query.timezone;
   const classes = await classesInfo(userTimeZone);
   res.json(classes);
