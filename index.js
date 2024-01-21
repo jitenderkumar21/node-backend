@@ -19,6 +19,7 @@ const momentTime = require('moment');
 const sendEmailToTeacher = require('./emails/teacherEmail');
 const whatsappReminderCron = require('./crons/whatsappReminderCron');
 const createWhatsappReminders = require('./createWhatsappReminders');
+const getIpInfo = require('./location/IPInfo'); // Import the module
 
 
 app.use(express.json());
@@ -39,11 +40,9 @@ process.on('uncaughtException', (error) => {
 
 
 app.post('/test', async (req, res) => {
-  let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
-  let classDisplayName = "Class on Sunday";
-
-  createWhatsappReminders(req.body,req.query.timezone);
-  res.send('Sent teacher mail');
+  const ipAddress = req.ip || req.connection.remoteAddress;
+  getIpInfo(ipAddress);
+  res.send('User IP Address: ' + ipAddress);
 });
 
 app.get('/info', async (req, res) => {
