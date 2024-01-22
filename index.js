@@ -20,6 +20,7 @@ const momentTime = require('moment');
 const sendEmailToTeacher = require('./emails/teacherEmail');
 const whatsappReminderCron = require('./crons/whatsappReminderCron');
 const createWhatsappReminders = require('./createWhatsappReminders');
+const getIpInfo = require('./location/IPInfo'); // Import the module
 
 
 app.use(express.json());
