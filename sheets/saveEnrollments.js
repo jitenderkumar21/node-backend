@@ -1,11 +1,13 @@
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
 const teacherInviteInfo = require('../teacherInviteInfo'); // Import the module
+const getIpInfo = require('../location/IPInfo'); // Import the module
 
-const saveEnrollments = async (personDetails) => {
+const saveEnrollments = async (personDetails,ipAddress) => {
   try {
     const invitesInfo =  await teacherInviteInfo();
-      
+    const ipInfo = await getIpInfo(ipAddress);
+
     const date = new Date();
     const formattedTimestamp = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
 
@@ -34,12 +36,18 @@ const saveEnrollments = async (personDetails) => {
         personDetails.childAge,
         personDetails.phoneNumber,
         inviteClassInfo[1],
+        personDetails.knowabout,
+        personDetails.additionalInfo,
         classDetail.className,
         classStartTime ? classStartTime.format('D MMMM') : '',
         classStartTime ? classStartTime.format('dddd') : '',
         classStartTime ? classStartTime.format('h:mm A') : '',
         classEndTime ? classEndTime.format('h:mm A') : '',
         wantAnotherSlot,
+        ipInfo.city,
+        ipInfo.region,
+        ipInfo.country,
+        ipInfo.timezone,
       ];
 
       return values;
@@ -53,13 +61,13 @@ const saveEnrollments = async (personDetails) => {
     // Create client instance for auth
     const client = await auth.getClient();
 
-    const spreadsheetId = '1NbmX0dsDYmkavqJas46Oeb2PrJC0W3eVbAG_UJ5NUIQ';
+    const spreadsheetId = '1zBKa0aa_P3M-Zq-x3lDh4jI9b7s--L4QYsNYqfVaJ-Y';
 
     // Write rows to spreadsheet
     await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.append({
       auth,
       spreadsheetId,
-      range: 'Format 1!A:M', // Adjust the range as needed
+      range: 'Format 1!A:P', // Adjust the range as needed
       valueInputOption: 'USER_ENTERED',
       resource: {
         values: rows,
