@@ -44,9 +44,9 @@ const saveEnrollments = async (personDetails,ipAddress) => {
         classStartTime ? classStartTime.format('h:mm A') : '',
         classEndTime ? classEndTime.format('h:mm A') : '',
         wantAnotherSlot,
-        ipInfo.city,
         ipInfo.region,
         ipInfo.country,
+        ipInfo.city,
         ipInfo.timezone,
       ];
 
