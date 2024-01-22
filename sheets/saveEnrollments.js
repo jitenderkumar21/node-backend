@@ -27,6 +27,14 @@ const saveEnrollments = async (personDetails,ipAddress) => {
         classStartTime = moment(inviteClassInfo[3], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
         classEndTime = moment(inviteClassInfo[4], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
       }
+      const dateDayTimeColumns = timeslot.toLowerCase().startsWith("want another slot")
+    ? ['', '', '', '']
+    : [
+        classStartTime ? classStartTime.format('D MMMM') : '',
+        classStartTime ? classStartTime.format('dddd') : '',
+        classStartTime ? classStartTime.format('h:mm A') : '',
+        classEndTime ? classEndTime.format('h:mm A') : '',
+      ];
 
       const values = [
         formattedTimestamp,
@@ -39,10 +47,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
         personDetails.knowabout,
         personDetails.additionalInfo,
         classDetail.className,
-        classStartTime ? classStartTime.format('D MMMM') : '',
-        classStartTime ? classStartTime.format('dddd') : '',
-        classStartTime ? classStartTime.format('h:mm A') : '',
-        classEndTime ? classEndTime.format('h:mm A') : '',
+        ...dateDayTimeColumns,
         wantAnotherSlot,
         ipInfo.region,
         ipInfo.country,
