@@ -53,19 +53,20 @@ const sendEmailToTeacher = (teacherInviteInfo) => {
           <p>Hope you are doing well!</p>
           <p>Excited to inform you that ${teacherInviteInfo[0]} Class for ${teacherInviteInfo[6]} has been successfully scheduled!</p>
           <p>Kindly find the class Zoom link details below:</p>
-          <p>Zoom Link : https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09</p>
+          <p>Zoom Meeting Link : https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09</p>
           <p>Meeting ID :  329 424 0234 </p>
           <p>Passcode : 123456</p>
 
           <p>Additional details : </p>
 
-          <p>- We will let you know the final number of enrollers before class begins :)</p>
-          <p><b>- Additionally, we would request you to confirm the learner's identity by requesting them to turn their cameras on at the beginning of the class. They can disable video after this if they wish. If verification fails, our team will cross-check if they have attended past classes from our record, and take necessary action within the first 5 minutes of class.</b></p>
-          <p>- Additionally, we would request you to inform students to stay back after you exit the class post 50 minutes - We will be spending 10 minutes with the students to understand their topic preferences and availability to plan for more classes.</p>
+          <p>- We will let you know the final number of enrolments before class begins :)</p>
+          <p>- We would request you to verify your learners by carrying out a quick live video check-in at the beginning of each class, for you to visually confirm that the learner in question is a child. The learner can then disable video after their check-in. If you’ve never seen a learner on video before, and they’re unable or unwilling to enable their video, please remove them from the class.</p>
+          <p>- Kindly inform students to stay back after you exit the class post 50 minutes - We will be spending 10 minutes with the students to understand their topic preferences and availability to plan for more classes.</p>
           <p>- We have also blocked your calendar.</p>
-          <p>- If possible, It would be great if you could use the Coral Academy background :) (The PNG file is attached to this mail) </p>
+          <p>- If possible, It would be great if you could use the Coral Academy background :) (The PNG file is attached to this mail)</p>
 
           <p>Please feel free to email me or text/call on (872)-222-8643 for any assistance required.</p>
+          <p>Looking forward to class!</p>
           
           <p>Best,</p>
           <p>Coral Academy</p>
