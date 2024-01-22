@@ -12,6 +12,7 @@ const defaultTimeZone = require('./defaultTimeSlot'); // Import the module
 const calendarInvite = require('./calender'); // Import the module
 const teacherCalendarInvite = require('./teacherCalendar'); // Import the module
 const classCancelltionInfo = require('./sheets/classCancellationInfo'); // Import the module
+const saveEnrollment = require('./sheets/saveEnrollments'); // Import the module
 const getBlockedEmails = require('./sheets/blockedEmails');
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
@@ -41,8 +42,10 @@ process.on('uncaughtException', (error) => {
 
 
 app.post('/test', async (req, res) => {
+  let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
+  let classDisplayName = "Class on Sunday";
   const ipAddress = req.ip || req.connection.remoteAddress;
-  getIpInfo('152.59.198.143');
+  getIpInfo(ipAddress);
   res.send('User IP Address: ' + ipAddress);
 });
 
@@ -205,6 +208,8 @@ pool1.connect((connectionError, client) => {
   await teacherCalendarInvite(req.body);
   calendarInvite(req.body);
   createWhatsappReminders(req.body,req.query.timezone);
+  const ipAddress = req.ip || req.connection.remoteAddress;
+  saveEnrollment(req.body,ipAddress);
   res.status(200).json({ message: 'Registration Successful' });
 
   });
