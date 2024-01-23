@@ -3,6 +3,7 @@ const moment = require('moment');
 const { Client } = require('pg');
 const request = require('request');
 const axios = require('axios');
+const sendParentReminderEmail = require('../emails/parentEmailReminder');
 
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
@@ -10,24 +11,33 @@ const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-c
 const sendReminder = async (reminderId,reminder_type, additionalInfo) => {
     // Assume you have a function to send reminders
     console.log('Sending reminder for ID:', reminderId, 'with additional info:', additionalInfo);
-
+    if(reminder_type==='BEFORE_CLASS_15_EMAIL' || reminder_type==='MORNING_8_EMAIL'){
+        sendParentReminderEmail(reminderId,reminder_type, additionalInfo)
+    }
+    else{
+        console.log('Sending whatsapp reminder');
     // Send WhatsApp reminder with callback to handle success and response body
-    await sendWhatsappReminder(reminderId,reminder_type, additionalInfo, (success, responseBody) => {
-        // After sending the reminder, update the reminder_status and save response body
-        const updateClient = new Client({
-            connectionString: connectionString,
-        });
-        updateClient.connect();
-        const statusToUpdate = success ? 'SUCCESS' : 'FAILURE';
-        updateClient.query('UPDATE reminders SET reminder_status = $1, response_body = $2 WHERE id = $3', [statusToUpdate, responseBody, reminderId], (err, result) => {
-            updateClient.end();
-            if (err) {
-                console.error('Error updating reminder status:', err);
-            } else {
-                console.log('Reminder status updated successfully for ID:', reminderId);
+        await sendWhatsappReminder(reminderId,reminder_type, additionalInfo, (success, responseBody) => {
+            // After sending the reminder, update the reminder_status and save response body
+            const updateClient = new Client({
+                connectionString: connectionString,
+            });
+            updateClient.connect();
+            const statusToUpdate = success ? 'SUCCESS' : 'FAILURE';
+            updateClient.query('UPDATE reminders SET reminder_status = $1, response_body = $2 WHERE id = $3', [statusToUpdate, responseBody, reminderId], (err, result) => {
+                updateClient.end();
+                if (err) {
+                    console.error('Error updating reminder status:', err);
+                } else {
+                    console.log('Reminder status updated successfully for ID:', reminderId);
+                }
+            });
+            if(statusToUpdate==='FAILURE'){
+                console.log('WA reminder failed, sending email reminder for ID:', reminderId);
+                sendParentReminderEmail(reminderId,reminder_type,additionalInfo);
             }
         });
-    });
+    }
 };
 
 const sendWhatsappReminder = async (reminderId,reminder_type, additionalInfo, callback) => {
@@ -125,15 +135,15 @@ Coral Academy
         console.log('Response:', response.data);
 
         // Check if the statusCode is 200 for success
-        const success = response.status === 200;
-        callback(success, response.data);
+        const success = response && response.status === 200 && response.data && response.data.message_status === "Success";
+        callback(success, response ? response.data : null);
     } catch (error) {
         console.error('Error in sendWhatsappReminder:', error);
         callback(false, null);
     }
 };
 
-const whatsappReminderCron = cron.schedule('*/15 * * * *', async () => {
+const whatsappReminderCron = cron.schedule('* * * * *', async () => {
     const currentClient = new Client({
         connectionString: connectionString,
     });

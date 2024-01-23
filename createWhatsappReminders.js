@@ -13,6 +13,7 @@ function createAdditionalInfo(data, classStartTimesMap) {
             parentName: data.parentName,
             kidName: data.childName,
             className: detail.className,
+            email:data.email,
             classTiming: classTiming,
             classStartTime: classStartTime,
             class_id: detail.classid, // Add class_id to the object
