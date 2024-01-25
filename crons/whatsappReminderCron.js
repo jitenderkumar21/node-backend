@@ -44,6 +44,15 @@ const sendWhatsappReminder = async (reminderId,reminder_type, additionalInfo, ca
     try {
         const parentName = additionalInfo.parentName;
         const kidName = additionalInfo.kidName;
+        const namesArray = kidName.split(',').map(name => name.trim());
+        let formattedNames;
+        let isMultipleKids = false;
+        if (namesArray.length >= 2) {
+            formattedNames = namesArray.slice(0, -1).join(', ') + ` and ${namesArray[namesArray.length - 1]}`;
+            isMultipleKids = true;
+        } else {
+            formattedNames = kidName;
+        }
         const className = additionalInfo.className;
         const classTiming = additionalInfo.classTiming;
         const prerequisite = additionalInfo.prerequisites;
@@ -59,7 +68,7 @@ const sendWhatsappReminder = async (reminderId,reminder_type, additionalInfo, ca
             message = `
 Hello ${parentName},
 
-Just a quick reminder that ${kidName}'s class is scheduled for today. Please make sure ${kidName} is in a quiet space for learning! 
+Just a quick reminder that ${formattedNames}'s class is scheduled for today. Please make sure ${formattedNames} ${isMultipleKids ? 'are' : 'is'} in a quiet space for learning! 
 
 Here are more details about the class:
 
@@ -71,9 +80,9 @@ Passcode: ${passcode}
 
 We would request you to join class with your video on, so that our team can verify the learner’s identity.
 
-If you have any questions or if your kid cannot join today, feel free to text us back!
+If you have any questions or if your ${isMultipleKids ? 'kids' : 'kid'} cannot join today, feel free to text us back!
 
-Excited to see your kid in the class!
+Excited to see your ${isMultipleKids ? 'kids' : 'kid'} in the class!
 
 Best Regards,
 Coral Academy
@@ -84,7 +93,7 @@ Coral Academy
             message = `
 Hello ${parentName},
 
-Just a friendly reminder that ${kidName}'s class is in 15 Minutes. Please make sure ${kidName} is prepared for class.
+Just a friendly reminder that ${formattedNames}'s class is in 15 Minutes. Please make sure ${formattedNames} ${isMultipleKids ? 'are' : 'is'} prepared for class.
 
 Class Details
 - Class Name: ${className}
@@ -96,8 +105,8 @@ Passcode: ${passcode}
 
 We would request you to join class with your video on, so that our team can verify the learner's identity.
 
-If you have any questions or if ${kidName} cannot join today, feel free to text us back!
-We hope to see ${kidName} in class!
+If you have any questions or if ${formattedNames} cannot join today, feel free to text us back!
+We hope to see ${formattedNames} in class!
 
 Best Regards,
 Coral Academy
@@ -156,7 +165,7 @@ const whatsappReminderCron = cron.schedule('* * * * *', async () => {
         await currentClient.connect();
 
         // Fetch entries where reminder_time is less than or equal to the current time and reminder_status is 'NOT_SENT'
-        const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_status = $2', [currentTimeUTC, 'NOT_SENT']);
+        const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_status = $2 ORDER BY created_on', [currentTimeUTC, 'NOT_SENT']);
 
         // Process each entry, send reminders, and update reminder status
         for (const row of result.rows) {

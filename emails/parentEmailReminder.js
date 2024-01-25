@@ -4,6 +4,17 @@ const path = require('path');
 const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
         const parentName = additionalInfo.parentName;
         const kidName = additionalInfo.kidName;
+
+        const namesArray = kidName.split(',').map(name => name.trim());
+        let formattedNames;
+        let isMultipleKids = false;
+        if (namesArray.length >= 2) {
+            formattedNames = namesArray.slice(0, -1).join(', ') + ` and ${namesArray[namesArray.length - 1]}`;
+            isMultipleKids = true;
+        } else {
+            formattedNames = kidName;
+        }
+        console.log('kidName',kidName);
         const className = additionalInfo.className;
         const classTiming = additionalInfo.classTiming;
         const prerequisite = additionalInfo.prerequisites;
@@ -60,7 +71,7 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
         <body>
           <div class="container">
             <p>Hello ${parentName}</p>
-            <p>Just a quick reminder that ${kidName}'s class is scheduled for today. Please make sure ${kidName} is in a quiet space for learning!</p>
+            <p>Just a quick reminder that ${formattedNames}'s class is scheduled for today. Please make sure ${formattedNames} ${isMultipleKids ? 'are' : 'is'} in a quiet space for learning!</p>
   
             <p>Here are more details about the class:</p>
   
@@ -72,8 +83,8 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
             <p>Passcode: ${passcode}</p>
   
             <p>We would request you to join class with your video on, so that our team can verify the learner's identity.</p>
-            <p>If you have any questions or if your kid cannot join today, feel free to text us back!</p>
-            <p>Excited to see your kid in the class!</p>
+            <p>If you have any questions or if your ${isMultipleKids ? 'kids' : 'kid'} cannot join today, feel free to text us back!</p>
+            <p>Excited to see your ${isMultipleKids ? 'kids' : 'kid'} in the class!</p>
             
             <p>Best Regards</p>
             <p>Coral Academy</p>
@@ -119,7 +130,7 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
       <body>
         <div class="container">
           <p>Hello ${parentName}</p>
-          <p>Just a friendly reminder that ${kidName}'s class is in 15 Minutes. Please make sure ${kidName} is prepared for class.</p>
+          <p>Just a friendly reminder that ${formattedNames}'s class is in 15 Minutes. Please make sure ${formattedNames} ${isMultipleKids ? 'are' : 'is'} prepared for class.</p>
 
           <p>Class Details</p>
 
@@ -131,8 +142,8 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
           <p>Passcode: ${passcode}</p>
 
           <p>We would request you to join class with your video on, so that our team can verify the learner's identity.</p>
-          <p>If you have any questions or if your kid cannot join today, feel free to text us back!</p>
-          <p>We hope to see ${kidName} in class!</p>
+          <p>If you have any questions or if ${formattedNames} cannot join today, feel free to text us back!</p>
+          <p>We hope to see ${formattedNames} in class!</p>
           
           <p>Best Regards</p>
           <p>Coral Academy</p>
@@ -149,7 +160,7 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
       const mailOptions = {
         from: 'support@coralacademy.com', // Sender's email address
         to:additionalInfo.email, // Sender's email address'
-        subject: `Reminder for ${kidName}'s class today : ${className}`,
+        subject: `Reminder for ${formattedNames}'s class today : ${className}`,
         html:emailContent,
       };
       

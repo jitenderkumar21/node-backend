@@ -48,6 +48,7 @@ app.post('/test', async (req, res) => {
   // const ipAddress = req.ip || req.connection.remoteAddress;
   // saveEnrollments(req.body,'152.59.194.85');
   createWhatsappReminders(req.body,req.query.timezone);
+  res.send('Sent teacher Email');
 });
 
 app.post('/teacher/invite', async (req, res) => {

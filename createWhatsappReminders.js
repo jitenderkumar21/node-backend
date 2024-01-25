@@ -53,7 +53,7 @@ async function createReminder(info,reminderTime,reminderType) {
                     ),
                     reminder_time = $2
             `,
-            values: [infoWithoutClassId, reminderTime, info.class_id, info.receiverNumber, info.kidName,reminderType],
+            values: [infoWithoutClassId, reminderTime, info.class_id, info.email, info.kidName,reminderType],
         };
 
         await client.query(query);
