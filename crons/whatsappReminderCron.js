@@ -55,9 +55,9 @@ Here are more details about the class:
 
 - Class Name: ${className}
 - Class Timing: ${classTiming}
-Zoom Meeting Link: ${zoomMeetingLink}
-Meeting ID: ${meetingId}
-Passcode: ${passcode}
+- Zoom Meeting Link: ${zoomMeetingLink}
+- Meeting ID: ${meetingId}
+- Passcode: ${passcode}
 
 We would request you to join class with your video on, so that our team can verify the learner’s identity.
 
@@ -79,10 +79,9 @@ Just a friendly reminder that ${kidName}'s class is in 15 Minutes. Please make s
 Class Details
 - Class Name: ${className}
 - Class Timing: ${classTiming}
-
-Zoom Meeting Link: ${zoomMeetingLink}
-Meeting ID: ${meetingId}
-Passcode: ${passcode}
+- Zoom Meeting Link: ${zoomMeetingLink}
+- Meeting ID: ${meetingId}
+- Passcode: ${passcode}
 
 We would request you to join class with your video on, so that our team can verify the learner's identity.
 
