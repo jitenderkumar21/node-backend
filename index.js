@@ -22,6 +22,7 @@ const whatsappReminderCron = require('./crons/whatsappReminderCron');
 const createWhatsappReminders = require('./createWhatsappReminders');
 const getIpInfo = require('./location/IPInfo'); // Import the module
 const saveEnrollments = require('./sheets/saveEnrollments');
+const createZoomMeetings = require('./zoom/createZoomMeetings');
 
 
 app.use(express.json());
@@ -45,9 +46,10 @@ process.on('uncaughtException', (error) => {
 app.post('/test', async (req, res) => {
   let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
   let classDisplayName = "Class on Sunday";
-  const ipAddress = req.ip || req.connection.remoteAddress;
-  saveEnrollments(req.body,'152.59.194.85');
-  res.send('User IP Address: ' + ipAddress);
+  // const ipAddress = req.ip || req.connection.remoteAddress;
+  // saveEnrollments(req.body,'152.59.194.85');
+  createZoomMeetings(req.body);
+  res.send('Meeting created');
 });
 
 app.post('/teacher/invite', async (req, res) => {
