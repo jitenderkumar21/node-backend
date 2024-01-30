@@ -1,5 +1,9 @@
 const nodemailer = require('nodemailer');
 const path = require('path');
+const { Client } = require('pg');
+
+
+const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
 const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
         const parentName = additionalInfo.parentName;
@@ -23,7 +27,6 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
         const zoomMeetingLink = additionalInfo.zoomMeetingLink;
         const meetingId = additionalInfo.meetingId;
         const passcode = additionalInfo.passcode;
-    const ATTACHMENT_PATH = path.join(process.cwd(), 'assets/Coral Academy Background.png');
    
     const transporter = nodemailer.createTransport({
         service: 'Gmail', // Use your email service provider
@@ -34,7 +37,7 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
       });
 
       let emailContent;
-      if(reminder_type==='MORNING_8_EMAIL'){
+      if(reminder_type==='MORNING_8_EMAIL' || reminder_type==='MORNING_8'){
         emailContent = `
         <html>
         <head>
@@ -75,9 +78,9 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
   
             <p>Here are more details about the class:</p>
   
-            <p>- Class Name: ${className}</p>
-            <p>- Class Timing: ${classTiming}</p>
-            <p>- Prerequisite: ${prerequisite}</p>
+            <p>Class Name: ${className}</p>
+            <p>Class Timing: ${classTiming}</p>
+            <p>Prerequisite: ${prerequisite}</p>
             <p>Zoom Meeting Link: ${zoomMeetingLink}</p>
             <p>Meeting ID: ${meetingId}</p>
             <p>Passcode: ${passcode}</p>
@@ -134,9 +137,9 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
 
           <p>Class Details</p>
 
-          <p>- Class Name: ${className}</p>
-          <p>- Class Timing: ${classTiming}</p>
-          <p>- Prerequisite: ${prerequisite}</p>
+          <p>Class Name: ${className}</p>
+          <p>Class Timing: ${classTiming}</p>
+          <p>Prerequisite: ${prerequisite}</p>
           <p>Zoom Meeting Link: ${zoomMeetingLink}</p>
           <p>Meeting ID: ${meetingId}</p>
           <p>Passcode: ${passcode}</p>
@@ -167,12 +170,36 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
       // Send the email
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          console.error('Error sending email reminder to parent for ID::', error);
+          console.error('Error sending email reminder to parent for ID::', reminderId);
+          updateReminderStatus(reminderId, 'FAILURE', 'Error sending email: ' + error.message);
         } else {
           console.log('Reminder Email sent to parent for ID:', reminderId);
+          updateReminderStatus(reminderId, 'SUCCESS', 'Email sent successfully');
         }
       });
 
   };
+
+const updateReminderStatus = async (reminderId, statusToUpdate, responseBody) => {
+  
+    const updateClient = new Client({
+        connectionString: connectionString,
+    });
+    try {
+      await updateClient.connect();
+
+      const result = await updateClient.query(
+          'UPDATE reminders SET reminder_status = $1, response_body = $2 WHERE id = $3',
+          [statusToUpdate, responseBody, reminderId]
+      );
+
+
+      console.log('Email Reminder status updated successfully for ID:', reminderId);
+  } catch (err) {
+      console.error('Error updating email reminder status:', err);
+  } finally {
+      updateClient.end();
+}
+};
   
   module.exports = parentReminderEmail;

@@ -34,7 +34,9 @@ const sendReminder = async (reminderId,reminder_type, additionalInfo) => {
             });
             if(statusToUpdate==='FAILURE'){
                 console.log('WA reminder failed, sending email reminder for ID:', reminderId);
-                sendParentReminderEmail(reminderId,reminder_type,additionalInfo);
+                if(reminder_type==='BEFORE_CLASS_15' || reminder_type==='MORNING_8'){
+                    sendParentReminderEmail(reminderId,reminder_type, additionalInfo)
+                }
             }
         });
     }
@@ -152,7 +154,7 @@ Coral Academy
     }
 };
 
-const whatsappReminderCron = cron.schedule('* * * * *', async () => {
+const whatsappReminderCron = cron.schedule('*/2 * * * *', async () => {
     const currentClient = new Client({
         connectionString: connectionString,
     });
