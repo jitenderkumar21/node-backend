@@ -91,8 +91,10 @@ We hope to see ${kidName} in class!
 Best Regards,
 Coral Academy
 `;
-        }else {
-            message = `
+    }else {
+            
+if (prerequisite !== 'There are no prerequisites needed for the class.') {
+    message = `
 Here are the prerequisites for the class:
 
 - ${prerequisite}
@@ -100,8 +102,12 @@ Here are the prerequisites for the class:
 Best Regards,
 Coral Academy
 `
-        }
+} else {
+    callback(false, 'Skipping reminder due to "No prerequisite"');
+    return;
 
+        }
+}
 
 
 
