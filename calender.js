@@ -124,7 +124,7 @@ try{
             if (timeslot){
                 const prefix = "want another slot";
                 if(!(timeslot.toLowerCase().startsWith(prefix))){
-                    if(inviteClassInfo[3]==undefined){
+                    if(inviteClassInfo[3]==undefined || inviteClassInfo[3]==''){
                         // const userStartDateTime = '2023-11-19 17:00';  // Replace this with the user's input
                         // const userEndDateTime = '2023-11-19 18:00';    // Replace this with the user's input
                         const userStartDateTime =inviteClassInfo[1];  // Replace this with the user's input

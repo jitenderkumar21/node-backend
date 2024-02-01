@@ -90,7 +90,7 @@ try{
         console.log('Sending Teacher invite for ',inviteClassInfo);
         if(inviteClassInfo!=undefined){
             
-            if (inviteClassInfo[5]==undefined){
+            if (inviteClassInfo[5]==undefined || inviteClassInfo[5]==''){
                 const prefix = "want another slot";
                 let timeslot = classDetail.timeslot;
                 if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix))){

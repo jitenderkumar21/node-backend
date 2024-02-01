@@ -79,14 +79,6 @@ app.post('/teacher/invite', async (req, res) => {
 // });
 
 app.get('/info', async (req, res) => {
-  const ipAddress = req.ip || req.connection.remoteAddress;
-
-  // Assuming getIpInfo is an asynchronous function
-  getIpInfo(ipAddress).then(ipInfo => {
-    console.log('IP Information:', ipInfo);
-  }).catch(error => {
-    console.error('Error fetching IP information:', error.message);
-  });
   const userTimeZone = req.query.timezone;
   const classes = await classesInfo(userTimeZone);
   res.json(classes);
