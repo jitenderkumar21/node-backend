@@ -25,12 +25,12 @@ const classesInfo = async (userTimeZone) => {
     // Create client instance for auth
     const client = await auth.getClient();
 
-    const spreadsheetId = '1S0TqlZmzF-U2id7XsNnUXQxTPxqxMDqMez3RIhIZJf4';
+    const spreadsheetId = '1PEWxWS0HzyFgwMdOTktj9eh8o0WQS2z7azKHs5zMjk4';
 
     const readResult = await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.get({
         auth,
         spreadsheetId,
-        range: 'Sheet1!A:U', // Specify the range you want to read
+        range: 'Sheet1!A:AC', // Specify the range you want to read
       });
 
       const keys = [
@@ -80,25 +80,57 @@ const classesInfo = async (userTimeZone) => {
               timeZoneAbbreviation = 'PST';
             }
             let displayClassTime = "";
-
             if (classStartTime.isValid() && classEndTime.isValid()) {
-              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
+              const day = classStartTime.format('dddd');
+              const startTime = classStartTime.format('h:mm A');
               const formattedClassEndTime = classEndTime.format('h:mm A');
               let currentTime = moment(); // current time
               let classStartTimeIST = moment(row[19], 'YYYY-MM-DD HH:mm');
             
-
-              if (classStartTimeIST.isBefore(currentTime)) {
+              const isOneTime = row[17]?.toLowerCase() === 'onetime';
+              console.log(isOneTime);
+              if (classStartTimeIST.isBefore(currentTime) && isOneTime) {
                   displayClassTime = "";
               }else{
-                  // Format the final string
-                  displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
-              }
+                  displayClassTime = isOneTime
+                      ? `${day}, ${startTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`
+                      : `${day}s, ${startTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
+                        }
             }
+            jsonObject['diplay_timing']=displayClassTime;
+            let upcomingTimeslots = [];
+            let pastTimeslots = [];
+            jsonObject['timeslots'] = [];
+            const MAX_SLOTS = parseInt(row[25]) || 0;
+            console.log('Max slots',MAX_SLOTS);
+            for (let counter = 0; counter < MAX_SLOTS; counter++) {
+      
+                const subClassId = `${row[0]}_${counter + 1}`; // Assuming 'id' is the first column
+                const classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').format('HH:mm');
 
+                const classStartDate = counter === 0
+                              ? moment.utc(row[19], 'YYYY-MM-DD HH:mm')
+                              : moment.utc(row[25 + counter] + ' ' + classStartTime, 'YYYY-MM-DD HH:mm');
+                const isPast = classStartDate.isBefore(moment.utc());
+                console.log(moment.utc());
+                console.log(isPast,subClassId,classStartDate,classStartDate.isValid());
+                if (classStartDate.isValid()) {
+                  const formattedClassStartDate = `Class ${counter + 1}: ${classStartDate.format('D MMMM')}`;
+                  const timeslot = { subClassId, timing: formattedClassStartDate, isPast };
 
-            jsonObject['timeslots']=[displayClassTime,row[14]];
+                  // Push to the appropriate array based on isPast
+                  if (isPast) {
+                    pastTimeslots.push(timeslot);
+                  } else {
+                    upcomingTimeslots.push(timeslot);
+                  }
+                }
+                
+            }
+            jsonObject['timeslots'].push(upcomingTimeslots.concat(pastTimeslots));
+
             jsonObject['isSlotOpen']=[row[13],'yes']
+            jsonObject['class_tag']=row[17];
             arrayOfObjects.push(jsonObject);
         });
       } else {
