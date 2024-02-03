@@ -10,7 +10,7 @@ const getIpInfo = async (ipAddress) => {
     try {
         const response = await axios.get(apiUrl);
         const ipInfo = response.data;
-        console.log('IP Information:', ipInfo);
+        // console.log('IP Information:', ipInfo);
         return ipInfo;
     } catch (error) {
         console.error('Error fetching IP information:', error.message);
