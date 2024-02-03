@@ -100,7 +100,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
       classes+=`</table>`;
     
       let message = '';
-      if(flag==true){
+      if(personDetails.want_another_slot!== undefined && personDetails.want_another_slot !== ''){
         message = `We noticed that you have also requested additional time slots for some classes - ${personDetails.want_another_slot}.  We will try our best to schedule classes that work for you.</p>`;
       }
       let confirmedClassMessage1 = '';
@@ -110,7 +110,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
         confirmedClassMessage2 = `* We recommend that ${personDetails.childName} attends all classes throughout the course to get the most out of them, as each class builds on the last one.`;
       }else{
         classes = '';
-        if(flag==true){
+        if(personDetails.want_another_slot!== undefined && personDetails.want_another_slot !== ''){
           message = `We noticed that you have also requested additional time slots for some classes - ${personDetails.want_another_slot}.  We will try our best to schedule classes that work for you.</p>`;
         }
       }
