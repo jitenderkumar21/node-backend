@@ -204,7 +204,7 @@ Thankyou!
                         
                             // Extract the event ID from the response
                             const eventId = response.data.id;
-                            console.log('Teacher Event created successfully. Event ID:', eventId);
+                            console.log(`Teacher Event created successfully for emails: ${teacherEmails} . Event ID:`, eventId);
                             }
                         );
                                    

@@ -3,7 +3,8 @@ const ClassUtility = require('../utils/subClassUtility');
 const nodemailer = require('nodemailer');
 const path = require('path');
 
-const sendEmailToTeacher = (teacherInviteInfo,classes,text) => {
+const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) => {
+
     console.log('sending mail to teacher',teacherInviteInfo);
     const ATTACHMENT_PATH = path.join(process.cwd(), 'assets/Coral Academy Background.png');
    
@@ -118,7 +119,7 @@ const sendEmailToTeacher = (teacherInviteInfo,classes,text) => {
       const mailOptions = {
         from: 'support@coralacademy.com', // Sender's email address
         to:teacherInviteInfo[2].split(',')[0],
-        subject: `Coral Academy: Class Confirmed - ${teacherInviteInfo[0]}`,
+        subject: `Coral Academy: Class Confirmed - ${modifiedClassName}`,
         html:emailContent,
         attachments: [
             {
@@ -134,7 +135,7 @@ const sendEmailToTeacher = (teacherInviteInfo,classes,text) => {
         if (error) {
           console.error('Error sending email to teacher:', error);
         } else {
-          console.log('Email sent to teacher:', info.response);
+          console.log('Email sent to teacher:', teacherInviteInfo[2].split(',')[0]);
         }
       });
 
@@ -168,7 +169,7 @@ function createTableAndSendEmail(timeslot,classTag,className,teacherInviteInfo,c
   `;
   classes += `</table>`;
   // console.log('Created classes: ', classes);
-  sendEmailToTeacher(teacherInviteInfo,classes,'class has');
+  sendEmailToTeacher(teacherInviteInfo,classes,'class has',classNameWithNumber);
 }
 
 function createTableForCoursesAndSendEmail(timeslots,className,teacherInviteInfo,classIdTimings){
@@ -210,7 +211,7 @@ function createTableForCoursesAndSendEmail(timeslots,className,teacherInviteInfo
   }
   classes += `</table>`;
   // console.log('Created classes: ', classes);
-  sendEmailToTeacher(teacherInviteInfo,classes,'classes have');
+  sendEmailToTeacher(teacherInviteInfo,classes,'classes have',className);
 }
 
 

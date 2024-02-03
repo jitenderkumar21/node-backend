@@ -229,7 +229,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
         if (error) {
           console.error('Error sending email to parent:', error);
         } else {
-          console.log('Email sent to parent:', info.response);
+          console.log('Email sent to parent:', personDetails.email);
         }
       });
 
