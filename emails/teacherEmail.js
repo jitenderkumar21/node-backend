@@ -167,7 +167,7 @@ function createTableAndSendEmail(timeslot,classTag,className,teacherInviteInfo,c
       </tr>
   `;
   classes += `</table>`;
-  console.log('Created classes: ', classes);
+  // console.log('Created classes: ', classes);
   sendEmailToTeacher(teacherInviteInfo,classes,'class has');
 }
 
@@ -209,7 +209,7 @@ function createTableForCoursesAndSendEmail(timeslots,className,teacherInviteInfo
       });
   }
   classes += `</table>`;
-  console.log('Created classes: ', classes);
+  // console.log('Created classes: ', classes);
   sendEmailToTeacher(teacherInviteInfo,classes,'classes have');
 }
 

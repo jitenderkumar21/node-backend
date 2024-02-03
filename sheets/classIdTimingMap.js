@@ -36,7 +36,7 @@ const classIdTimingMap = async () => {
             let pastTimeslots = [];
             jsonObject['timeslots'] = [];
             const numberOfSubclasses = parseInt(row[25]) || 1;
-            console.log('Max slots',numberOfSubclasses);
+            // console.log('Max slots',numberOfSubclasses);
             for (let counter = 0; counter < numberOfSubclasses; counter++) {
       
                 const subClassId = `${row[0]}_${counter + 1}`; // Assuming 'id' is the first column
