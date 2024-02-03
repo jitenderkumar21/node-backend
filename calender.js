@@ -1,5 +1,10 @@
+const { fetchClassInvitations, insertClassInvitation} = require('./dao/classIdToInviteMapping');
 const inviteInfo = require('./inviteInfo'); // Import the module
-const saveEventId = require('./updateEventId'); // Import the module
+// const saveEventId = require('./updateEventId'); // Import the module
+const classIdTimingMap = require('./sheets/classIdTimingMap');
+const classCancelltionInfo = require('./sheets/classCancellationInfo');
+const ClassUtility = require('./utils/SubClassUtility');
+
 const calendarInvite = async (personDetails) => {
 
 try{
@@ -112,54 +117,73 @@ try{
     async function listEvents(auth) {
     const calendar = google.calendar({version: 'v3', auth});
     
-
+    const childName = personDetails.childName;
     const invitesInfo =  await inviteInfo();
-
+    const classInviteIds = await fetchClassInvitations();
+    const classIdTimings = await classIdTimingMap();
+    const classStartTimesMap = await classCancelltionInfo();
+    console.log('classInviteIds',classInviteIds);
     personDetails.classDetails.forEach((classDetail) => {
-        const { classid } = classDetail;
+        const { classid,className,classTag} = classDetail;
         const inviteClassInfo = invitesInfo[classid];
+        console.log('inviteClassInfo',inviteClassInfo);
         if(inviteClassInfo!=undefined){
             
-            let timeslot = classDetail.timeslot;
-            if (timeslot){
-                const prefix = "want another slot";
-                if(!(timeslot.toLowerCase().startsWith(prefix))){
-                    if(inviteClassInfo[3]==undefined){
-                        // const userStartDateTime = '2023-11-19 17:00';  // Replace this with the user's input
-                        // const userEndDateTime = '2023-11-19 18:00';    // Replace this with the user's input
-                        const userStartDateTime =inviteClassInfo[1];  // Replace this with the user's input
-                        const userEndDateTime = inviteClassInfo[2];    // Replace this with the user's input
+            let timeslots = classDetail.timeslots;
+            timeslots.filter((timeslot1) => !timeslot1.isPast)
+            .forEach((timeslot) => {
+                const { timing, subClassId } = timeslot;
+                const classInviteId = classInviteIds[subClassId];
+                console.log('classInviteId',classInviteId);
+                const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
+                console.log('Modified class name',modifiedClassName);
+                    if(classInviteId==undefined){
+                        const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
+                        const userEndDateTime = classIdTimings.get(subClassId)[1];    // Replace this with the user's input
                 
                         const convertToDateTimeFormat = (userDateTime) => {
-                        const formattedDateTime = momentTime.utc(userDateTime, 'YYYY-MM-DD HH:mm').format();
-                        return formattedDateTime;
+                            const formattedDateTime = momentTime.utc(userDateTime, 'YYYY-MM-DD HH:mm').format();
+                            return formattedDateTime;
                         };
 
                         const startDateTime = convertToDateTimeFormat(userStartDateTime);
                         const endDateTime = convertToDateTimeFormat(userEndDateTime);
                         
-const eventDescription = `
+let eventDescription = `
 Hello there!
 
-Thank you for registering your child for "${inviteClassInfo[0]}" Class!
+Thank you for registering ${childName} for "${modifiedClassName}" !
 
-<b><i>We kindly request you to switch on the learner's camera at the start of the class for a quick identity check. After confirmation, learners may choose to participate with the camera off</i></b>.
+<b><i>We kindly request you to switch on the learner's camera at the start of the class for a quick identity check. After confirmation, learners may choose to participate with the camera off.</i></b>
 
 Here's everything you need to know:
 
-Class Duration: (50 Minutes Class + 10 Minutes Feedback)
-
-${inviteClassInfo[5] ? `Class Material: ${inviteClassInfo[5]}\n` : ''}
-Zoom Meeting Link: https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09
-
-Meeting ID: 329 424 0234
-Passcode: 123456
-
-Happy Learning!
 `;
 
+if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][1].toLowerCase() !== 'there are no prerequisites needed for the class.') {
+    eventDescription += `Prerequisites: ${classStartTimesMap[classid][1]}\n`;
+}
+
+if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && inviteClassInfo[5] !== undefined && inviteClassInfo[5] !== '') {
+    eventDescription += '\n';
+}
+
+if (inviteClassInfo[5] !== undefined && inviteClassInfo[5] !== '') {
+    eventDescription += `Class Material: ${inviteClassInfo[5]}\n`;
+}
+
+eventDescription += `
+Meeting Link: ${classStartTimesMap[classid][4]}
+Meeting ID: ${classStartTimesMap[classid][5]}
+Passcode: ${classStartTimesMap[classid][6]}
+
+Class time includes a 10-minute feedback session. We kindly request ${childName} to stay back, and share their class experience with us.
+
+Happy Learning!
+`.trim();
+
                         var event = {
-                        'summary': inviteClassInfo[0],
+                        'summary':  ` Coral Academy : ${modifiedClassName}`,
                         'location': 'https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09',
                         'description': eventDescription,
                         'start': {
@@ -201,21 +225,21 @@ Happy Learning!
                             // Extract the event ID from the response
                             const eventId = response.data.id;
                             console.log('Event created successfully. Event ID:', eventId);
-                            saveEventId(inviteClassInfo[4],eventId);
+                            insertClassInvitation(subClassId,eventId);
                             }
                         );
                         
                     }else{
                     
-
-                        updateEventAndAttendees(auth, calendar, inviteClassInfo[3], personDetails);
+                        console.log('Will update event in this case',subClassId);
+                        updateEventAndAttendees(auth, calendar, classInviteId, personDetails);
 
 
                     }
                      
             
-                }
-            }
+            
+            });
         }
         });
       

@@ -97,11 +97,9 @@ const classesInfo = async (userTimeZone) => {
                       : `${day}s, ${startTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
                         }
             }
-            jsonObject['diplay_timing']=displayClassTime;
-            let upcomingTimeslots = [];
-            let pastTimeslots = [];
-            jsonObject['timeslots'] = [];
-            const MAX_SLOTS = parseInt(row[25]) || 0;
+            jsonObject['display_timing']=displayClassTime;
+            let timeslots = [];
+            const MAX_SLOTS = parseInt(row[25]) || 1;
             console.log('Max slots',MAX_SLOTS);
             for (let counter = 0; counter < MAX_SLOTS; counter++) {
       
@@ -112,22 +110,24 @@ const classesInfo = async (userTimeZone) => {
                               ? moment.utc(row[19], 'YYYY-MM-DD HH:mm')
                               : moment.utc(row[25 + counter] + ' ' + classStartTime, 'YYYY-MM-DD HH:mm');
                 const isPast = classStartDate.isBefore(moment.utc());
+                const teacherPreference = parseInt(row[18]) || 1;
+                if(row[17].toLowerCase()==='course' && counter+1===teacherPreference){
+                  jsonObject['isMoveToPast']=isPast;
+                }else if(row[17].toLowerCase()==='ongoing' && counter+1==MAX_SLOTS){
+                  jsonObject['isMoveToPast']=isPast;
+                }else if(row[17].toLowerCase()==='onetime'){
+                  jsonObject['isMoveToPast']=isPast;
+                }
                 console.log(moment.utc());
                 console.log(isPast,subClassId,classStartDate,classStartDate.isValid());
                 if (classStartDate.isValid()) {
                   const formattedClassStartDate = `Class ${counter + 1}: ${classStartDate.format('D MMMM')}`;
                   const timeslot = { subClassId, timing: formattedClassStartDate, isPast };
-
-                  // Push to the appropriate array based on isPast
-                  if (isPast) {
-                    pastTimeslots.push(timeslot);
-                  } else {
-                    upcomingTimeslots.push(timeslot);
-                  }
+                  timeslots.push(timeslot);
                 }
                 
             }
-            jsonObject['timeslots'].push(upcomingTimeslots.concat(pastTimeslots));
+            jsonObject['timeslots']=timeslots;
 
             jsonObject['isSlotOpen']=[row[13],'yes']
             jsonObject['class_tag']=row[17];

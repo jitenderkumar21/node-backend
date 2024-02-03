@@ -22,6 +22,8 @@ const whatsappReminderCron = require('./crons/whatsappReminderCron');
 const createWhatsappReminders = require('./createWhatsappReminders');
 const getIpInfo = require('./location/IPInfo'); // Import the module
 const saveEnrollments = require('./sheets/saveEnrollments');
+const classIdTimingMap = require('./sheets/classIdTimingMap');
+// classIdTimingMap
 
 
 app.use(express.json());
@@ -46,7 +48,9 @@ app.post('/test', async (req, res) => {
   let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
   let classDisplayName = "Class on Sunday";
   const ipAddress = req.ip || req.connection.remoteAddress;
-  saveEnrollments(req.body,'152.59.194.85');
+  // saveEnrollments(req.body,'152.59.194.85');
+  // classIdTimingMap();
+  sendEmail(req.body);
   res.send('User IP Address: ' + ipAddress);
 });
 
@@ -79,14 +83,6 @@ app.post('/teacher/invite', async (req, res) => {
 // });
 
 app.get('/info', async (req, res) => {
-  const ipAddress = req.ip || req.connection.remoteAddress;
-
-  // Assuming getIpInfo is an asynchronous function
-  getIpInfo(ipAddress).then(ipInfo => {
-    console.log('IP Information:', ipInfo);
-  }).catch(error => {
-    console.error('Error fetching IP information:', error.message);
-  });
   const userTimeZone = req.query.timezone;
   const classes = await classesInfo(userTimeZone);
   res.json(classes);
@@ -95,6 +91,7 @@ app.get('/info', async (req, res) => {
 
 
 app.post('/save', async (req, res) => {
+  const userTimeZone = req.query.timezone;
   let blockedEmails = await getBlockedEmails(req.body);
   const emailToCheck = req.body.email;
 
@@ -104,115 +101,114 @@ app.post('/save', async (req, res) => {
     return;
   }
 
-  const defaultTimeZoneMap =  await defaultTimeZone();
+  // const defaultTimeZoneMap =  await defaultTimeZone();
 
-  // Create a connection pool
-  const { Pool } = require('pg');
-  const pool = new Pool({
-    connectionString: 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true',
-  });
+//   // Create a connection pool
+//   const { Pool } = require('pg');
+//   const pool = new Pool({
+//     connectionString: 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true',
+//   });
 
-  // Acquire a connection from the pool
-  pool.connect((connectionError, client) => {
-  if (connectionError) {
-    console.error('Error acquiring a connection:', connectionError);
-    return;
-  }
+//   // Acquire a connection from the pool
+//   pool.connect((connectionError, client) => {
+//   if (connectionError) {
+//     console.error('Error acquiring a connection:', connectionError);
+//     return;
+//   }
 
-  // Use the client (connection) for database operations
-  const personDetails = req.body;
+//   // Use the client (connection) for database operations
+//   const personDetails = req.body;
   
   
-    // SQL query to insert data into the "users" table
-    const insertQuery = `
-      INSERT INTO users (P_NAME, C_NAME,EMAIL,AGE,T1,T2,T3)
-      VALUES ($1,$2, $3,$4,$5, $6,$7)
-    `;
+//     // SQL query to insert data into the "users" table
+//     const insertQuery = `
+//       INSERT INTO users (P_NAME, C_NAME,EMAIL,AGE,T1,T2,T3)
+//       VALUES ($1,$2, $3,$4,$5, $6,$7)
+//     `;
   
-    const values = [personDetails.parentName, personDetails.childName,personDetails.email, personDetails.childAge,personDetails.classDetails[0].timeslot,personDetails.classDetails[1].timeslot,personDetails.classDetails[2].timeslot];
+//     const values = [personDetails.parentName, personDetails.childName,personDetails.email, personDetails.childAge,personDetails.classDetails[0].timeslot,personDetails.classDetails[1].timeslot,personDetails.classDetails[2].timeslot];
   
-    // Execute the query to insert data
-    client.query(insertQuery, values, (queryErr) => {
-      if (queryErr) {
-        console.error('Error inserting data:', queryErr);
-        res.status(500).json({ error: 'Error inserting data' });
-        return;
-      } else {
-        console.log('Data inserted successfully');        
-      }
+//     // Execute the query to insert data
+//     client.query(insertQuery, values, (queryErr) => {
+//       if (queryErr) {
+//         console.error('Error inserting data:', queryErr);
+//         res.status(500).json({ error: 'Error inserting data' });
+//         return;
+//       } else {
+//         console.log('Data inserted successfully');        
+//       }
     
-  });
+//   });
   
-//   client.release(true);
+// //   client.release(true);
 
-});
-pool.end();
-const pool1 = new Pool({
-  connectionString: 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true',
-});
-pool1.connect((connectionError, client) => {
-    if (connectionError) {
-      console.error('Error acquiring a connection:', connectionError);
-      return;
-    }
+// });
+// pool.end();
+// const pool1 = new Pool({
+//   connectionString: 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true',
+// });
+// pool1.connect((connectionError, client) => {
+//     if (connectionError) {
+//       console.error('Error acquiring a connection:', connectionError);
+//       return;
+//     }
   
-    // Use the client (connection) for database operations
-    const personDetails = req.body;
-  const updateQuery = `
-      UPDATE CLASSES SET count = count + 1 WHERE class_id = $1 AND slot = $2
-      RETURNING count;  -- Return the updated count or 0 if no rows were updated
-    `;
+//     // Use the client (connection) for database operations
+//     const personDetails = req.body;
+//   const updateQuery = `
+//       UPDATE CLASSES SET count = count + 1 WHERE class_id = $1 AND slot = $2
+//       RETURNING count;  -- Return the updated count or 0 if no rows were updated
+//     `;
     
-    const insertClassesQuery = `
-      INSERT INTO CLASSES (class_id, slot, count)
-      VALUES ($1, $2, 1)
-      RETURNING count;  -- Return 1 as count for a new row
-    `;
+//     const insertClassesQuery = `
+//       INSERT INTO CLASSES (class_id, slot, count)
+//       VALUES ($1, $2, 1)
+//       RETURNING count;  -- Return 1 as count for a new row
+//     `;
     
-    const classDetails = personDetails.classDetails;
+//     const classDetails = personDetails.classDetails;
     
-    classDetails.forEach((classDetail) => {
-      const { classid } = classDetail;
-      let timeslot = classDetail.timeslot;
-      if (timeslot){
-        const prefix = "want another slot";
-        if(!(timeslot.toLowerCase().startsWith(prefix))){
-          timeslot = defaultTimeZoneMap[classid];
-        }
-      // Try to update the count, and if no rows are updated, insert a new row
-      client.query(updateQuery, [classid, timeslot], (updateErr, updateResult) => {
-        if (updateErr) {
-          console.error('Error updating data:', updateErr);
-        } else if (updateResult.rowCount === 0) {
-          // No rows were updated, so insert a new row
-          client.query(insertClassesQuery, [classid, timeslot], (insertErr, insertResult) => {
-            if (insertErr) {
-              console.error('Error inserting data:', insertErr);
-            } else {
-              console.log('New row inserted with count: 1');
-            }
-          });
-        } else {
-          console.log(`Updated count: ${updateResult.rows[0].count}`);
-        }
-      });
-    }
-    });
+//     classDetails.forEach((classDetail) => {
+//       const { classid } = classDetail;
+//       let timeslot = classDetail.timeslot;
+//       if (timeslot){
+//         const prefix = "want another slot";
+//         if(!(timeslot.toLowerCase().startsWith(prefix))){
+//           timeslot = defaultTimeZoneMap[classid];
+//         }
+//       // Try to update the count, and if no rows are updated, insert a new row
+//       client.query(updateQuery, [classid, timeslot], (updateErr, updateResult) => {
+//         if (updateErr) {
+//           console.error('Error updating data:', updateErr);
+//         } else if (updateResult.rowCount === 0) {
+//           // No rows were updated, so insert a new row
+//           client.query(insertClassesQuery, [classid, timeslot], (insertErr, insertResult) => {
+//             if (insertErr) {
+//               console.error('Error inserting data:', insertErr);
+//             } else {
+//               console.log('New row inserted with count: 1');
+//             }
+//           });
+//         } else {
+//           console.log(`Updated count: ${updateResult.rows[0].count}`);
+//         }
+//       });
+//     }
+//     });
     
-    // client.release(true);
+//     // client.release(true);
    
-  });
-  pool1.end();
-  sendEmail(req.body);
-  sendEmailToUs(req.body);
-  googleSheets(req.body);
+//   });
+//   pool1.end();
+  sendEmail(req.body,userTimeZone);
+  // sendEmailToUs(req.body);
+  // googleSheets(req.body);
   await teacherCalendarInvite(req.body);
   calendarInvite(req.body);
-  createWhatsappReminders(req.body,req.query.timezone);
+  // createWhatsappReminders(req.body,req.query.timezone);
   const ipAddress = req.ip || req.connection.remoteAddress;
   saveEnrollment(req.body,ipAddress);
   res.status(200).json({ message: 'Registration Successful' });
-
   });
 
 
@@ -313,5 +309,5 @@ const pool = new Pool({
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
   // myCronJob.start();
-  whatsappReminderCron.start();
+  // whatsappReminderCron.start();
 });

@@ -1,6 +1,13 @@
 const teacherInviteInfo = require('./teacherInviteInfo'); // Import the module
-const sendEmailToTeacher = require('./emails/teacherEmail');
+const {
+    sendEmailToTeacher,
+    createTableAndSendEmail,
+    createTableForCoursesAndSendEmail,
+  } = require('./emails/teacherEmail');
 const moment = require('moment-timezone');
+const classIdTimingMap = require('./sheets/classIdTimingMap');
+const ClassUtility = require('./utils/SubClassUtility');
+const { fetchClassInvitations, insertClassInvitation} = require('./dao/classIdToInviteMapping');
 
 const teacherCalendar = async (personDetails) => {
 
@@ -83,25 +90,31 @@ try{
     
 
     const invitesInfo =  await teacherInviteInfo();
+    const classIdTimings = await classIdTimingMap();
+    const classInviteIds = await fetchClassInvitations();
 
     personDetails.classDetails.forEach((classDetail) => {
-        const { classid } = classDetail;
+        const { classid,className,classTag} = classDetail;
         const inviteClassInfo = invitesInfo[classid];
         console.log('Sending Teacher invite for ',inviteClassInfo);
         if(inviteClassInfo!=undefined){
-            
-            if (inviteClassInfo[5]==undefined){
-                const prefix = "want another slot";
-                let timeslot = classDetail.timeslot;
-                if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix))){
-                    if(inviteClassInfo[3]!=undefined && inviteClassInfo[4]!=undefined){
-                        // const userStartDateTime = '2023-11-19 17:00';  // Replace this with the user's input
-                        // const userEndDateTime = '2023-11-19 18:00';    // Replace this with the user's input
-                        const userStartDateTime =inviteClassInfo[3];  // Replace this with the user's input
-                        const userEndDateTime = inviteClassInfo[4];    // Replace this with the user's input
+            let timeslots = classDetail.timeslots;
+            let courseTimeslots = [];
+            timeslots.filter((timeslot1) => !timeslot1.isPast)
+                .forEach((timeslot) => {
+                    const { timing, subClassId } = timeslot;
+                    console.log('Sending Teacher invite for subClassId',subClassId);
+                    const classInviteId = classInviteIds[subClassId];
+                    console.log('classInviteId',classInviteId);
+                    const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
+                    console.log('Modified class name',modifiedClassName);
+                    if(classInviteId==undefined){
+        
+                        const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
+                        const userEndDateTime = classIdTimings.get(subClassId)[1];    // Replace this with the user's input
                         const convertToDateTimeFormat = (userDateTime) => {
-                        const formattedDateTime = momentTime.utc(userDateTime, 'YYYY-MM-DD HH:mm').format();
-                        return formattedDateTime;
+                            const formattedDateTime = momentTime.utc(userDateTime, 'YYYY-MM-DD HH:mm').format();
+                            return formattedDateTime;
                         };
                         let classStartTime = moment(userStartDateTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
                         let classEndTime = moment(userEndDateTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
@@ -112,27 +125,36 @@ try{
                             const formattedClassEndTime = classEndTime.format('h:mm A');
                             displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
                           }
+                        const lowercaseClassTag = classTag.toLowerCase();
 
-                        sendEmailToTeacher([...inviteClassInfo,displayClassTime]);
+                        if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'onetime') {
+                            createTableAndSendEmail(timeslot,classTag,className,[...inviteClassInfo,displayClassTime],classIdTimings);    
+                        }else if (lowercaseClassTag === 'course'){
+                            console.log('Push timeslot to courseTimeslots for',subClassId);
+                            courseTimeslots.push(timeslot);
+                        }                     
                         const startDateTime = convertToDateTimeFormat(userStartDateTime);
                         const endDateTime = convertToDateTimeFormat(userEndDateTime);
                         
 
-                        let eventSummary = `Coral Academy: ${inviteClassInfo[0]}`;
+                        let eventSummary = `Coral Academy: ${modifiedClassName}`;
                         
 const eventDescription = `
 Hi ${inviteClassInfo[1]},
 
-We are blocking your calendar for ${displayClassTime}.<b><i>Additionally, we would request you to confirm the learner's identity by requesting them to turn their cameras on at the beginning of the class. They can disable video after this if they wish. If verification fails, our team will cross-check if they have attended past classes from our record, and take necessary action within the first 5 minutes of class</i></b>.
+We are blocking your calendar for ${displayClassTime}.
 
-Kindly find the joining details here as well:
+Zoom details mentioned below :
 
-Zoom Meeting Link: https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09
+Meeting Link: ${inviteClassInfo[5]}
+Meeting ID: ${inviteClassInfo[6]}
+Passcode: ${inviteClassInfo[7]}
 
-Meeting ID: 329 424 0234 
-Passcode: 123456
+- Please verify learners with a quick video check-in at the start of each class to visually ensure that the learner is a child.After check-in, they can turn off the video. If a learner is unwilling or unable to enable video, kindly remove them from the class.
 
-Thank You!
+- Please email class materials & any homework to us if you haven't already. Include the deadline for homework submissions and we'll inform parents & pass on the homework to you.
+
+Thankyou!
 `;
 
 
@@ -185,12 +207,13 @@ Thank You!
                             console.log('Teacher Event created successfully. Event ID:', eventId);
                             }
                         );
-                        
-                    }
-                     
-            
+                                   
                 }
-            }
+            });
+            if (courseTimeslots.length > 0) {
+                console.log('Sending Teacher email for courseTimeslots',courseTimeslots);
+                createTableForCoursesAndSendEmail(courseTimeslots,className,inviteClassInfo,classIdTimings);
+              }
         }
         });
       

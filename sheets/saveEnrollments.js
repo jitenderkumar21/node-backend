@@ -2,6 +2,7 @@ const { google } = require('googleapis');
 const moment = require('moment-timezone');
 const teacherInviteInfo = require('../teacherInviteInfo'); // Import the module
 const getIpInfo = require('../location/IPInfo'); // Import the module
+const ClassUtility = require('../utils/SubClassUtility');
 
 const saveEnrollments = async (personDetails,ipAddress) => {
   try {
@@ -11,15 +12,10 @@ const saveEnrollments = async (personDetails,ipAddress) => {
     const date = new Date();
     const formattedTimestamp = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
 
-    const rows = personDetails.classDetails.map((classDetail) => {
-      const timeslot = classDetail.timeslot || '';
-      let wantAnotherSlot = timeslot.toLowerCase().startsWith("want another slot") ? timeslot : '';
-      // Remove the part before colon (if colon exists)
-      const colonIndex = wantAnotherSlot.indexOf(':');
-      wantAnotherSlot = colonIndex !== -1 ? wantAnotherSlot.substring(colonIndex + 1).trim() : wantAnotherSlot;
+    const rows = personDetails.classDetails.flatMap((classDetail) => {
+      const timeslots = classDetail.timeslots || [];
       const { classid } = classDetail;
       const inviteClassInfo = invitesInfo[classid];
-      // Initialize variables outside the if block
       let classStartTime, classEndTime;
 
       if (inviteClassInfo[3] !== undefined && inviteClassInfo[4] !== undefined) {
@@ -27,36 +23,74 @@ const saveEnrollments = async (personDetails,ipAddress) => {
         classStartTime = moment(inviteClassInfo[3], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
         classEndTime = moment(inviteClassInfo[4], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
       }
-      const dateDayTimeColumns = timeslot.toLowerCase().startsWith("want another slot")
-    ? ['', '', '', '']
-    : [
-        classStartTime ? classStartTime.format('D MMMM') : '',
+      const dateDayTimeColumns = [
         classStartTime ? classStartTime.format('dddd') : '',
         classStartTime ? classStartTime.format('h:mm A') : '',
         classEndTime ? classEndTime.format('h:mm A') : '',
       ];
 
-      const values = [
+      return timeslots
+      .filter((timeslot) => !timeslot.isPast)  // Filter out timeslots where isPast is true
+      .map((timeslot) => {
+        const { subClassId, timing, isPast } = timeslot;
+        const classIdFomatted = ClassUtility.getClassId(subClassId, classDetail.classTag);
+        const values = [
+          formattedTimestamp,
+          personDetails.parentName,
+          personDetails.childName,
+          personDetails.email,
+          personDetails.childAge,
+          personDetails.phoneNumber,
+          inviteClassInfo[1],
+          personDetails.knowabout,
+          personDetails.additionalInfo,
+          classIdFomatted,
+          classDetail.classTag,
+          classDetail.className,
+          timing.split(':')[1].trim(),
+          ...dateDayTimeColumns,
+          '',
+          ipInfo.country,
+          ipInfo.region,
+          ipInfo.city,
+          moment.tz([2023, 0], ipInfo.timezone).zoneAbbr(),
+        ];
+    
+        return values;
+      });
+    });
+
+    if(personDetails.want_another_slot !== undefined && personDetails.want_another_slot!== ''){
+      const additionalRow = [
         formattedTimestamp,
         personDetails.parentName,
         personDetails.childName,
         personDetails.email,
         personDetails.childAge,
         personDetails.phoneNumber,
-        inviteClassInfo[1],
+        '', // You may need to adjust this based on your actual data structure
         personDetails.knowabout,
         personDetails.additionalInfo,
-        classDetail.className,
-        ...dateDayTimeColumns,
-        wantAnotherSlot,
-        ipInfo.region,
-        ipInfo.country,
-        ipInfo.city,
-        ipInfo.timezone,
+        '', 
+        '',
+        '',
+        '',
+        '',
+        '',
+        '',
+        personDetails.want_another_slot,
+        '',
+        '',
+        '',
+        '',
       ];
+      rows.push(additionalRow);
+    }
+    
+    // Log the result for testing
+    console.log(rows);
+    
 
-      return values;
-    });
 
     const auth = new google.auth.GoogleAuth({
       keyFile: 'credentials.json',
@@ -66,7 +100,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
     // Create client instance for auth
     const client = await auth.getClient();
 
-    const spreadsheetId = '1zBKa0aa_P3M-Zq-x3lDh4jI9b7s--L4QYsNYqfVaJ-Y';
+    const spreadsheetId = '1NbmX0dsDYmkavqJas46Oeb2PrJC0W3eVbAG_UJ5NUIQ';
 
     // Write rows to spreadsheet
     await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.append({

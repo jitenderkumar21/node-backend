@@ -1,7 +1,11 @@
 const nodemailer = require('nodemailer');
+const ClassUtility = require('./utils/SubClassUtility');
+const classIdTimingMap = require('./sheets/classIdTimingMap');
 
-const sendEmail = (personDetails) => {
-   
+const sendEmail = async (personDetails,userTimeZone) => {
+
+    const classIdTimings = await classIdTimingMap();
+
     const transporter = nodemailer.createTransport({
         service: 'Gmail', // Use your email service provider
         auth: {
@@ -11,57 +15,102 @@ const sendEmail = (personDetails) => {
       });
 
       const prefix = "want another slot:";
-      let flag = false;
+      let flag = true;
       let confirmedClassesFlag = false;
       
       let classes = '';
       let classes2 = '';
 
       const classDetails = personDetails.classDetails;
+      classes += `
+                <table class="class-table">
+                    <tr>
+                        <th>Class Name</th>
+                        <th>Date and Time</th>
+                        <th>Class Type</th>
+                        <th>Zoom Details</th>
+                    </tr>
+            `;
       classDetails.forEach((classDetail) => {
-        const { className, timeslot } = classDetail;
-        if(timeslot){  
-                let regex = new RegExp(prefix, "gi"); // "gi" stands for global and case-insensitive
-
-                let modifiedTimeslot = timeslot.replace(regex, "Preferred Timing : ");
-                
-                if(timeslot.toLowerCase().startsWith(prefix)){
-                    flag=true;
-                    classes2 += `
-                    <div class="class_div">
-                    <p class="custom-para">Class Name : ${className}</p>
-                    <p class="custom-para">${modifiedTimeslot}</p>
-                    </div>
-                    `;
-                }else{
-                  confirmedClassesFlag = true;
+        let { className, classTag, timeslots } = classDetail;
+    
+        if (classTag.toLowerCase() === 'course') {
+            classTag = 'Course *';
+            if (timeslots && timeslots.length > 0) {
+                // Filter out timeslots where isPast is true
+                const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
+    
+                if (futureTimeslots.length > 0) {
+                    confirmedClassesFlag = true;
                     classes += `
-                <div class="class_div">
-                <p class="custom-para">Class Name : ${className}</p>
-                <p class="custom-para">Date & Time : ${modifiedTimeslot}</p>
-                <p class="custom-para">Zoom Link : https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09</p>
-                <p class="custom-para">Meeting ID :  329 424 0234 </p>
-                <p class="custom-para">Passcode : 123456</p>
-                </div>
-                `;
-
+                            <tr>
+                                <td>${className}</td>
+                                <td>`;
+    
+                    futureTimeslots.forEach((timeslot, index) => {
+                        let { timing, subClassId } = timeslot;
+                        const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
+                        const userEndDateTime = classIdTimings.get(subClassId)[1]; 
+                        let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
+                        classes += `${classDisplayTiming}${index < futureTimeslots.length - 1 ? '<br>' : ''}`;
+                    });
+    
+                    classes += `</td>
+                                <td>${classTag}</td>
+                                <td>
+                                    <p class="custom-para"><a href="https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09">Zoom Link</a></p>
+                                    <p class="custom-para">Meeting ID: 329 424 0234</p>
+                                    <p class="custom-para">Passcode: 123456</p>
+                                </td>
+                            </tr>
+                    `;
                 }
-
-            
+            }
+        } else {
+            // For other class types
+            if (timeslots && timeslots.length > 0) {
+                // Filter out timeslots where isPast is true
+                const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
+    
+                futureTimeslots.forEach((timeslot) => {
+                    let { timing,subClassId } = timeslot;
+                    const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
+                    const userEndDateTime = classIdTimings.get(subClassId)[1]; 
+                    let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
+    
+                    confirmedClassesFlag = true;
+                    classes += `
+                            <tr>
+                                <td>${className}</td>
+                                <td>${classDisplayTiming}</td>
+                                <td>${classTag}</td>
+                                <td>
+                                    <p class="custom-para"><a href="https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09">Zoom Link</a></p>
+                                    <p class="custom-para">Meeting ID: 329 424 0234</p>
+                                    <p class="custom-para">Passcode: 123456</p>
+                                </td>
+                            </tr>
+                    `;
+                });
+            }
         }
-      });
+    });
+
+      classes+=`</table>`;
+    
       let message = '';
       if(flag==true){
-        message = '<p>We noticed that you have also requested for additional time slots for some classes. We will try our best to schedule classes that work for you.</p>';
+        message = `We noticed that you have also requested additional time slots for some classes - ${personDetails.want_another_slot}.  We will try our best to schedule classes that work for you.</p>`;
       }
       let confirmedClassMessage1 = '';
       let confirmedClassMessage2 = '';
       if(confirmedClassesFlag==true){
         confirmedClassMessage1 = 'Here are your confirmed classes :';
-        confirmedClassMessage2 = 'We will block your Calendars as well. The class materials, if any, will be sent to you one day before class. Keep an eye on your email for these details. Excited to see you in class!';
+        confirmedClassMessage2 = `* We recommend that ${personDetails.childName} attends all classes throughout the course to get the most out of them, as each class builds on the last one.`;
       }else{
+        classes = '';
         if(flag==true){
-          message = '<p>We noticed that you have requested for additional time slots for some classes. We will try our best to schedule classes that work for you.</p>';
+          message = `We noticed that you have also requested additional time slots for some classes - ${personDetails.want_another_slot}.  We will try our best to schedule classes that work for you.</p>`;
         }
       }
       
@@ -93,20 +142,35 @@ const sendEmail = (personDetails) => {
           }
       
           p {
-            color: #666;
+            color: black;
             font-size: 16px;
             line-height: 1.6;
           }
       
           .custom-para {
             color: #666;
-            font-size: 16px;
-            line-height: 1.4;
+            font-size: 12px;
+            line-height: 1.0;
           }
           .class_div{
             margin-top: 20px;
             margin-bottom:50px;
           }
+          .class-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+    
+        .class-table th, .class-table td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+    
+        .class-table th {
+            background-color: #99e1ea;
+        }
           @media screen and (max-width: 600px) {
             .class_div p{
                 line-height: 1.4;
@@ -124,14 +188,27 @@ const sendEmail = (personDetails) => {
           <p>Thank You for choosing us for ${personDetails.childName}'s learning adventure! It's a joy to have you onboard!</p>
           <p>${confirmedClassMessage1}</p>
             ${classes}
-          <p>${confirmedClassMessage2}</p>  
+          <p><i>${confirmedClassMessage2}</i></p>  
           ${message}
-          ${classes2}
-          <p><b><i>Ensuring learner safety is our highest priority, we request you to switch on the learner's camera at the start of each class for a quick identity check. After confirmation, learners may choose to participate with the camera off.</i></b></p>
-          <p>We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</p>
-          <p>Also, we're committed to continuous improvement. Got suggestions? Share them in this form: <a href="https://docs.google.com/forms/d/e/1FAIpQLSflsLJJuG74V1jjS29B-R1TVPbD74e9H5CkKVQMX6CzM87AZQ/viewform">Link</a></p>
-          <p>Warm Regards,</p>
-          <p>The Coral Academy Team</p>
+          <ul>
+              <li><strong>Identity Verification:</strong> Ensuring learner safety as our highest priority,<strong> we request you to switch on ${personDetails.childName}'s camera at the start of each class for a quick identity check.</strong> While ${personDetails.childName} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
+              <li><strong>Class Materials:</strong> The required class materials and details about homework submissions, if any, will be sent to you before class. Keep an eye on your email for these details.</li>
+              <li><strong>Class Alerts:</strong> We have blocked your calendar for class; please let us know if you are unable to see it. We send class reminders via email & WhatsApp. Feel free to share your communication preferences with us!</li>
+              <li><strong>Feedback:</strong> Class time includes a 10-minute feedback session. We kindly request ${personDetails.childName} to stay back, and share their class experience with us.</li>
+              <li><strong>Class Withdrawals:</strong> We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</li>
+              <li><strong>Code of Conduct:</strong> Classes are recorded for student safety, allowing parents to review study situations and enabling us to assess teacher performance. Recorded videos are strictly confidential and for internal use only. We won't disclose them publicly or share with third parties without parental consent.</li>
+          </ul>
+
+          <p>Your feedback is valuable to us! Please feel free to share any feedback with us <a href="https://docs.google.com/forms/d/e/1FAIpQLSflsLJJuG74V1jjS29B-R1TVPbD74e9H5CkKVQMX6CzM87AZQ/viewform">here!</a></p>
+
+          <p>PFA our <a href="https://docs.google.com/document/d/1kU49ck4nGge6_k4Myua_eUpBx06MADlFxm_xRdUz7Os/edit" target="_blank">Code of Conduct Policy</a> for your reference.</p>
+
+          <p><i><strong>Note:</strong>Classes are recorded for student safety. The recorded classes are for internal use only and are strictly confidential. These would not be disclosed or shared without parental consent.</i></p>
+
+          <p>Happy Learning! </p>
+
+          <p>Best,</p>
+          <p>Coral Academy</p>
         </div>
       </body>
       </html>
@@ -141,7 +218,7 @@ const sendEmail = (personDetails) => {
       const mailOptions = {
         from: 'support@coralacademy.com', // Sender's email address
         to:personDetails.email,
-        subject: 'Thank You for enrolling '+personDetails.childName+'!',
+        subject: `Let the Learning Begin! ${personDetails.childName} is Enrolled!`,
         // text: 'This is the email body text.',
         html:emailContent,
       };
