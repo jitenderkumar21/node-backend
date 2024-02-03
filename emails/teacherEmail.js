@@ -132,7 +132,7 @@ const sendEmailToTeacher = (teacherInviteInfo,classes,text) => {
       // Send the email
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          console.error('Error sending email:', error);
+          console.error('Error sending email to teacher:', error);
         } else {
           console.log('Email sent to teacher:', info.response);
         }

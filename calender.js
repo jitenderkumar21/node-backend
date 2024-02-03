@@ -122,11 +122,11 @@ try{
     const classInviteIds = await fetchClassInvitations();
     const classIdTimings = await classIdTimingMap();
     const classStartTimesMap = await classCancelltionInfo();
-    console.log('classInviteIds',classInviteIds);
+    // console.log('classInviteIds',classInviteIds);
     personDetails.classDetails.forEach((classDetail) => {
         const { classid,className,classTag} = classDetail;
         const inviteClassInfo = invitesInfo[classid];
-        console.log('inviteClassInfo',inviteClassInfo);
+        // console.log('inviteClassInfo',inviteClassInfo);
         if(inviteClassInfo!=undefined){
             
             let timeslots = classDetail.timeslots;
@@ -134,9 +134,9 @@ try{
             .forEach((timeslot) => {
                 const { timing, subClassId } = timeslot;
                 const classInviteId = classInviteIds[subClassId];
-                console.log('classInviteId',classInviteId);
+                // console.log('classInviteId',classInviteId);
                 const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
-                console.log('Modified class name',modifiedClassName);
+                // console.log('Modified class name',modifiedClassName);
                     if(classInviteId==undefined){
                         const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
                         const userEndDateTime = classIdTimings.get(subClassId)[1];    // Replace this with the user's input
@@ -231,7 +231,7 @@ Happy Learning!
                         
                     }else{
                     
-                        console.log('Will update event in this case',subClassId);
+                        // console.log('Will update event in this case',subClassId);
                         updateEventAndAttendees(auth, calendar, classInviteId, personDetails);
 
 

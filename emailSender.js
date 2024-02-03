@@ -227,7 +227,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
       // Send the email
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          console.error('Error sending email:', error);
+          console.error('Error sending email to parent:', error);
         } else {
           console.log('Email sent to parent:', info.response);
         }

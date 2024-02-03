@@ -42,14 +42,6 @@ const classIdTimingMap = async () => {
                 const subClassId = `${row[0]}_${counter + 1}`; // Assuming 'id' is the first column
                 const classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').format('HH:mm');
                 const classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').format('HH:mm');
-
-                // const classStartTiming = counter === 0
-                //               ? moment.utc(row[19], 'YYYY-MM-DD HH:mm')
-                //               : moment.utc(row[25 + counter] + ' ' + classStartTime, 'YYYY-MM-DD HH:mm');
-                // const classEndTiming = counter === 0
-                //               ? moment.utc(row[20], 'YYYY-MM-DD HH:mm')
-                //               : moment.utc(row[25 + counter] + ' ' + classEndTime, 'YYYY-MM-DD HH:mm');
-
                 const classStartTiming = counter === 0
                               ? row[19]
                               : row[25 + counter] + ' ' + classStartTime;
@@ -66,7 +58,6 @@ const classIdTimingMap = async () => {
       } else {
         console.log('No data found.');
       }
-      console.log(classSubIdMap);
       return classSubIdMap;
 
 

@@ -96,18 +96,18 @@ try{
     personDetails.classDetails.forEach((classDetail) => {
         const { classid,className,classTag} = classDetail;
         const inviteClassInfo = invitesInfo[classid];
-        console.log('Sending Teacher invite for ',inviteClassInfo);
+        // console.log('Sending Teacher invite for ',inviteClassInfo);
         if(inviteClassInfo!=undefined){
             let timeslots = classDetail.timeslots;
             let courseTimeslots = [];
             timeslots.filter((timeslot1) => !timeslot1.isPast)
                 .forEach((timeslot) => {
                     const { timing, subClassId } = timeslot;
-                    console.log('Sending Teacher invite for subClassId',subClassId);
+                    // console.log('Sending Teacher invite for subClassId',subClassId);
                     const classInviteId = classInviteIds[subClassId];
-                    console.log('classInviteId',classInviteId);
+                    // console.log('classInviteId',classInviteId);
                     const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
-                    console.log('Modified class name',modifiedClassName);
+                    // console.log('Modified class name',modifiedClassName);
                     if(classInviteId==undefined){
         
                         const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
@@ -130,7 +130,7 @@ try{
                         if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'onetime') {
                             createTableAndSendEmail(timeslot,classTag,className,[...inviteClassInfo,displayClassTime],classIdTimings);    
                         }else if (lowercaseClassTag === 'course'){
-                            console.log('Push timeslot to courseTimeslots for',subClassId);
+                            // console.log('Push timeslot to courseTimeslots for',subClassId);
                             courseTimeslots.push(timeslot);
                         }                     
                         const startDateTime = convertToDateTimeFormat(userStartDateTime);
@@ -211,7 +211,7 @@ Thankyou!
                 }
             });
             if (courseTimeslots.length > 0) {
-                console.log('Sending Teacher email for courseTimeslots',courseTimeslots);
+                // console.log('Sending Teacher email for courseTimeslots',courseTimeslots);
                 createTableForCoursesAndSendEmail(courseTimeslots,className,inviteClassInfo,classIdTimings);
               }
         }
@@ -225,7 +225,7 @@ authorize().then(listEvents).catch(console.error);
 
 
 }catch (err) {
-    console.error('Error sending clender invite ', err);
+    console.error('Error sending clender invite to teacher', err);
 }
 
 };

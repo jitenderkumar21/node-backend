@@ -68,7 +68,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
         personDetails.email,
         personDetails.childAge,
         personDetails.phoneNumber,
-        '', // You may need to adjust this based on your actual data structure
+        '', 
         personDetails.knowabout,
         personDetails.additionalInfo,
         '', 
@@ -88,10 +88,8 @@ const saveEnrollments = async (personDetails,ipAddress) => {
     }
     
     // Log the result for testing
-    console.log(rows);
+    // console.log(rows);
     
-
-
     const auth = new google.auth.GoogleAuth({
       keyFile: 'credentials.json',
       scopes: 'https://www.googleapis.com/auth/spreadsheets',
