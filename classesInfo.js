@@ -88,7 +88,7 @@ const classesInfo = async (userTimeZone) => {
               let classStartTimeIST = moment(row[19], 'YYYY-MM-DD HH:mm');
             
               const isOneTime = row[17]?.toLowerCase() === 'onetime';
-              console.log(isOneTime);
+              // console.log(isOneTime);
               if (classStartTimeIST.isBefore(currentTime) && isOneTime) {
                   displayClassTime = "";
               }else{
@@ -118,8 +118,8 @@ const classesInfo = async (userTimeZone) => {
                 }else if(row[17].toLowerCase()==='onetime'){
                   jsonObject['isMoveToPast']=isPast;
                 }
-                console.log(moment.utc());
-                console.log(isPast,subClassId,classStartDate,classStartDate.isValid());
+                // console.log(moment.utc());
+                // console.log(isPast,subClassId,classStartDate,classStartDate.isValid());
                 if (classStartDate.isValid()) {
                   const formattedClassStartDate = `Class ${counter + 1}: ${classStartDate.format('D MMMM')}`;
                   const timeslot = { subClassId, timing: formattedClassStartDate, isPast };
