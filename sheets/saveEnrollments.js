@@ -2,7 +2,7 @@ const { google } = require('googleapis');
 const moment = require('moment-timezone');
 const teacherInviteInfo = require('../teacherInviteInfo'); // Import the module
 const getIpInfo = require('../location/IPInfo'); // Import the module
-const ClassUtility = require('../utils/SubClassUtility');
+const ClassUtility = require('../utils/subClassUtility');
 
 const saveEnrollments = async (personDetails,ipAddress) => {
   try {

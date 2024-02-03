@@ -1,4 +1,4 @@
-const ClassUtility = require('../utils/SubClassUtility');
+const ClassUtility = require('../utils/subClassUtility');
 
 async function sendTeacherEmails(classDetails) {
     const invitesInfo = await teacherInviteInfo();

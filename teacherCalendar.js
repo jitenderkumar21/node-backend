@@ -6,7 +6,7 @@ const {
   } = require('./emails/teacherEmail');
 const moment = require('moment-timezone');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
-const ClassUtility = require('./utils/SubClassUtility');
+const ClassUtility = require('./utils/subClassUtility');
 const { fetchClassInvitations, insertClassInvitation} = require('./dao/classIdToInviteMapping');
 
 const teacherCalendar = async (personDetails) => {

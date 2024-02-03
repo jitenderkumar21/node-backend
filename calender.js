@@ -3,7 +3,7 @@ const inviteInfo = require('./inviteInfo'); // Import the module
 // const saveEventId = require('./updateEventId'); // Import the module
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 const classCancelltionInfo = require('./sheets/classCancellationInfo');
-const ClassUtility = require('./utils/SubClassUtility');
+const ClassUtility = require('./utils/subClassUtility');
 
 const calendarInvite = async (personDetails) => {
 

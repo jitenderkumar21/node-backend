@@ -1,6 +1,6 @@
 const moment = require('moment-timezone');
 
-class SubClassUtility {
+class subClassUtility {
     static getClassId(subClassId, classTag) {
         const lowercaseClassTag = classTag.toLowerCase();
 
@@ -78,4 +78,4 @@ class SubClassUtility {
     
 }
 
-module.exports = SubClassUtility;
+module.exports = subClassUtility;

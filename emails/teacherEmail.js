@@ -1,4 +1,4 @@
-const ClassUtility = require('../utils/SubClassUtility');
+const ClassUtility = require('../utils/subClassUtility');
 
 const nodemailer = require('nodemailer');
 const path = require('path');
