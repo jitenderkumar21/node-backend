@@ -1,9 +1,10 @@
 const nodemailer = require('nodemailer');
 const ClassUtility = require('./utils/subClassUtility');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
+const teacherInviteInfo = require('./teacherInviteInfo'); // Import the module
 
 const sendEmail = async (personDetails,userTimeZone) => {
-
+    const invitesInfo =  await teacherInviteInfo();
     const classIdTimings = await classIdTimingMap();
 
     const transporter = nodemailer.createTransport({
@@ -32,8 +33,8 @@ const sendEmail = async (personDetails,userTimeZone) => {
                     </tr>
             `;
       classDetails.forEach((classDetail) => {
-        let { className, classTag, timeslots } = classDetail;
-    
+        let { classid, className, classTag, timeslots } = classDetail;
+        const inviteClassInfo = invitesInfo[classid];
         if (classTag.toLowerCase() === 'course') {
             classTag = 'Course *';
             if (timeslots && timeslots.length > 0) {
@@ -59,9 +60,9 @@ const sendEmail = async (personDetails,userTimeZone) => {
                     classes += `</td>
                                 <td>${classTag}</td>
                                 <td>
-                                    <p class="custom-para"><a href="https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09">Zoom Link</a></p>
-                                    <p class="custom-para">Meeting ID: 329 424 0234</p>
-                                    <p class="custom-para">Passcode: 123456</p>
+                                    <p class="custom-para"><a href=${inviteClassInfo[5]}>Zoom Link</a></p>
+                                    <p class="custom-para">Meeting ID: ${inviteClassInfo[6]}</p>
+                                    <p class="custom-para">Passcode: ${inviteClassInfo[7]}</p>
                                 </td>
                             </tr>
                     `;
