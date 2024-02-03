@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-// const ClassUtility = require('./utils/SubClassUtility');
+const ClassUtility = require('./utils/subClassUtility');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 
 const sendEmail = async (personDetails,userTimeZone) => {
@@ -51,8 +51,8 @@ const sendEmail = async (personDetails,userTimeZone) => {
                         let { timing, subClassId } = timeslot;
                         const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
                         const userEndDateTime = classIdTimings.get(subClassId)[1]; 
-                        // let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
-                        let classDisplayTiming = 'test name';
+                        let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
+                        
                         classes += `${classDisplayTiming}${index < futureTimeslots.length - 1 ? '<br>' : ''}`;
                     });
     
@@ -77,8 +77,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
                     let { timing,subClassId } = timeslot;
                     const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
                     const userEndDateTime = classIdTimings.get(subClassId)[1]; 
-                    // let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
-                    let classDisplayTiming = 'test name';
+                    let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
                     confirmedClassesFlag = true;
                     classes += `
                             <tr>
