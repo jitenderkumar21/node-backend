@@ -100,7 +100,7 @@ const classesInfo = async (userTimeZone) => {
             jsonObject['display_timing']=displayClassTime;
             let timeslots = [];
             const MAX_SLOTS = parseInt(row[25]) || 1;
-            console.log('Max slots',MAX_SLOTS);
+            // console.log('Max slots',MAX_SLOTS);
             for (let counter = 0; counter < MAX_SLOTS; counter++) {
       
                 const subClassId = `${row[0]}_${counter + 1}`; // Assuming 'id' is the first column
