@@ -158,7 +158,7 @@ function createTableAndSendEmail(timeslot,classTag,className,teacherInviteInfo,c
       classNameWithNumber = `${className} Class ${classNumber}`;
   }
   const classIdTimingMap = classIdTimings.get(subClassId);
-  const dayAndMonth = ClassUtility.getDayAndMonth(classIdTimingMap[0]);
+  const dayAndMonth = ClassUtility.getdateMonthAndDay(classIdTimingMap[0]);
   classes += `
       <tr>
           <td>${classNameWithNumber}</td>
