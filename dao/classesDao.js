@@ -1,6 +1,6 @@
 // dbFunctions.js
-
 const { Client } = require('pg');
+require('dotenv').config();
 
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
@@ -13,13 +13,8 @@ async function updateCounts(classDetails) {
     await client.connect();
 
     for (const classDetail of classDetails) {
-      try {
-        const classTagLower = classDetail.classTag.toLowerCase();
-        if (classTagLower === 'onetime' || classTagLower === 'course') {
-          await updateCountsForClassId(client, classDetail.classid);
-        } else {
+      try {        
           await updateCountsForClassDetail(client, classDetail);
-        }
       } catch (error) {
         console.error(`Error updating counts for classDetail ${classDetail.classid}:`, error);
       }
@@ -35,24 +30,56 @@ async function updateCounts(classDetails) {
   }
 }
 
-// Function to update counts for a specific classDetail
 async function updateCountsForClassDetail(client, classDetail) {
-  for (const timeslot of classDetail.timeslots.filter(timeslot => !timeslot.isPast)) {
+  for (const timeslot of classDetail.timeslots) {
     await client.query(`
-      INSERT INTO sub_class_counts (sub_class_id, count)
-      VALUES ($1, 1)
-      ON CONFLICT (sub_class_id) DO UPDATE SET count = sub_class_counts.count + 1
-    `, [timeslot.subClassId]);
+      INSERT INTO classes_count (class_id, sub_class_id, count)
+      VALUES ($1, $2, 1)
+      ON CONFLICT (class_id, sub_class_id) DO UPDATE SET count = classes_count.count + 1
+    `, [classDetail.classid, timeslot.subClassId]);
   }
 }
 
-// Function to update counts for a specific classId
-async function updateCountsForClassId(client, classId) {
-  await client.query(`
-    INSERT INTO sub_class_counts (sub_class_id, count)
-    VALUES ($1, 1)
-    ON CONFLICT (sub_class_id) DO UPDATE SET count = sub_class_counts.count + 1
-  `, [classId]);
+async function getAllClassCounts() {
+  const countsMap = {};
+  const client = new Client({
+    connectionString: connectionString,
+  });
+
+  try {
+    await client.connect();
+
+    const result = await client.query(`
+      SELECT class_id, sub_class_id, count
+      FROM classes_count
+    `);
+
+
+    result.rows.forEach(row => {
+      const { class_id, sub_class_id, count } = row;
+
+      if (!countsMap[class_id]) {
+        countsMap[class_id] = {};
+      }
+
+      countsMap[class_id][sub_class_id] = count;
+    });
+
+    
+  } catch (error) {
+    console.error('Error fetching counts:', error);
+  } finally {
+    try {
+      await client.end();
+    } catch (error) {
+      console.error('Error closing database connection:', error);
+    }
+  }
+  // console.log(countsMap);
+  return countsMap;
 }
 
-module.exports = updateCounts;
+module.exports = {
+  updateCounts,
+  getAllClassCounts
+};

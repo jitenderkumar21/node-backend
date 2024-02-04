@@ -23,7 +23,10 @@ const createWhatsappReminders = require('./createWhatsappReminders');
 const getIpInfo = require('./location/IPInfo'); // Import the module
 const saveEnrollments = require('./sheets/saveEnrollments');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
-const updateCounts = require('./dao/classesDao');
+const {
+  updateCounts,
+  getAllClassCounts
+} = require('./dao/classesDao');
 // classIdTimingMap
 
 
@@ -56,6 +59,19 @@ app.post('/test', async (req, res) => {
   // sendEmail(req.body,userTimeZone);
 
   res.send('User IP Address: ' + ipAddress);
+});
+
+app.get('/test2', async (req, res) => {
+  let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
+  let classDisplayName = "Class on Sunday";
+  const ipAddress = req.ip || req.connection.remoteAddress;
+  const userTimeZone = req.query.timezone;
+  const res1 = await getAllClassCounts(req.body.classDetails);
+  // saveEnrollments(req.body,'152.59.194.85');
+  // classIdTimingMap();
+  // sendEmail(req.body,userTimeZone);
+
+  res.send('User IP Address: ' + res1);
 });
 
 app.post('/teacher/invite', async (req, res) => {
@@ -204,7 +220,7 @@ app.post('/save', async (req, res) => {
    
 //   });
 //   pool1.end();
-  // updateCounts(req.body.classDetails);
+  updateCounts(req.body.classDetails);
   sendEmail(req.body,userTimeZone);
   // sendEmailToUs(req.body);
   // googleSheets(req.body);
@@ -222,58 +238,27 @@ app.post('/save', async (req, res) => {
 
     const overAllMap = await maxLearners();
     const maxLearnersCount = overAllMap['classIdToValue'];
-    const classIdToSlots = overAllMap['classIdToSlots'];
+    // console.log('maxLearnersCount', maxLearnersCount);
+    // const classIdToSlots = overAllMap['classIdToSlots'];
+    const classCounts = await getAllClassCounts(req.body.classDetails);
+    const finalJson = {};
 
-    // Query to fetch data from the "classes" table
-    const query = 'SELECT class_id, slot, count FROM classes';
-  const { Pool } = require('pg');
-const pool = new Pool({
-  connectionString: 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true',
-});
+    for (const classId in classCounts) {
+      finalJson[classId] = [];
 
-    pool.query(query, (error, result) => {
-      if (error) {
-        console.error('Error fetching data:', error);
-        res.status(500).json({ error: 'Error fetching data' });
-        return;
-      } else {
-        // Process the result and format it as needed
-        const classes = {};
-        result.rows.forEach((row) => {
-          const { class_id, slot, count } = row;
-          
-          var isFull = false;
-          const prefix = "want another slot";
-          if(count >=maxLearnersCount[class_id] && !(slot.toLowerCase().startsWith(prefix))){
-            isFull = true;
-          }
+      for (const subClassId in classCounts[classId]) {
+        const count = classCounts[classId][subClassId];
+        const maxCap = maxLearnersCount[classId] || 15;
 
-          if (!classes[class_id]) {
-            classes[class_id] = {
-
-                class_id,
-              slots: [],
-            };
-          }
-          if(isFull==true){
-              var totalClassSlots = classIdToSlots[class_id];
-              for (var i = 0; i < totalClassSlots.length; i++) {
-                classes[class_id].slots.push({
-                  slot:totalClassSlots[i],
-                  isFull,
-                });
-              }
-          }
-          
-        });
-  
-        // Convert classes object to an array
-        const response = Object.values(classes);
-  
-        res.json(response);
+        if (count >= maxCap) {
+          finalJson[classId].push(subClassId);
+        }
       }
-    });
-    pool.end();
+    }
+    // console.log(finalJson);
+    res.json(finalJson);
+    
+
   });
 
 
