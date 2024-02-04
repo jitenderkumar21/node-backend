@@ -23,6 +23,7 @@ const createWhatsappReminders = require('./createWhatsappReminders');
 const getIpInfo = require('./location/IPInfo'); // Import the module
 const saveEnrollments = require('./sheets/saveEnrollments');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
+const updateCounts = require('./dao/classesDao');
 // classIdTimingMap
 
 
@@ -48,9 +49,12 @@ app.post('/test', async (req, res) => {
   let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
   let classDisplayName = "Class on Sunday";
   const ipAddress = req.ip || req.connection.remoteAddress;
+  const userTimeZone = req.query.timezone;
+  updateCounts(req.body.classDetails);
   // saveEnrollments(req.body,'152.59.194.85');
   // classIdTimingMap();
-  sendEmail(req.body);
+  // sendEmail(req.body,userTimeZone);
+
   res.send('User IP Address: ' + ipAddress);
 });
 

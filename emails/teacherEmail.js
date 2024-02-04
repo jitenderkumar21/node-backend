@@ -159,14 +159,20 @@ function createTableAndSendEmail(timeslot,classTag,className,teacherInviteInfo,c
       classNameWithNumber = `${className} Class ${classNumber}`;
   }
   const classIdTimingMap = classIdTimings.get(subClassId);
-  const dayAndMonth = ClassUtility.getdateMonthAndDay(classIdTimingMap[0]);
+  const dateMonthAndDay = ClassUtility.getdateMonthAndDay(classIdTimingMap[0]);
+  const estTiming = ClassUtility.getESTTiming(classIdTimingMap[0],classIdTimingMap[1]);
+  const cstTiming = ClassUtility.getCSTTiming(classIdTimingMap[0],classIdTimingMap[1]);
+  const pstTiming = ClassUtility.getPSTTiming(classIdTimingMap[0],classIdTimingMap[1]);
   classes += `
-      <tr>
-          <td>${classNameWithNumber}</td>
-          <td>${dayAndMonth}</td>
-          <td>${classTag}</td>
-      </tr>
-  `;
+              <tr>
+                  <td>${classNameWithNumber}</td>
+                  <td>${dateMonthAndDay}</td>
+                  <td>`;
+          classes += `${estTiming}<br>`; 
+          classes += `${cstTiming}<br>`;
+          classes += `${pstTiming}`; 
+          classes+= `</td>
+          </tr>`;
   classes += `</table>`;
   // console.log('Created classes: ', classes);
   sendEmailToTeacher(teacherInviteInfo,classes,'class has',classNameWithNumber);

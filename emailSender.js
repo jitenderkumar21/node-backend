@@ -2,6 +2,7 @@ const nodemailer = require('nodemailer');
 const ClassUtility = require('./utils/subClassUtility');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 const teacherInviteInfo = require('./teacherInviteInfo'); // Import the module
+const { v4: uuidv4 } = require('uuid');
 
 const sendEmail = async (personDetails,userTimeZone) => {
     const invitesInfo =  await teacherInviteInfo();
@@ -18,6 +19,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
       const prefix = "want another slot:";
       let flag = true;
       let confirmedClassesFlag = false;
+      let isCoursePresent = false;
       
       let classes = '';
       let classes2 = '';
@@ -42,6 +44,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
                 const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
     
                 if (futureTimeslots.length > 0) {
+                    isCoursePresent = true;
                     confirmedClassesFlag = true;
                     classes += `
                             <tr>
@@ -107,7 +110,9 @@ const sendEmail = async (personDetails,userTimeZone) => {
       let confirmedClassMessage2 = '';
       if(confirmedClassesFlag==true){
         confirmedClassMessage1 = 'Here are your confirmed classes :';
-        confirmedClassMessage2 = `* We recommend that ${personDetails.childName} attends all classes throughout the course to get the most out of them, as each class builds on the last one.`;
+        if(isCoursePresent == true){
+          confirmedClassMessage2 = `* We recommend that ${personDetails.childName} attends all classes throughout the course to get the most out of them, as each class builds on the last one.`;
+        }
       }else{
         classes = '';
         if(personDetails.want_another_slot!== undefined && personDetails.want_another_slot !== ''){
@@ -222,6 +227,9 @@ const sendEmail = async (personDetails,userTimeZone) => {
         subject: `Let the Learning Begin! ${personDetails.childName} is Enrolled!`,
         // text: 'This is the email body text.',
         html:emailContent,
+        headers: {
+          References: uuidv4(),
+        },
       };
       
       // Send the email
