@@ -19,7 +19,7 @@ const classIdTimingMap = async () => {
     const readResult = await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.get({
         auth,
         spreadsheetId,
-        range: 'Sheet1!A:AC', // Specify the range you want to read
+        range: 'Sheet1!A:AE', // Specify the range you want to read
       });
 
       

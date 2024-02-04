@@ -204,6 +204,7 @@ app.post('/save', async (req, res) => {
    
 //   });
 //   pool1.end();
+  // updateCounts(req.body.classDetails);
   sendEmail(req.body,userTimeZone);
   // sendEmailToUs(req.body);
   // googleSheets(req.body);

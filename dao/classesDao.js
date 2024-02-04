@@ -5,7 +5,6 @@ const { Client } = require('pg');
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
 async function updateCounts(classDetails) {
-    console.log(classDetails);
   const client = new Client({
     connectionString: connectionString,
   });
@@ -16,7 +15,6 @@ async function updateCounts(classDetails) {
     for (const classDetail of classDetails) {
       try {
         const classTagLower = classDetail.classTag.toLowerCase();
-        console.log('classDetail',classDetail);
         if (classTagLower === 'onetime' || classTagLower === 'course') {
           await updateCountsForClassId(client, classDetail.classid);
         } else {
