@@ -60,8 +60,7 @@ class subClassUtility {
     static getClassDisplayTiming(userTimeZone,classStartTime,classEndTime){
         let timeZoneAbbreviation = 'PST';
         userTimeZone = moment.tz([2023, 0], userTimeZone).zoneAbbr();
-        classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
-        classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+        
         if(userTimeZone === 'EST'){
             classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
             classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
@@ -74,6 +73,9 @@ class subClassUtility {
             classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
             classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
             timeZoneAbbreviation = 'MST';
+        }else{
+            classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+            classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
         }
         let displayClassTime = '';
         if (classStartTime.isValid() && classEndTime.isValid()) {
