@@ -89,13 +89,11 @@ const classesInfo = async (userTimeZone) => {
             
               const isOneTime = row[17]?.toLowerCase() === 'onetime';
               // console.log(isOneTime);
-              if (classStartTimeIST.isBefore(currentTime) && isOneTime) {
-                  displayClassTime = "";
-              }else{
-                  displayClassTime = isOneTime
-                      ? `${day}, ${startTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`
-                      : `${day}s, ${startTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
-                        }
+              
+              displayClassTime = isOneTime
+                  ? `${day}, ${startTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`
+                  : `${day}s, ${startTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
+                    
             }
             jsonObject['display_timing']=displayClassTime;
             let timeslots = [];
