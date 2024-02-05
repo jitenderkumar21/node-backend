@@ -90,10 +90,11 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
   
             <p>Class Name: ${className}</p>
             <p>Class Timing: ${classTiming}</p>
-            <p>Zoom Metting Details: <a href="${zoomMeetingLink}" target="_blank">Zoom Link</a>,&nbsp;&nbsp;&nbsp; Meeting ID: ${meetingId}, &nbsp;&nbsp;&nbsp; Passcode: ${passcode}</p>
+            <p>Zoom Meeting Details: <a href="${zoomMeetingLink}" target="_blank">Zoom Link</a>,&nbsp;&nbsp;&nbsp; Meeting ID: ${meetingId}, &nbsp;&nbsp;&nbsp; Passcode: ${passcode}</p>
+            <ul>
             `
             if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][1].toLowerCase() !== 'there are no prerequisites needed for the class.') {
-              emailContent += `<p><strong>-Prerequisite</strong> : ${classStartTimesMap[classid][1]}</p>`;
+              emailContent += `<li><strong>Prerequisite</strong> : ${classStartTimesMap[classid][1]}</li>`;
             }
               
             if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][7] !== undefined && classStartTimesMap[classid][7] !== '') {
@@ -101,10 +102,10 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
             }
               
             if (classStartTimesMap[classid][7] !== undefined && classStartTimesMap[classid][7] !== '') {
-              emailContent += `<p><strong>-Class Materials</strong> : ${classStartTimesMap[classid][7]}</p>`;
+              emailContent += `<li><strong>Class Materials</strong> : ${classStartTimesMap[classid][7]}</li>`;
             }
         
-            emailContent+=`<ul>
+            emailContent+=`
             <li><strong>Identity Verification :</strong> Ensuring learner safety as our highest priority, we request you to switch on ${formattedNames}'s camera at the start of each class for a quick identity check. While ${formattedNames} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
             <li><strong>Class Alerts :</strong> We have blocked your calendar for class; please let us know if you are unable to see it. We send class reminders via email & whatsapp. Feel free to share your communication preferences with us!</li>
             <li><strong>Feedback :</strong>Class time includes a 10-minute feedback session. We kindly request ${formattedNames} to stay back, and share their class experience with us.</li>
@@ -171,10 +172,11 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
 
           <p>Class Name: ${className}</p>
           <p>Class Timing: ${classTiming}</p>
-          <p>Zoom Metting Details: <a href="${zoomMeetingLink}" target="_blank">Zoom Link</a>&nbsp;&nbsp;&nbsp; Meeting ID: ${meetingId} &nbsp;&nbsp;&nbsp; Passcode: ${passcode}</p>
+          <p>Zoom Meeting Details: <a href="${zoomMeetingLink}" target="_blank">Zoom Link</a>,&nbsp;&nbsp;&nbsp; Meeting ID: ${meetingId}, &nbsp;&nbsp;&nbsp; Passcode: ${passcode}</p>
+          <ul>
           `
           if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][1].toLowerCase() !== 'there are no prerequisites needed for the class.') {
-            emailContent += `<p><strong>-Prerequisite</strong> : ${classStartTimesMap[classid][1]}</p>`;
+            emailContent += `<li><strong>Prerequisite</strong> : ${classStartTimesMap[classid][1]}</li>`;
           }
             
           if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][7] !== undefined && classStartTimesMap[classid][7] !== '') {
@@ -182,10 +184,10 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
           }
             
           if (classStartTimesMap[classid][7] !== undefined && classStartTimesMap[classid][7] !== '') {
-            emailContent += `<p><strong>-Class Materials</strong> : ${classStartTimesMap[classid][7]}</p>`;
+            emailContent += `<li><strong>Class Materials</strong> : ${classStartTimesMap[classid][7]}</li>`;
           }
 
-          emailContent+=`<ul>
+          emailContent+=`
           <li><strong>Identity Verification :</strong> Ensuring learner safety as our highest priority, we request you to switch on ${formattedNames}'s camera at the start of each class for a quick identity check. While ${formattedNames} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
           <li><strong>Feedback :</strong>Class time includes a 10-minute feedback session. We kindly request ${formattedNames} to stay back, and share their class experience with us.</li>
           </ul>
