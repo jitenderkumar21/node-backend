@@ -222,7 +222,7 @@ app.post('/save', async (req, res) => {
   // googleSheets(req.body);
   await teacherCalendarInvite(req.body);
   calendarInvite(req.body);
-  // createWhatsappReminders(req.body,req.query.timezone);
+  createWhatsappReminders(req.body,req.query.timezone);
   const ipAddress = req.ip || req.connection.remoteAddress;
   saveEnrollment(req.body,ipAddress);
   res.status(200).json({ message: 'Registration Successful' });
