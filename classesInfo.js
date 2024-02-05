@@ -105,10 +105,12 @@ const classesInfo = async (userTimeZone) => {
                 const classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').format('HH:mm');
 
                 const classStartDate = counter === 0
-                              ? moment.utc(row[19], 'YYYY-MM-DD HH:mm').subtract(offset,'hours')
-                              : moment.utc(row[25 + counter] + ' ' + classStartTime, 'YYYY-MM-DD HH:mm').subtract(offset,'hours');;
-                  
-                const isPast = classStartDate.isBefore(moment.utc());
+                        ? moment.utc(row[19], 'YYYY-MM-DD HH:mm').subtract(offset,'hours')
+                        : moment.utc(row[25 + counter] + ' ' + classStartTime, 'YYYY-MM-DD HH:mm').subtract(offset,'hours');
+                const classStartDateUTC = counter === 0
+                        ? moment.utc(row[19], 'YYYY-MM-DD HH:mm')
+                        : moment.utc(row[25 + counter] + ' ' + classStartTime, 'YYYY-MM-DD HH:mm');
+                const isPast = classStartDateUTC.isBefore(moment.utc());
                 const teacherPreference = parseInt(row[18]) || 1;
                 if(row[17].toLowerCase()==='course' && counter+1===teacherPreference){
                   jsonObject['isMoveToPast']=isPast;
