@@ -7,13 +7,13 @@ const classesInfo = async (userTimeZone) => {
   try {
 
     let timeZoneAbbreviation = moment.tz([2023, 0], userTimeZone).zoneAbbr();
-    let userTimeZoneColumn = 12;
+    let offset = 8;
     if(timeZoneAbbreviation=='MST'){
-        userTimeZoneColumn=16;
+      offset=7;
     }else if(timeZoneAbbreviation=='EST'){
-        userTimeZoneColumn=17;
+      offset=5;
     }else if(timeZoneAbbreviation=='CST'){
-        userTimeZoneColumn=18;
+      offset=6;
     }
 
     const auth = new google.auth.GoogleAuth({
@@ -105,8 +105,9 @@ const classesInfo = async (userTimeZone) => {
                 const classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').format('HH:mm');
 
                 const classStartDate = counter === 0
-                              ? moment.utc(row[19], 'YYYY-MM-DD HH:mm')
-                              : moment.utc(row[25 + counter] + ' ' + classStartTime, 'YYYY-MM-DD HH:mm');
+                              ? moment.utc(row[19], 'YYYY-MM-DD HH:mm').subtract(offset,'hours')
+                              : moment.utc(row[25 + counter] + ' ' + classStartTime, 'YYYY-MM-DD HH:mm').subtract(offset,'hours');;
+                  
                 const isPast = classStartDate.isBefore(moment.utc());
                 const teacherPreference = parseInt(row[18]) || 1;
                 if(row[17].toLowerCase()==='course' && counter+1===teacherPreference){
