@@ -76,9 +76,9 @@ Here are more details about the class:
 
 - Class Name: ${className}
 - Class Timing: ${classTiming}
-Zoom Meeting Link: ${zoomMeetingLink}
-Meeting ID: ${meetingId}
-Passcode: ${passcode}
+- Zoom Meeting Link: ${zoomMeetingLink}
+- Meeting ID: ${meetingId}
+- Passcode: ${passcode}
 
 We would request you to join class with your video on, so that our team can verify the learner’s identity.
 
@@ -100,10 +100,9 @@ Just a friendly reminder that ${formattedNames}'s class is in 15 Minutes. Please
 Class Details
 - Class Name: ${className}
 - Class Timing: ${classTiming}
-
-Zoom Meeting Link: ${zoomMeetingLink}
-Meeting ID: ${meetingId}
-Passcode: ${passcode}
+- Zoom Meeting Link: ${zoomMeetingLink}
+- Meeting ID: ${meetingId}
+- Passcode: ${passcode}
 
 We would request you to join class with your video on, so that our team can verify the learner's identity.
 
@@ -113,8 +112,10 @@ We hope to see ${formattedNames} in class!
 Best Regards,
 Coral Academy
 `;
-        }else {
-            message = `
+    }else {
+            
+if (prerequisite !== 'There are no prerequisites needed for the class.') {
+    message = `
 Here are the prerequisites for the class:
 
 - ${prerequisite}
@@ -122,8 +123,12 @@ Here are the prerequisites for the class:
 Best Regards,
 Coral Academy
 `
-        }
+} else {
+    callback(false, 'Skipping reminder due to "No prerequisite"');
+    return;
 
+        }
+}
 
 
 
