@@ -199,7 +199,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
           <p>${confirmedClassMessage1}</p>
             ${classes}
           <p><i>${confirmedClassMessage2}</i></p>  
-          ${message}
+          <p>${message}</p>
           <p>
           <ul>
               <li><strong>Identity Verification:</strong> Ensuring learner safety as our highest priority,<strong> we request you to switch on ${personDetails.childName}'s camera at the start of each class for a quick identity check.</strong> While ${personDetails.childName} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
