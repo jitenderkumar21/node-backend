@@ -1,13 +1,16 @@
 const nodemailer = require('nodemailer');
+const classCancelltionInfo = require('../sheets/classCancellationInfo');
 const path = require('path');
 const { Client } = require('pg');
 
 
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
-const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
+const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => {
+        const classStartTimesMap = await classCancelltionInfo();
         const parentName = additionalInfo.parentName;
         const kidName = additionalInfo.kidName;
+        const classid = additionalInfo.classId;
 
         const namesArray = kidName.split(',').map(name => name.trim());
         let formattedNames;
@@ -18,10 +21,10 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
         } else {
             formattedNames = kidName;
         }
-        console.log('kidName',kidName);
+        // console.log('kidName',kidName);
         const className = additionalInfo.className;
         const classTiming = additionalInfo.classTiming;
-        const prerequisite = additionalInfo.prerequisites;
+        // const prerequisite = additionalInfo.prerequisites;
 
         // Hardcoded Zoom meeting details
         const zoomMeetingLink = additionalInfo.zoomMeetingLink;
@@ -37,7 +40,9 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
       });
 
       let emailContent;
+      let emailSubject = 'Reminder!';
       if(reminder_type==='MORNING_8_EMAIL' || reminder_type==='MORNING_8'){
+        emailSubject=`Reminder for ${formattedNames}'s class today : ${className}`;
         emailContent = `
         <html>
         <head>
@@ -53,9 +58,9 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
               background-color: #fff;
               border-radius: 5px;
               box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-              padding: 20px;
+              padding: 2px;
               margin: 0 auto;
-              width: 80%;
+              width: 100%;
             }
         
             h1 {
@@ -64,7 +69,12 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
             }
         
             p {
-              color: #666;
+              color: black;
+              font-size: 16px;
+              line-height: 1.6;
+            }
+            li {
+              color: black;
               font-size: 16px;
               line-height: 1.6;
             }
@@ -76,20 +86,35 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
             <p>Hello ${parentName}</p>
             <p>Just a quick reminder that ${formattedNames}'s class is scheduled for today. Please make sure ${formattedNames} ${isMultipleKids ? 'are' : 'is'} in a quiet space for learning!</p>
   
-            <p>Here are more details about the class:</p>
+            <p>Here are the details about the class:</p>
   
             <p>Class Name: ${className}</p>
             <p>Class Timing: ${classTiming}</p>
-            <p>Prerequisite: ${prerequisite}</p>
-            <p>Zoom Meeting Link: ${zoomMeetingLink}</p>
-            <p>Meeting ID: ${meetingId}</p>
-            <p>Passcode: ${passcode}</p>
-  
-            <p>We would request you to join class with your video on, so that our team can verify the learner's identity.</p>
-            <p>If you have any questions or if your ${isMultipleKids ? 'kids' : 'kid'} cannot join today, feel free to text us back!</p>
-            <p>Excited to see your ${isMultipleKids ? 'kids' : 'kid'} in the class!</p>
+            <p>Zoom Metting Details: <a href="${zoomMeetingLink}" target="_blank">Zoom Link</a>,&nbsp;&nbsp;&nbsp; Meeting ID: ${meetingId}, &nbsp;&nbsp;&nbsp; Passcode: ${passcode}</p>
+            `
+            if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][1].toLowerCase() !== 'there are no prerequisites needed for the class.') {
+              emailContent += `<p><strong>-Prerequisite</strong> : ${classStartTimesMap[classid][1]}</p>`;
+            }
+              
+            if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][7] !== undefined && classStartTimesMap[classid][7] !== '') {
+              emailContent += '\n';
+            }
+              
+            if (classStartTimesMap[classid][7] !== undefined && classStartTimesMap[classid][7] !== '') {
+              emailContent += `<p><strong>-Class Materials</strong> : ${classStartTimesMap[classid][7]}</p>`;
+            }
+        
+            emailContent+=`<ul>
+            <li><strong>Identity Verification :</strong> Ensuring learner safety as our highest priority, we request you to switch on ${formattedNames}'s camera at the start of each class for a quick identity check. While ${formattedNames} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
+            <li><strong>Class Alerts :</strong> We have blocked your calendar for class; please let us know if you are unable to see it. We send class reminders via email & whatsapp. Feel free to share your communication preferences with us!</li>
+            <li><strong>Feedback :</strong>Class time includes a 10-minute feedback session. We kindly request ${formattedNames} to stay back, and share their class experience with us.</li>
+            <li><strong>Class Withdrawals :</strong> We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</li>
+            </ul>
+            <p>Your feedback is valuable to us! Please feel free to share any feedback with us <a href="https://docs.google.com/forms/d/e/1FAIpQLSflsLJJuG74V1jjS29B-R1TVPbD74e9H5CkKVQMX6CzM87AZQ/viewform">here!</a></p>
             
-            <p>Best Regards</p>
+            <p>Happy Learning! </p>
+
+            <p>Best,</p>
             <p>Coral Academy</p>
           
           </div>
@@ -97,6 +122,8 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
         </html>
         `;
       }else{
+        emailSubject=`Reminder for ${formattedNames}'s class in 15 minutes : ${className}`;
+
         emailContent = `
       <html>
       <head>
@@ -112,9 +139,9 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            padding: 2px;
             margin: 0 auto;
-            width: 80%;
+            width: 100%;
           }
       
           h1 {
@@ -123,7 +150,12 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
           }
       
           p {
-            color: #666;
+            color: black;
+            font-size: 16px;
+            line-height: 1.6;
+          }
+          li {
+            color: black;
             font-size: 16px;
             line-height: 1.6;
           }
@@ -133,22 +165,33 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
       <body>
         <div class="container">
           <p>Hello ${parentName}</p>
-          <p>Just a friendly reminder that ${formattedNames}'s class is in 15 Minutes. Please make sure ${formattedNames} ${isMultipleKids ? 'are' : 'is'} prepared for class.</p>
+          <p>Just a quick reminder that ${formattedNames}'s class is starting in 15 minutes.</p>
 
-          <p>Class Details</p>
+          <p>Here are the details about the class:</p>
 
           <p>Class Name: ${className}</p>
           <p>Class Timing: ${classTiming}</p>
-          <p>Prerequisite: ${prerequisite}</p>
-          <p>Zoom Meeting Link: ${zoomMeetingLink}</p>
-          <p>Meeting ID: ${meetingId}</p>
-          <p>Passcode: ${passcode}</p>
+          <p>Zoom Metting Details: <a href="${zoomMeetingLink}" target="_blank">Zoom Link</a>&nbsp;&nbsp;&nbsp; Meeting ID: ${meetingId} &nbsp;&nbsp;&nbsp; Passcode: ${passcode}</p>
+          `
+          if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][1].toLowerCase() !== 'there are no prerequisites needed for the class.') {
+            emailContent += `<p><strong>-Prerequisite</strong> : ${classStartTimesMap[classid][1]}</p>`;
+          }
+            
+          if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][7] !== undefined && classStartTimesMap[classid][7] !== '') {
+            emailContent += '\n';
+          }
+            
+          if (classStartTimesMap[classid][7] !== undefined && classStartTimesMap[classid][7] !== '') {
+            emailContent += `<p><strong>-Class Materials</strong> : ${classStartTimesMap[classid][7]}</p>`;
+          }
 
-          <p>We would request you to join class with your video on, so that our team can verify the learner's identity.</p>
-          <p>If you have any questions or if ${formattedNames} cannot join today, feel free to text us back!</p>
-          <p>We hope to see ${formattedNames} in class!</p>
-          
-          <p>Best Regards</p>
+          emailContent+=`<ul>
+          <li><strong>Identity Verification :</strong> Ensuring learner safety as our highest priority, we request you to switch on ${formattedNames}'s camera at the start of each class for a quick identity check. While ${formattedNames} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
+          <li><strong>Feedback :</strong>Class time includes a 10-minute feedback session. We kindly request ${formattedNames} to stay back, and share their class experience with us.</li>
+          </ul>
+          <p>Happy Learning! </p>
+
+          <p>Best,</p>
           <p>Coral Academy</p>
         
         </div>
@@ -163,7 +206,7 @@ const parentReminderEmail = (reminderId,reminder_type, additionalInfo) => {
       const mailOptions = {
         from: 'support@coralacademy.com', // Sender's email address
         to:additionalInfo.email, // Sender's email address'
-        subject: `Reminder for ${formattedNames}'s class today : ${className}`,
+        subject: emailSubject,
         html:emailContent,
       };
       
@@ -201,5 +244,6 @@ const updateReminderStatus = async (reminderId, statusToUpdate, responseBody) =>
       updateClient.end();
 }
 };
+
   
   module.exports = parentReminderEmail;

@@ -54,7 +54,7 @@ const sendEmailToUs = (personDetails) => {
           }
       
           p {
-            color: #666;
+            color: black;
             font-size: 16px;
             line-height: 1.6;
           }

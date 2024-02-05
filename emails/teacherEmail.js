@@ -32,9 +32,9 @@ const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) =>
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
+            padding: 2px;
             margin: 0 auto;
-            width: 80%;
+            width: 100%;
           }
           .class-table {
             width: 100%;
@@ -58,6 +58,11 @@ const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) =>
           }
       
           p {
+            color: black;
+            font-size: 16px;
+            line-height: 1.6;
+          }
+          li {
             color: black;
             font-size: 16px;
             line-height: 1.6;

@@ -135,10 +135,9 @@ const sendEmail = async (personDetails,userTimeZone) => {
             background-color: #fff;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            margin-left: 2%;
+            padding: 2px;
             margin-top:0;
-            width: 80%;
+            width: 100%;
           }
       
           h1 {
@@ -148,6 +147,11 @@ const sendEmail = async (personDetails,userTimeZone) => {
           }
       
           p {
+            color: black;
+            font-size: 16px;
+            line-height: 1.6;
+          }
+          li {
             color: black;
             font-size: 16px;
             line-height: 1.6;
@@ -196,6 +200,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
             ${classes}
           <p><i>${confirmedClassMessage2}</i></p>  
           ${message}
+          <p>
           <ul>
               <li><strong>Identity Verification:</strong> Ensuring learner safety as our highest priority,<strong> we request you to switch on ${personDetails.childName}'s camera at the start of each class for a quick identity check.</strong> While ${personDetails.childName} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
               <li><strong>Class Materials:</strong> The required class materials and details about homework submissions, if any, will be sent to you before class. Keep an eye on your email for these details.</li>
@@ -204,12 +209,11 @@ const sendEmail = async (personDetails,userTimeZone) => {
               <li><strong>Class Withdrawals:</strong> We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</li>
               <li><strong>Code of Conduct:</strong> Classes are recorded for student safety, allowing parents to review study situations and enabling us to assess teacher performance. Recorded videos are strictly confidential and for internal use only. We won't disclose them publicly or share with third parties without parental consent.</li>
           </ul>
+          </p>
 
           <p>Your feedback is valuable to us! Please feel free to share any feedback with us <a href="https://docs.google.com/forms/d/e/1FAIpQLSflsLJJuG74V1jjS29B-R1TVPbD74e9H5CkKVQMX6CzM87AZQ/viewform">here!</a></p>
 
           <p>PFA our <a href="https://docs.google.com/document/d/1kU49ck4nGge6_k4Myua_eUpBx06MADlFxm_xRdUz7Os/edit" target="_blank">Code of Conduct Policy</a> for your reference.</p>
-
-          <p><i><strong>Note:</strong>Classes are recorded for student safety. The recorded classes are for internal use only and are strictly confidential. These would not be disclosed or shared without parental consent.</i></p>
 
           <p>Happy Learning! </p>
 

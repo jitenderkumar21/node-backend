@@ -1,29 +1,64 @@
 const { Client } = require('pg');
 const classCancelltionInfo = require('./sheets/classCancellationInfo'); // Import the module
 const moment = require('moment-timezone');
+const ClassUtility = require('./utils/subClassUtility');
+const classIdTimingMap = require('./sheets/classIdTimingMap');
 
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
-function createAdditionalInfo(data, classStartTimesMap) {
-    return data.classDetails.map(detail => {
-        const classTiming = detail.timeslot;
-        const classStartTime = classStartTimesMap[detail.classid][2] || null; // Fetch classStartTime from the map
-
-        return {
+function createAdditionalInfo(data,userTimeZone, classStartTimesMap,classIdTimings) {
+    const finalJson = [];
+    
+    data.classDetails.forEach(detail => {
+    
+        detail.timeslots.filter(timeslot => !timeslot.isPast)
+        .forEach(timeslot => {
+        const subClassId = timeslot.subClassId;
+        const classIdTimingMap = classIdTimings.get(subClassId);
+        console.log(subClassId,classIdTimingMap);
+        const classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,classIdTimingMap[0],classIdTimingMap[1]);
+        const modifiedClassName = ClassUtility.getModifiedClassNameV2(subClassId,detail.className,detail.classTag);
+        const row = {
             parentName: data.parentName,
             kidName: data.childName,
-            className: detail.className,
-            email:data.email,
-            classTiming: classTiming,
-            classStartTime: classStartTime,
-            class_id: detail.classid, // Add class_id to the object
+            email: data.email,
+            className: modifiedClassName,
+            classTiming: classDisplayTiming,
+            classStartTime: classIdTimingMap[0],
+            classId: detail.classid,
+            subClassId: subClassId,
             receiverNumber: data.phoneNumber,
-            prerequisites: classStartTimesMap[detail.classid][1],
             zoomMeetingLink: classStartTimesMap[detail.classid][4],
             meetingId: classStartTimesMap[detail.classid][5],
-            passcode:classStartTimesMap[detail.classid][6],
+            passcode: classStartTimesMap[detail.classid][6],
         };
+
+        finalJson.push(row);
+        });
     });
+
+    return finalJson;
+
+
+    // return data.classDetails.map(detail => {
+    //     const classTiming = detail.timeslot;
+    //     const classStartTime = classStartTimesMap[detail.classid][2] || null; // Fetch classStartTime from the map
+
+    //     return {
+    //         parentName: data.parentName,
+    //         kidName: data.childName,
+    //         className: detail.className,
+    //         email:data.email,
+    //         classTiming: classTiming,
+    //         classStartTime: classStartTime,
+    //         class_id: detail.classid, // Add class_id to the object
+    //         receiverNumber: data.phoneNumber,
+    //         prerequisites: classStartTimesMap[detail.classid][1],
+    //         zoomMeetingLink: classStartTimesMap[detail.classid][4],
+    //         meetingId: classStartTimesMap[detail.classid][5],
+    //         passcode:classStartTimesMap[detail.classid][6],
+    //     };
+    // });
 }
 
 async function createReminder(info,reminderTime,reminderType) {
@@ -36,7 +71,7 @@ async function createReminder(info,reminderTime,reminderType) {
 
         // Drop class_id from additionalInfo before the insert query
         const infoWithoutClassId = { ...info };
-        delete infoWithoutClassId.class_id;
+        // delete infoWithoutClassId.class_id;
         delete infoWithoutClassId.classStartTime;
 
         const query = {
@@ -53,7 +88,7 @@ async function createReminder(info,reminderTime,reminderType) {
                     ),
                     reminder_time = $2
             `,
-            values: [infoWithoutClassId, reminderTime, info.class_id, info.email, info.kidName,reminderType],
+            values: [infoWithoutClassId, reminderTime, info.subClassId, info.email, info.kidName,reminderType],
         };
 
         await client.query(query);
@@ -114,10 +149,12 @@ function cleanPhoneNumber(phoneNumber) {
 
 async function createWhatsappReminders(jsonData,userTimeZone) {
     const classStartTimesMap = await classCancelltionInfo();
+    const classIdTimings = await classIdTimingMap();
     // console.log('classStartTimesMap', classStartTimesMap);
+    console.log('classIdTimings', classIdTimings);
     jsonData.phoneNumber = cleanPhoneNumber(jsonData.phoneNumber);
-    const additionalInfoArray = createAdditionalInfo(jsonData, classStartTimesMap);
-    // console.log('additionalInfo', additionalInfoArray);
+    const additionalInfoArray = createAdditionalInfo(jsonData,userTimeZone, classStartTimesMap,classIdTimings);
+    console.log('additionalInfo', additionalInfoArray);
     for (const info of additionalInfoArray) {
         const prefix = "want another slot";
         let timeslot = info.classTiming;
@@ -126,17 +163,17 @@ async function createWhatsappReminders(jsonData,userTimeZone) {
             const morningReminderTime = calculateMorningReminderTime(info.classStartTime,userTimeZone);
             // console.log('beforeClassReminderTime',beforeClassReminderTime);
             // console.log('morningReminderTime',morningReminderTime);
-            await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15');
-            await createReminder(info,morningReminderTime,'MORNING_8');
-            await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_P');
-            await createReminder(info,morningReminderTime,'MORNING_8_P');
-        }else if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix))){
+            // await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15');
+            // await createReminder(info,morningReminderTime,'MORNING_8');
+            // await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_P');
+            // await createReminder(info,morningReminderTime,'MORNING_8_P');
+        }if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix))){
             const beforeClassReminderTime = calculateReminderTime(info.classStartTime);
             const morningReminderTime = calculateMorningReminderTime(info.classStartTime,userTimeZone);
             // console.log('beforeClassReminderTime',beforeClassReminderTime);
             // console.log('morningReminderTime',morningReminderTime);
-            await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_EMAIL');
-            await createReminder(info,morningReminderTime,'MORNING_8_EMAIL');
+            createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_EMAIL');
+            createReminder(info,morningReminderTime,'MORNING_8_EMAIL');
         }
     }
 }

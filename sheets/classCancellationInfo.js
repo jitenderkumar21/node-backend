@@ -30,7 +30,7 @@ const classCancelltionInfo = async () => {
       if (rows.length) {
         rows.slice(1).forEach((row) => {
             var classId = row[0];
-            var value = [row[1],row[3],row[19],row[21],row[22],row[23],row[24]];
+            var value = [row[1],row[3],row[19],row[21],row[22],row[23],row[24],row[16]];
             inviteInfo[classId] = value;
         });
       } else {

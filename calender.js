@@ -152,7 +152,7 @@ try{
 let eventDescription = `
 Hello there!
 
-Thank you for registering ${childName} for "${modifiedClassName}" !
+Thank you for registering for "${modifiedClassName}" !
 
 <b><i>We kindly request you to switch on the learner's camera at the start of the class for a quick identity check. After confirmation, learners may choose to participate with the camera off.</i></b>
 
@@ -177,7 +177,7 @@ Meeting Link: ${classStartTimesMap[classid][4]}
 Meeting ID: ${classStartTimesMap[classid][5]}
 Passcode: ${classStartTimesMap[classid][6]}
 
-Class time includes a 10-minute feedback session. We kindly request ${childName} to stay back, and share their class experience with us.
+Class time includes a 10-minute feedback session. We kindly request the learner to stay back, and share their class experience with us.
 
 Happy Learning!
 `.trim();

@@ -25,6 +25,15 @@ class subClassUtility {
             return className;
         }
     }
+    static getModifiedClassNameV2(subClassId,className,classTag){
+        const lowercaseClassTag = classTag.toLowerCase();
+        const classNumber = subClassId.split('_')[1];
+        if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'course') {
+            return `Class ${classNumber} : ${className}`;
+        } else {
+            return className;
+        }
+    }
     static getPSTTiming(classStartTime,classEndTime){
         classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
         classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
