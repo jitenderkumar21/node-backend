@@ -130,7 +130,7 @@ const classesInfo = async (userTimeZone) => {
             }
             jsonObject['timeslots']=timeslots;
 
-            jsonObject['isSlotOpen']=[row[13],'yes']
+            jsonObject['isSlotOpen']=['yes','yes']
             jsonObject['class_tag']=row[17];
             arrayOfObjects.push(jsonObject);
         });

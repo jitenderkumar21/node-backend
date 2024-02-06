@@ -36,6 +36,7 @@ const classIdTimingMap = async () => {
             let pastTimeslots = [];
             jsonObject['timeslots'] = [];
             const numberOfSubclasses = parseInt(row[25]) || 1;
+            const classDuration = parseInt(row[13]) || 60;
             // console.log('Max slots',numberOfSubclasses);
             for (let counter = 0; counter < numberOfSubclasses; counter++) {
       
@@ -49,9 +50,8 @@ const classIdTimingMap = async () => {
                               ? row[20]
                               : row[25 + counter] + ' ' + classEndTime;
                 
-
-                classSubIdMap.set(subClassId, [classStartTiming, classEndTiming]);
-                              
+                const classEndTiming2 = moment(classStartTiming, 'YYYY-MM-DD HH:mm').add(classDuration, 'minutes').format('YYYY-MM-DD HH:mm');
+                classSubIdMap.set(subClassId, [classStartTiming,classEndTiming2]);                              
                 }
                 
             });
