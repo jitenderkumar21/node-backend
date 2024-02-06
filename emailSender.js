@@ -82,10 +82,11 @@ const sendEmail = async (personDetails,userTimeZone) => {
                     const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
                     const userEndDateTime = classIdTimings.get(subClassId)[1]; 
                     let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
+                    const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
                     confirmedClassesFlag = true;
                     classes += `
                             <tr>
-                                <td>${className}</td>
+                                <td>${modifiedClassName}</td>
                                 <td>${classDisplayTiming}</td>
                                 <td>${classTag}</td>
                                 <td>
