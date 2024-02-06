@@ -5,7 +5,7 @@ const path = require('path');
 
 const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) => {
 
-    console.log('sending mail to teacher',teacherInviteInfo);
+    // console.log('sending confirmation mail to teacher',teacherInviteInfo);
     const ATTACHMENT_PATH = path.join(process.cwd(), 'assets/Coral Academy Background.png');
    
     const transporter = nodemailer.createTransport({
@@ -140,7 +140,7 @@ const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) =>
         if (error) {
           console.error('Error sending email to teacher:', error);
         } else {
-          console.log('Email sent to teacher:', teacherInviteInfo[2].split(',')[0]);
+          console.log('Confirmation Email sent to teacher:', teacherInviteInfo[2].split(',')[0]);
         }
       });
 

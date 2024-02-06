@@ -10,7 +10,7 @@ const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-c
 
 const sendReminder = async (reminderId,reminder_type, additionalInfo) => {
     // Assume you have a function to send reminders
-    console.log('Sending reminder for ID:', reminderId, 'with additional info:', additionalInfo);
+    // console.log('Sending reminder for ID:', reminderId, 'with additional info:', additionalInfo);
     if(reminder_type==='BEFORE_CLASS_15_EMAIL' || reminder_type==='MORNING_8_EMAIL'){
         sendParentReminderEmail(reminderId,reminder_type, additionalInfo)
     }

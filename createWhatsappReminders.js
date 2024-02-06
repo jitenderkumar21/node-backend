@@ -15,7 +15,7 @@ function createAdditionalInfo(data,userTimeZone, classStartTimesMap,classIdTimin
         .forEach(timeslot => {
         const subClassId = timeslot.subClassId;
         const classIdTimingMap = classIdTimings.get(subClassId);
-        console.log(subClassId,classIdTimingMap);
+        // console.log(subClassId,classIdTimingMap);
         const classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,classIdTimingMap[0],classIdTimingMap[1]);
         const modifiedClassName = ClassUtility.getModifiedClassNameV2(subClassId,detail.className,detail.classTag);
         const row = {
@@ -151,10 +151,10 @@ async function createWhatsappReminders(jsonData,userTimeZone) {
     const classStartTimesMap = await classCancelltionInfo();
     const classIdTimings = await classIdTimingMap();
     // console.log('classStartTimesMap', classStartTimesMap);
-    console.log('classIdTimings', classIdTimings);
+    // console.log('classIdTimings', classIdTimings);
     jsonData.phoneNumber = cleanPhoneNumber(jsonData.phoneNumber);
     const additionalInfoArray = createAdditionalInfo(jsonData,userTimeZone, classStartTimesMap,classIdTimings);
-    console.log('additionalInfo', additionalInfoArray);
+    // console.log('additionalInfo', additionalInfoArray);
     for (const info of additionalInfoArray) {
         const prefix = "want another slot";
         let timeslot = info.classTiming;

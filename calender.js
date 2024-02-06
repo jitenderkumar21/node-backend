@@ -224,7 +224,7 @@ Happy Learning!
                         
                             // Extract the event ID from the response
                             const eventId = response.data.id;
-                            console.log('Event created successfully. Event ID:', eventId);
+                            console.log('Parent Event created successfully. Event ID:', eventId);
                             insertClassInvitation(subClassId,eventId);
                             }
                         );
