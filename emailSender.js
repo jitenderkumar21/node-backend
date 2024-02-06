@@ -89,9 +89,9 @@ const sendEmail = async (personDetails,userTimeZone) => {
                                 <td>${classDisplayTiming}</td>
                                 <td>${classTag}</td>
                                 <td>
-                                    <p class="custom-para"><a href="https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09">Zoom Link</a></p>
-                                    <p class="custom-para">Meeting ID: 329 424 0234</p>
-                                    <p class="custom-para">Passcode: 123456</p>
+                                    <p class="custom-para"><a href=${inviteClassInfo[5]}>Zoom Link</a></p>
+                                    <p class="custom-para">Meeting ID: ${inviteClassInfo[6]}</p>
+                                    <p class="custom-para">Passcode: ${inviteClassInfo[7]}</p>
                                 </td>
                             </tr>
                     `;
