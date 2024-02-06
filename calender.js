@@ -184,7 +184,7 @@ Happy Learning!
 
                         var event = {
                         'summary':  ` Coral Academy : ${modifiedClassName}`,
-                        'location': 'https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09',
+                        'location': `${classStartTimesMap[classid][4]}`,
                         'description': eventDescription,
                         'start': {
                             'dateTime': startDateTime,

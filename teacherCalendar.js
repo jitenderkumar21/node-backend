@@ -160,7 +160,7 @@ Thankyou!
 
                         var event = {
                         'summary': eventSummary,
-                        'location': 'https://zoom.us/j/3294240234?pwd=ajdsWWlDWHpialdXUklxME1UVzVrUT09',
+                        'location': `${inviteClassInfo[5]}`,
                         'description': eventDescription,
                         'start': {
                             'dateTime': startDateTime,
