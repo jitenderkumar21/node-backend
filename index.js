@@ -217,6 +217,8 @@ app.post('/save', async (req, res) => {
    
 //   });
 //   pool1.end();
+
+  const ipAddress = req.ip || req.connection.remoteAddress;
   updateCounts(req.body.classDetails);
   sendEmail(req.body,userTimeZone);
   sendEmailToUs(req.body,userTimeZone,ipAddress);
@@ -224,7 +226,7 @@ app.post('/save', async (req, res) => {
   await teacherCalendarInvite(req.body);
   calendarInvite(req.body);
   createWhatsappReminders(req.body,req.query.timezone);
-  const ipAddress = req.ip || req.connection.remoteAddress;
+  
   saveEnrollment(req.body,ipAddress);
   res.status(200).json({ message: 'Registration Successful' });
   });
