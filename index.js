@@ -53,7 +53,8 @@ app.post('/test', async (req, res) => {
   let classDisplayName = "Class on Sunday";
   // const ipAddress = req.ip || req.connection.remoteAddress;
   // saveEnrollments(req.body,'152.59.194.85');
-  createWhatsappReminders(req.body,req.query.timezone);
+  // createWhatsappReminders(req.body,req.query.timezone);
+  sendEmailToUs(req.body,req.query.timezone,'152.59.194.85')
   res.send('Sent teacher Email');
 });
 
@@ -218,7 +219,7 @@ app.post('/save', async (req, res) => {
 //   pool1.end();
   updateCounts(req.body.classDetails);
   sendEmail(req.body,userTimeZone);
-  // sendEmailToUs(req.body);
+  sendEmailToUs(req.body,userTimeZone,ipAddress);
   // googleSheets(req.body);
   await teacherCalendarInvite(req.body);
   calendarInvite(req.body);
