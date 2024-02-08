@@ -7,6 +7,7 @@ const { Client } = require('pg');
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
 const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => {
+        try{
         const classStartTimesMap = await classCancelltionInfo();
         const parentName = additionalInfo.parentName;
         const kidName = additionalInfo.kidName;
@@ -222,6 +223,10 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
           updateReminderStatus(reminderId, 'SUCCESS', 'Email sent successfully');
         }
       });
+    }catch(err) {
+      onsole.error('Error sending email reminder to parent for ID::', reminderId);
+      updateReminderStatus(reminderId, 'FAILURE', 'Unexpected Error sending email: ' + error.message);
+      }
 
   };
 
