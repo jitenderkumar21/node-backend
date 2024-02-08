@@ -224,7 +224,7 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
         }
       });
     }catch(err) {
-      onsole.error('Error sending email reminder to parent for ID::', reminderId);
+      console.error('Error sending email reminder to parent for ID::', reminderId);
       updateReminderStatus(reminderId, 'FAILURE', 'Unexpected Error sending email: ' + error.message);
       }
 
