@@ -15,12 +15,12 @@ const teacherInviteInfo = async () => {
     // Create client instance for auth
     const client = await auth.getClient();
 
-    const spreadsheetId = '1S0TqlZmzF-U2id7XsNnUXQxTPxqxMDqMez3RIhIZJf4';
+    const spreadsheetId = '1NbmX0dsDYmkavqJas46Oeb2PrJC0W3eVbAG_UJ5NUIQ';
 
     const readResult = await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.get({
         auth,
         spreadsheetId,
-        range: 'Sheet1!A:Y', // Specify the range you want to read
+        range: 'Classes!A:Y', // Specify the range you want to read
       });
 
       

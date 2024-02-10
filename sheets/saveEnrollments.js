@@ -24,6 +24,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
         classEndTime = moment(inviteClassInfo[4], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
       }
       const dateDayTimeColumns = [
+        classStartTime ? classStartTime.format('DD MMMM') : '',
         classStartTime ? classStartTime.format('dddd') : '',
         classStartTime ? classStartTime.format('h:mm A') : '',
         classEndTime ? classEndTime.format('h:mm A') : '',
@@ -47,7 +48,6 @@ const saveEnrollments = async (personDetails,ipAddress) => {
           classIdFomatted,
           classDetail.classTag,
           classDetail.className,
-          timing.split(':')[1].trim(),
           ...dateDayTimeColumns,
           '',
           ipInfo.country,
