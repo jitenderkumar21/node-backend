@@ -6,7 +6,7 @@ const cors = require('cors');
 const sendEmail = require('./emailSender');
 const sendEmailToUs = require('./emailSenderUs');
 const googleSheets = require('./googleSheet'); // Import the module
-const classesInfo = require('./classesInfo'); // Import the module
+const {classesInfo,cachedClassesInfo} = require('./classesInfo'); // Import the module
 const maxLearners = require('./maxLearners'); // Import the module
 const defaultTimeZone = require('./defaultTimeSlot'); // Import the module
 const calendarInvite = require('./calender'); // Import the module
@@ -54,8 +54,9 @@ app.post('/test', async (req, res) => {
   // const ipAddress = req.ip || req.connection.remoteAddress;
   // saveEnrollments(req.body,'152.59.194.85');
   // createWhatsappReminders(req.body,req.query.timezone);
-  sendEmailToUs(req.body,req.query.timezone,'152.59.194.85')
-  res.send('Sent teacher Email');
+  // sendEmailToUs(req.body,req.query.timezone,'152.59.194.85')
+  const classes = await cachedClassesInfo(req.query.timezone);
+  res.json(classes);
 });
 
 app.get('/test2', async (req, res) => {

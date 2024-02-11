@@ -3,6 +3,27 @@
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
 
+const NodeCache = require('node-cache');
+const myCache = new NodeCache();
+
+const cachedClassesInfo = async (userTimeZone) => {
+  // Check if the result is already in the cache
+  const cachedResult = myCache.get(userTimeZone);
+  if (cachedResult) {
+    console.log('Cache hit! Returning cached result.');
+    return cachedResult;
+  }
+
+  // If not in cache, perform the actual operation
+  const result = await classesInfo(userTimeZone);
+
+  // Store the result in the cache for future use with a time-to-live (TTL) of, for example, 10 minutes
+  myCache.set(userTimeZone, result, 5); // in seconds
+
+  return result;
+};
+
+
 const classesInfo = async (userTimeZone) => {
   try {
 
@@ -146,4 +167,8 @@ const classesInfo = async (userTimeZone) => {
   }
 };
 
-module.exports = classesInfo;
+module.exports = {
+  classesInfo,
+  cachedClassesInfo,
+}
+  ;
