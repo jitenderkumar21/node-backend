@@ -76,7 +76,7 @@ try{
     return client;
     }
 
-    const updateEventAndAttendees = async (auth, calendar, eventId, personDetails) => {
+    const updateEventAndAttendees = async (auth, calendar, eventId, personDetails,modifiedClassName) => {
         try {
           // Get the existing attendees from the event before updating
           const existingEvent = await calendar.events.get({
@@ -105,6 +105,7 @@ try{
           });
       
         } catch (err) {
+          console.error('Error updating event for parent: %s and class %s ', personDetails.email,modifiedClassName);
           console.log('Error updating event:', err);
         }
       };
@@ -232,7 +233,7 @@ Happy Learning!
                     }else{
                     
                         // console.log('Will update event in this case',subClassId);
-                        updateEventAndAttendees(auth, calendar, classInviteId, personDetails);
+                        updateEventAndAttendees(auth, calendar, classInviteId, personDetails,modifiedClassName);
 
 
                     }
