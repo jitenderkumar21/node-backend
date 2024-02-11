@@ -1,6 +1,7 @@
 // googleSheets.js
 
 const { google } = require('googleapis');
+const ClassUtility = require('../utils/subClassUtility');
 
 const classCancelltionInfo = async () => {
   try {
@@ -30,7 +31,8 @@ const classCancelltionInfo = async () => {
       if (rows.length) {
         rows.slice(1).forEach((row) => {
             var classId = row[0];
-            var value = [row[1],row[3],row[19],row[21],row[22],row[23],row[24],row[16]];
+            const classStartTimeGmt = ClassUtility.getGmtFromPstTiming(row[19]);
+            var value = [row[1],row[3],classStartTimeGmt,row[21],row[22],row[23],row[24],row[16]];
             inviteInfo[classId] = value;
         });
       } else {

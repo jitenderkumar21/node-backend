@@ -2,6 +2,7 @@
 
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
+const ClassUtility = require('../utils/subClassUtility');
 
 const classIdTimingMap = async () => {
   try {
@@ -41,14 +42,16 @@ const classIdTimingMap = async () => {
             for (let counter = 0; counter < numberOfSubclasses; counter++) {
       
                 const subClassId = `${row[0]}_${counter + 1}`; // Assuming 'id' is the first column
-                const classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').format('HH:mm');
-                const classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').format('HH:mm');
+                const classStartTimeGmt = ClassUtility.getGmtFromPstTiming(row[19]);
+                const classEndTimeGmt = ClassUtility.getGmtFromPstTiming(row[20]);
+                const classStartTime = moment(classStartTimeGmt, 'YYYY-MM-DD HH:mm').format('HH:mm');
+                const classEndTime = moment(classEndTimeGmt, 'YYYY-MM-DD HH:mm').format('HH:mm');
                 const classStartTiming = counter === 0
-                              ? row[19]
-                              : row[25 + counter] + ' ' + classStartTime;
+                              ? classStartTimeGmt
+                              : ClassUtility.getGmtFromPstTimingV2(row[25 + counter],classStartTime);
                 const classEndTiming = counter === 0
-                              ? row[20]
-                              : row[25 + counter] + ' ' + classEndTime;
+                              ? classEndTimeGmt
+                              : ClassUtility.getGmtFromPstTimingV2(row[25 + counter],classStartTime);
                 
                 const classEndTiming2 = moment(classStartTiming, 'YYYY-MM-DD HH:mm').add(classDuration, 'minutes').format('YYYY-MM-DD HH:mm');
                 classSubIdMap.set(subClassId, [classStartTiming,classEndTiming2]);                              

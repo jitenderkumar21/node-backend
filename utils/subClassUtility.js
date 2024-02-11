@@ -84,8 +84,18 @@ class subClassUtility {
             displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
         }
         return displayClassTime;
-}
+    }
 
+    static getGmtFromPstTiming(pstTime){
+        const outputFormat = 'YYYY-MM-DD HH:mm';
+        const gmtTime = moment(pstTime, 'D MMM h:mm A').add(8,'hours').format(outputFormat);
+        return gmtTime;
+    }
+    static getGmtFromPstTimingV2(pstDate, pstTime){
+        const outputFormat = 'YYYY-MM-DD HH:mm';
+        const gmtTime = moment(pstDate + ' ' + pstTime, 'D MMM h:mm A').add(8,'hours').format(outputFormat);
+        return gmtTime;
+    }
     
 }
 

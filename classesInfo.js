@@ -2,6 +2,7 @@
 
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
+const ClassUtility = require('./utils/subClassUtility');
 
 const classesInfo = async (userTimeZone) => {
   try {
@@ -62,20 +63,22 @@ const classesInfo = async (userTimeZone) => {
             }
             // console.log(row);
             jsonObject['expand']=true;
+            const classStartTimeGmt = ClassUtility.getGmtFromPstTiming(row[19]);
+            const classEndTimeGmt = ClassUtility.getGmtFromPstTiming(row[20]);
 
-            let classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
-            let classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+            let classStartTime = moment(classStartTimeGmt, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+            let classEndTime = moment(classEndTimeGmt, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
             
             
             if(timeZoneAbbreviation=='MST'){
-              classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
-              classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+              classStartTime = moment(classStartTimeGmt, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+              classEndTime = moment(classEndTimeGmt, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
             }else if(timeZoneAbbreviation=='EST'){
-              classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
-              classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
+              classStartTime = moment(classStartTimeGmt, 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
+              classEndTime = moment(classEndTimeGmt, 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
             }else if(timeZoneAbbreviation=='CST'){
-              classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
-              classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
+              classStartTime = moment(classStartTimeGmt, 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
+              classEndTime = moment(classEndTimeGmt, 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
             }else{
               timeZoneAbbreviation = 'PST';
             }
@@ -84,9 +87,6 @@ const classesInfo = async (userTimeZone) => {
               const day = classStartTime.format('dddd');
               const startTime = classStartTime.format('h:mm A');
               const formattedClassEndTime = classEndTime.format('h:mm A');
-              let currentTime = moment(); // current time
-              let classStartTimeIST = moment(row[19], 'YYYY-MM-DD HH:mm');
-            
               const isOneTime = row[17]?.toLowerCase() === 'onetime';
               // console.log(isOneTime);
               
@@ -102,14 +102,14 @@ const classesInfo = async (userTimeZone) => {
             for (let counter = 0; counter < MAX_SLOTS; counter++) {
       
                 const subClassId = `${row[0]}_${counter + 1}`; // Assuming 'id' is the first column
-                const classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').format('HH:mm');
-
+                const classStartTime = moment(classStartTimeGmt, 'YYYY-MM-DD HH:mm').format('HH:mm');
+                
                 const classStartDate = counter === 0
-                        ? moment.utc(row[19], 'YYYY-MM-DD HH:mm').subtract(offset,'hours')
-                        : moment.utc(row[25 + counter] + ' ' + classStartTime, 'YYYY-MM-DD HH:mm').subtract(offset,'hours');
+                        ? moment.utc(classStartTimeGmt, 'YYYY-MM-DD HH:mm').subtract(offset,'hours')
+                        : moment.utc(ClassUtility.getGmtFromPstTimingV2(row[25 + counter],classStartTime), 'YYYY-MM-DD HH:mm').subtract(offset,'hours');
                 const classStartDateUTC = counter === 0
-                        ? moment.utc(row[19], 'YYYY-MM-DD HH:mm')
-                        : moment.utc(row[25 + counter] + ' ' + classStartTime, 'YYYY-MM-DD HH:mm');
+                        ? moment.utc(classStartTimeGmt, 'YYYY-MM-DD HH:mm')
+                        : moment.utc(ClassUtility.getGmtFromPstTimingV2(row[25 + counter],classStartTime), 'YYYY-MM-DD HH:mm');
                 const isPast = classStartDateUTC.isBefore(moment.utc());
                 const teacherPreference = parseInt(row[18]) || 1;
                 if(row[17].toLowerCase()==='course' && counter+1===teacherPreference){

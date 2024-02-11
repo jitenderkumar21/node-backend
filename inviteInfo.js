@@ -1,6 +1,7 @@
 // googleSheets.js
 
 const { google } = require('googleapis');
+const ClassUtility = require('./utils/subClassUtility');
 
 const inviteInfo = async () => {
   try {
@@ -30,7 +31,9 @@ const inviteInfo = async () => {
       if (rows.length) {
         rows.slice(1).forEach((row) => {
             var classId = row[0];
-            var value = [row[1],row[19],row[20],row[21],rows.indexOf(row),row[16]];
+            const classStartTimeGmt = ClassUtility.getGmtFromPstTiming(row[19]);
+            const classEndTimeGmt = ClassUtility.getGmtFromPstTiming(row[20]);
+            var value = [row[1],classStartTimeGmt,classEndTimeGmt,row[21],rows.indexOf(row),row[16]];
             inviteInfo[classId] = value;
         });
       } else {
