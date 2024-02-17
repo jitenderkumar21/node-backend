@@ -27,7 +27,11 @@ const {
   updateCounts,
   getAllClassCounts
 } = require('./dao/classesDao');
-// classIdTimingMap
+
+const {
+  insertParentInfo,
+  getParentInfoByEmail,
+} = require('./dao/parentsInfoDao')
 
 
 app.use(express.json());
@@ -54,8 +58,8 @@ app.post('/test', async (req, res) => {
   // const ipAddress = req.ip || req.connection.remoteAddress;
   // saveEnrollments(req.body,'152.59.194.85');
   // createWhatsappReminders(req.body,req.query.timezone);
-  sendEmailToUs(req.body,req.query.timezone,'152.59.194.85')
-  res.send('Sent teacher Email');
+  const result = await getParentInfoByEmail('jitender.kumar@iitgn.ac.in');
+  res.send(result);
 });
 
 app.get('/test2', async (req, res) => {
@@ -103,6 +107,12 @@ app.get('/info', async (req, res) => {
   const userTimeZone = req.query.timezone;
   const classes = await classesInfo(userTimeZone);
   res.json(classes);
+});
+
+app.get('/parent/info', async (req, res) => {
+  const email = req.query.email;
+  const result = await getParentInfoByEmail(email);
+  res.json(result);
 });
 
 

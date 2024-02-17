@@ -154,6 +154,7 @@ async function createWhatsappReminders(jsonData,userTimeZone) {
     // console.log('classIdTimings', classIdTimings);
     jsonData.phoneNumber = cleanPhoneNumber(jsonData.phoneNumber);
     const additionalInfoArray = createAdditionalInfo(jsonData,userTimeZone, classStartTimesMap,classIdTimings);
+    const communicationPreference = jsonData.commPref;
     // console.log('additionalInfo', additionalInfoArray);
     for (const info of additionalInfoArray) {
         const prefix = "want another slot";
@@ -167,7 +168,7 @@ async function createWhatsappReminders(jsonData,userTimeZone) {
             // await createReminder(info,morningReminderTime,'MORNING_8');
             // await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_P');
             // await createReminder(info,morningReminderTime,'MORNING_8_P');
-        }if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix))){
+        }if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix)) && communicationPreference === 'Email'){
             const beforeClassReminderTime = calculateReminderTime(info.classStartTime);
             const morningReminderTime = calculateMorningReminderTime(info.classStartTime,userTimeZone);
             // console.log('beforeClassReminderTime',beforeClassReminderTime);
