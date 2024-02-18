@@ -23,6 +23,7 @@ const createWhatsappReminders = require('./createWhatsappReminders');
 const getIpInfo = require('./location/IPInfo'); // Import the module
 const saveEnrollments = require('./sheets/saveEnrollments');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
+const {  getAllSystemReports } = require('./dao/systemReportDao')
 const {
   updateCounts,
   getAllClassCounts
@@ -54,7 +55,7 @@ app.post('/test', async (req, res) => {
   // const ipAddress = req.ip || req.connection.remoteAddress;
   // saveEnrollments(req.body,'152.59.194.85');
   // createWhatsappReminders(req.body,req.query.timezone);
-  sendEmailToUs(req.body,req.query.timezone,'152.59.194.85')
+  sendEmail(req.body,req.query.timezone);
   res.send('Sent teacher Email');
 });
 
@@ -103,6 +104,13 @@ app.get('/info', async (req, res) => {
   const userTimeZone = req.query.timezone;
   const classes = await classesInfo(userTimeZone);
   res.json(classes);
+});
+
+app.get('/report', async (req, res) => {
+  const pageNumber = req.query.pageNumber;
+  const filters = { classId: req.query.classId, status: req.query.status, channel: req.query.channel, type: req.query.type }
+  const systemReport = await getAllSystemReports(filters,pageNumber);
+  res.json(systemReport);
 });
 
 

@@ -2,6 +2,7 @@ const ClassUtility = require('../utils/subClassUtility');
 
 const nodemailer = require('nodemailer');
 const path = require('path');
+const {  insertSystemReport } = require('../dao/systemReportDao')
 
 const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) => {
 
@@ -138,8 +139,12 @@ const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) =>
       // Send the email
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
+          const reportData = { channel: 'EMAIL', type: 'Teacher Confimation', status: 'FAILURE', reason: error.message};
+          insertSystemReport(reportData);
           console.error('Error sending email to teacher:', error);
         } else {
+          const reportData = { channel: 'EMAIL', type: 'Teacher Confimation', status: 'SUCCESS'};
+          insertSystemReport(reportData);
           console.log('Confirmation Email sent to teacher:', teacherInviteInfo[2].split(',')[0]);
         }
       });

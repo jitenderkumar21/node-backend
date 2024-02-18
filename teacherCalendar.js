@@ -8,6 +8,7 @@ const moment = require('moment-timezone');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 const ClassUtility = require('./utils/subClassUtility');
 const { fetchClassInvitations, insertClassInvitation} = require('./dao/classIdToInviteMapping');
+const {  insertSystemReport } = require('./dao/systemReportDao')
 
 const teacherCalendar = async (personDetails) => {
 
@@ -205,6 +206,8 @@ Thankyou!
                             // Extract the event ID from the response
                             const eventId = response.data.id;
                             console.log(`Teacher Event created successfully for emails: ${teacherEmails} . Event ID:`, eventId);
+                            const reportData = { channel: 'CALENDER', type: 'Teacher Calender Block', status: 'SUCCESS', classId: classid};
+                            insertSystemReport(reportData);
                             }
                         );
                                    
@@ -225,7 +228,9 @@ authorize().then(listEvents).catch(console.error);
 
 
 }catch (err) {
-    console.error('Error sending clender invite to teacher', err);
+    const reportData = { channel: 'CALENDER', type: 'Teacher Calender Block', status: 'FAILURE', reason: 'Internal Server Error'};
+    insertSystemReport(reportData);
+    console.error('Error sending calender invite to teacher', err);
 }
 
 };
