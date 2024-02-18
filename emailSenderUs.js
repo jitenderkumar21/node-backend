@@ -186,7 +186,7 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
           insertSystemReport(reportData);
         } else {
           console.log('Confirmation Email sent to us for parent:', personDetails.email);
-          const reportData = { channel: 'EMAIL', type: 'Parent Confimation', status: 'SUCCESS', parentEmail: personDetails.email};
+          const reportData = { channel: 'EMAIL', type: 'Coral Confimation', status: 'SUCCESS', parentEmail: personDetails.email};
           insertSystemReport(reportData);
         }
       });
