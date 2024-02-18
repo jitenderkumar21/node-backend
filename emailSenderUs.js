@@ -3,6 +3,7 @@ const classIdTimingMap = require('./sheets/classIdTimingMap');
 const ClassUtility = require('./utils/subClassUtility');
 const teacherInviteInfo = require('./teacherInviteInfo'); // Import the module
 const getIpInfo = require('./location/IPInfo'); // Import the module
+const {  insertSystemReport } = require('./dao/systemReportDao')
 
 const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
   try{
@@ -181,13 +182,19 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           console.error('Error sending confirmation email to us:', error);
+          const reportData = { channel: 'EMAIL', type: 'Coral Confimation', status: 'FAILURE', reason: error.message, parentEmail: personDetails.email};
+          insertSystemReport(reportData);
         } else {
           console.log('Confirmation Email sent to us for parent:', personDetails.email);
+          const reportData = { channel: 'EMAIL', type: 'Parent Confimation', status: 'SUCCESS', parentEmail: personDetails.email};
+          insertSystemReport(reportData);
         }
       });
 
   }catch (error) {
     console.error('Error sending confirmation email to us');
+    const reportData = { channel: 'EMAIL', type: 'Coral Confimation', status: 'FAILURE', reason: 'Internal Server Error', parentEmail: personDetails.email};
+    insertSystemReport(reportData);
   }
 
   };

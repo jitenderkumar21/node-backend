@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const ClassUtility = require('./utils/subClassUtility');
+const {  insertSystemReport } = require('./dao/systemReportDao')
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 const teacherInviteInfo = require('./teacherInviteInfo'); // Import the module
 const { v4: uuidv4 } = require('uuid');
@@ -241,8 +242,12 @@ const sendEmail = async (personDetails,userTimeZone) => {
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           console.error('Error sending email to parent:', error);
+          const reportData = { channel: 'EMAIL', type: 'Parent Confimation', status: 'FAILURE', reason: error.message, parentEmail: personDetails.email};
+          insertSystemReport(reportData);
         } else {
           console.log('Email sent to parent:', personDetails.email);
+          const reportData = { channel: 'EMAIL', type: 'Parent Confimation', status: 'SUCCESS', parentEmail: personDetails.email};
+          insertSystemReport(reportData);
         }
       });
 

@@ -4,6 +4,7 @@ const teacherInviteInfo = require('../teacherInviteInfo'); // Import the module
 const getIpInfo = require('../location/IPInfo'); // Import the module
 const ClassUtility = require('../utils/subClassUtility');
 require('dotenv').config();
+const {  insertSystemReport } = require('../dao/systemReportDao')
 
 const saveEnrollments = async (personDetails,ipAddress) => {
   try {
@@ -113,10 +114,13 @@ const saveEnrollments = async (personDetails,ipAddress) => {
         values: rows,
       },
     });
-
     console.log('Enrollments Saved in Format 1 successfully');
+    const reportData = { channel: 'SHEETS', type: 'Save Enrollments', status: 'SUCCESS', parentEmail: personDetails.email};
+    insertSystemReport(reportData);
   } catch (err) {
-    console.error('Error writing to Google Sheets:', err);
+    console.error('Error writing to Format 1 Sheets:', err);
+    const reportData = { channel: 'SHEETS', type: 'Save Enrollments', status: 'FAILURE', reason: err.message, parentEmail: personDetails.email};
+    insertSystemReport(reportData);
   }
 };
 
