@@ -18,6 +18,7 @@ async function insertParentInfo(enrollmentDetails) {
       ON CONFLICT (email) DO UPDATE
         SET child_name = EXCLUDED.child_name,
             child_age = EXCLUDED.child_age,
+            parent_name = EXCLUDED.parent_name,
             phone_number = CASE WHEN EXCLUDED.phone_number <> '' THEN EXCLUDED.phone_number ELSE parent_info.phone_number END,
             communication_preference = EXCLUDED.communication_preference,
             source = CASE WHEN EXCLUDED.source <> '' THEN EXCLUDED.source ELSE parent_info.source END,
