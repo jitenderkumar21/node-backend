@@ -3,6 +3,7 @@ const moment = require('moment-timezone');
 const teacherInviteInfo = require('../teacherInviteInfo'); // Import the module
 const getIpInfo = require('../location/IPInfo'); // Import the module
 const ClassUtility = require('../utils/subClassUtility');
+const { bulkInsertEnrollments } = require('../dao/enrollmentsDao');
 
 const saveEnrollments = async (personDetails,ipAddress) => {
   try {
@@ -98,7 +99,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
     // Create client instance for auth
     const client = await auth.getClient();
 
-    const spreadsheetId = '1zBKa0aa_P3M-Zq-x3lDh4jI9b7s--L4QYsNYqfVaJ-Y';
+    const spreadsheetId = '1NbmX0dsDYmkavqJas46Oeb2PrJC0W3eVbAG_UJ5NUIQ';
 
     // Write rows to spreadsheet
     await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.append({
@@ -110,8 +111,8 @@ const saveEnrollments = async (personDetails,ipAddress) => {
         values: rows,
       },
     });
-
     console.log('Enrollments Saved in Format 1 successfully');
+    bulkInsertEnrollments(rows);
   } catch (err) {
     console.error('Error writing to Google Sheets:', err);
   }

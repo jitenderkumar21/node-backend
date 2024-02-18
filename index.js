@@ -19,10 +19,14 @@ const moment = require('moment-timezone');
 const momentTime = require('moment');
 const sendEmailToTeacher = require('./emails/teacherEmail');
 const whatsappReminderCron = require('./crons/whatsappReminderCron');
+const teacherEmailReminderCron = require('./crons/teacherEmailReminderCron');
 const createWhatsappReminders = require('./createWhatsappReminders');
 const getIpInfo = require('./location/IPInfo'); // Import the module
 const saveEnrollments = require('./sheets/saveEnrollments');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
+const createTeacherReminder = require('./reminders/createTeacherReminder')
+const teacherInviteInfo = require('./teacherInviteInfo');
+// const classIdTimingMap = require('./sheets/classIdTimingMap');
 const {
   updateCounts,
   getAllClassCounts
@@ -52,9 +56,15 @@ app.post('/test', async (req, res) => {
   let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
   let classDisplayName = "Class on Sunday";
   // const ipAddress = req.ip || req.connection.remoteAddress;
-  // saveEnrollments(req.body,'152.59.194.85');
+  saveEnrollments(req.body,'152.59.194.85');
   // createWhatsappReminders(req.body,req.query.timezone);
-  sendEmailToUs(req.body,req.query.timezone,'152.59.194.85')
+  // const invitesInfo =  await teacherInviteInfo();
+
+  // const inviteClassInfo = invitesInfo['43'];
+  // const classIdTimings = await classIdTimingMap();
+  // console.log(inviteClassInfo);
+  // console.log('classIdTimings',classIdTimings);
+  // createTeacherReminder('43_1','Test 1',inviteClassInfo,classIdTimings)
   res.send('Sent teacher Email');
 });
 
@@ -299,4 +309,5 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
   // myCronJob.start();
   // whatsappReminderCron.start();
+  teacherEmailReminderCron.start();
 });
