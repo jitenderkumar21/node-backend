@@ -238,6 +238,7 @@ app.post('/save', async (req, res) => {
   createWhatsappReminders(req.body,req.query.timezone);
   
   saveEnrollment(req.body,ipAddress);
+  insertParentInfo(req.body);
   res.status(200).json({ message: 'Registration Successful' });
   });
 

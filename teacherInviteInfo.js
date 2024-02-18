@@ -1,6 +1,7 @@
 // googleSheets.js
 
 const { google } = require('googleapis');
+require('dotenv').config();
 
 const teacherInviteInfo = async () => {
   try {

@@ -3,6 +3,7 @@ const moment = require('moment-timezone');
 const teacherInviteInfo = require('../teacherInviteInfo'); // Import the module
 const getIpInfo = require('../location/IPInfo'); // Import the module
 const ClassUtility = require('../utils/subClassUtility');
+require('dotenv').config();
 
 const saveEnrollments = async (personDetails,ipAddress) => {
   try {
@@ -100,7 +101,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
     // Create client instance for auth
     const client = await auth.getClient();
 
-    const spreadsheetId = '1zBKa0aa_P3M-Zq-x3lDh4jI9b7s--L4QYsNYqfVaJ-Y';
+    const spreadsheetId = process.env.RESPONSE_SHEET_ID;
 
     // Write rows to spreadsheet
     await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.append({

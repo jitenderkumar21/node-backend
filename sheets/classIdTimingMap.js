@@ -2,6 +2,7 @@
 
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
+require('dotenv').config();
 
 const classIdTimingMap = async () => {
   try {
@@ -14,7 +15,7 @@ const classIdTimingMap = async () => {
     // Create client instance for auth
     const client = await auth.getClient();
 
-    const spreadsheetId = '1S0TqlZmzF-U2id7XsNnUXQxTPxqxMDqMez3RIhIZJf4';
+    const spreadsheetId = process.env.CLASSES_SHEET_ID;
 
     const readResult = await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.get({
         auth,

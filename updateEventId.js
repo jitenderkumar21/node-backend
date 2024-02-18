@@ -1,6 +1,7 @@
 // googleSheets.js
 
 const { google } = require('googleapis');
+require('dotenv').config();
 
 const updateEventId = async (index, newValue) => {
   try {
@@ -16,7 +17,7 @@ const updateEventId = async (index, newValue) => {
     // Create client instance for auth
     const client = await auth.getClient();
 
-    const spreadsheetId = '1S0TqlZmzF-U2id7XsNnUXQxTPxqxMDqMez3RIhIZJf4';
+    const spreadsheetId = process.env.CLASSES_SHEET_ID;
 
     if (index!=undefined && newValue!=undefined) {
         // Update the cell in Google Sheets
