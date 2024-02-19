@@ -112,7 +112,54 @@ async function getChildInfoByClassId(classId) {
   }
 }
 
+async function getEnrollmentsByClassId(classId, pageNumber = 1) {
+  const pageSize = 10
+  const client = await connect();
+
+  try {
+    const offset = (pageNumber - 1) * pageSize;
+
+    const result = await client.query(
+      `
+      SELECT *
+      FROM enrollments
+      WHERE class_id = $1
+      ORDER BY timestamp
+      OFFSET $2
+      LIMIT $3;
+    `,
+      [classId, offset, pageSize]
+    );
+
+    // Convert the result.rows to JSON objects
+    const jsonEnrollments = result.rows.map(enrollment => {
+      return {
+        // timestamp: enrollment.timestamp,
+        parent_name: enrollment.parent_name,
+        child_name: enrollment.child_name,
+        email: enrollment.email,
+        child_age: enrollment.child_age,
+        phone_number: enrollment.phone_number,
+      };
+    });
+
+    return {
+      total: result.rowCount,
+      pageSize: pageSize,
+      pageNumber: pageNumber,
+      totalPages: Math.ceil(result.rowCount / pageSize),
+      enrollments: jsonEnrollments,
+    };
+  } catch (error) {
+    console.error('Error fetching paginated enrollments by classId:', error);
+    throw new Error('Error fetching paginated enrollments by classId');
+  } finally {
+    await disconnect(client);
+  }
+}
+
 module.exports = {
   bulkInsertEnrollments,
   getChildInfoByClassId,
+  getEnrollmentsByClassId,
 };

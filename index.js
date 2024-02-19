@@ -38,6 +38,8 @@ const {
   getParentInfoByEmail,
 } = require('./dao/parentsInfoDao')
 
+const {getEnrollmentsByClassId} = require('./dao/enrollmentsDao');
+
 
 app.use(express.json());
 
@@ -114,12 +116,20 @@ app.get('/info', async (req, res) => {
   res.json(classes);
 });
 
-app.get('/report', async (req, res) => {
+app.get('/cms/report', async (req, res) => {
   const pageNumber = req.query.pageNumber;
   const filters = { classId: req.query.classId, status: req.query.status, channel: req.query.channel, type: req.query.type }
   const systemReport = await getAllSystemReports(filters,pageNumber);
   res.json(systemReport);
 });
+
+app.get('/cms/enrollments', async (req, res) => {
+  const classId = req.query.classId;
+  const pageNumber = req.query.pageNumber;
+  const systemReport = await getEnrollmentsByClassId(classId,pageNumber);
+  res.json(systemReport);
+});
+
 
 app.get('/parent/info', async (req, res) => {
   const email = req.query.email;
