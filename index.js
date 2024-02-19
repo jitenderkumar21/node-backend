@@ -24,13 +24,10 @@ const createWhatsappReminders = require('./createWhatsappReminders');
 const getIpInfo = require('./location/IPInfo'); // Import the module
 const saveEnrollments = require('./sheets/saveEnrollments');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
-<<<<<<< HEAD
 const {  getAllSystemReports } = require('./dao/systemReportDao')
-=======
 const createTeacherReminder = require('./reminders/createTeacherReminder')
 const teacherInviteInfo = require('./teacherInviteInfo');
 // const classIdTimingMap = require('./sheets/classIdTimingMap');
->>>>>>> 498fb41dc903b7e2b9d28b065330abb612f5c65b
 const {
   updateCounts,
   getAllClassCounts
@@ -66,19 +63,8 @@ app.post('/test', async (req, res) => {
   // const ipAddress = req.ip || req.connection.remoteAddress;
   saveEnrollments(req.body,'152.59.194.85');
   // createWhatsappReminders(req.body,req.query.timezone);
-<<<<<<< HEAD
   const result = await getParentInfoByEmail('jitender.kumar@iitgn.ac.in');
   res.send(result);
-=======
-  // const invitesInfo =  await teacherInviteInfo();
-
-  // const inviteClassInfo = invitesInfo['43'];
-  // const classIdTimings = await classIdTimingMap();
-  // console.log(inviteClassInfo);
-  // console.log('classIdTimings',classIdTimings);
-  // createTeacherReminder('43_1','Test 1',inviteClassInfo,classIdTimings)
-  res.send('Sent teacher Email');
->>>>>>> 498fb41dc903b7e2b9d28b065330abb612f5c65b
 });
 
 app.get('/test2', async (req, res) => {
