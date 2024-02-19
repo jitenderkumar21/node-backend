@@ -19,11 +19,18 @@ const moment = require('moment-timezone');
 const momentTime = require('moment');
 const sendEmailToTeacher = require('./emails/teacherEmail');
 const whatsappReminderCron = require('./crons/whatsappReminderCron');
+const teacherEmailReminderCron = require('./crons/teacherEmailReminderCron');
 const createWhatsappReminders = require('./createWhatsappReminders');
 const getIpInfo = require('./location/IPInfo'); // Import the module
 const saveEnrollments = require('./sheets/saveEnrollments');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
+<<<<<<< HEAD
 const {  getAllSystemReports } = require('./dao/systemReportDao')
+=======
+const createTeacherReminder = require('./reminders/createTeacherReminder')
+const teacherInviteInfo = require('./teacherInviteInfo');
+// const classIdTimingMap = require('./sheets/classIdTimingMap');
+>>>>>>> 498fb41dc903b7e2b9d28b065330abb612f5c65b
 const {
   updateCounts,
   getAllClassCounts
@@ -57,10 +64,21 @@ app.post('/test', async (req, res) => {
   let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
   let classDisplayName = "Class on Sunday";
   // const ipAddress = req.ip || req.connection.remoteAddress;
-  // saveEnrollments(req.body,'152.59.194.85');
+  saveEnrollments(req.body,'152.59.194.85');
   // createWhatsappReminders(req.body,req.query.timezone);
+<<<<<<< HEAD
   const result = await getParentInfoByEmail('jitender.kumar@iitgn.ac.in');
   res.send(result);
+=======
+  // const invitesInfo =  await teacherInviteInfo();
+
+  // const inviteClassInfo = invitesInfo['43'];
+  // const classIdTimings = await classIdTimingMap();
+  // console.log(inviteClassInfo);
+  // console.log('classIdTimings',classIdTimings);
+  // createTeacherReminder('43_1','Test 1',inviteClassInfo,classIdTimings)
+  res.send('Sent teacher Email');
+>>>>>>> 498fb41dc903b7e2b9d28b065330abb612f5c65b
 });
 
 app.get('/test2', async (req, res) => {
@@ -318,4 +336,5 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
   // myCronJob.start();
   // whatsappReminderCron.start();
+  teacherEmailReminderCron.start();
 });
