@@ -1,7 +1,8 @@
 const nodemailer = require('nodemailer');
 const { Client } = require('pg');
 const { v4: uuidv4 } = require('uuid');
-const { getChildInfoByClassId } = require('../dao/enrollmentsDao'); // Replace with the actual path to your DAO file
+const { getChildInfoByClassId } = require('../dao/enrollmentsDao');
+const {  insertSystemReport } = require('../dao/systemReportDao')
 
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
@@ -141,9 +142,13 @@ const sendTeacherReminderEmail = async (reminderId,teacherReminderInfo) => {
     if (error) {
       console.error('Error sending reminder email to teacher:', error);
       updateReminderStatus(reminderId, 'FAILURE', error.message);
+      const reportData = { channel: 'EMAIL', type: 'Teacher Reminder', status: 'FAILURE', reason: error.message, parentEmail: teacherReminderInfo.email, classId:teacherReminderInfo.classId, reminderId:reminderId};
+      insertSystemReport(reportData);
     } else {
       console.log('Reminder email sent to teacher:', teacherReminderInfo.email);
       updateReminderStatus(reminderId, 'SUCCESS', 'Teacher Reminder Email sent successfully');
+      const reportData = { channel: 'EMAIL', type: 'Teacher Reminder', status: 'SUCCESS', parentEmail: teacherReminderInfo.email, classId:teacherReminderInfo.classId, reminderId:reminderId};
+      insertSystemReport(reportData);
     }
   });
 };
