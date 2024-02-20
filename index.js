@@ -25,7 +25,6 @@ const getIpInfo = require('./location/IPInfo'); // Import the module
 const saveEnrollments = require('./sheets/saveEnrollments');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 const {  getAllSystemReports } = require('./dao/systemReportDao')
-const createTeacherReminder = require('./reminders/createTeacherReminder')
 const teacherInviteInfo = require('./teacherInviteInfo');
 // const classIdTimingMap = require('./sheets/classIdTimingMap');
 const {

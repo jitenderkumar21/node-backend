@@ -9,6 +9,7 @@ const classIdTimingMap = require('./sheets/classIdTimingMap');
 const ClassUtility = require('./utils/subClassUtility');
 const { fetchClassInvitations, insertClassInvitation} = require('./dao/classIdToInviteMapping');
 const {  insertSystemReport } = require('./dao/systemReportDao')
+const createTeacherReminder = require('./reminders/createTeacherReminder')
 
 const teacherCalendar = async (personDetails) => {
 
@@ -110,7 +111,7 @@ try{
                     const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
                     // console.log('Modified class name',modifiedClassName);
                     if(classInviteId==undefined){
-        
+                        createTeacherReminder(subClassId,modifiedClassName,inviteClassInfo,classIdTimings);                       
                         const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
                         const userEndDateTime = classIdTimings.get(subClassId)[1];    // Replace this with the user's input
                         const convertToDateTimeFormat = (userDateTime) => {

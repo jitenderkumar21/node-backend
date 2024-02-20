@@ -16,6 +16,15 @@ const sendEmail = async (personDetails,userTimeZone) => {
           pass: 'xcvf sxnm yctg jvte',
         },
       });
+      const commPref = personDetails.commPref;
+      let formattedCommPref = 'email';
+      if (commPref.length === 1) {
+        formattedCommPref = commPref[0];
+      } else if (commPref.length === 2) {
+        formattedCommPref = commPref.join(' and ');
+      } else {
+        formattedCommPref = commPref.slice(0, -1).join(', ') + ', and ' + commPref.slice(-1);
+      }
 
       const prefix = "want another slot:";
       let flag = true;
@@ -206,16 +215,14 @@ const sendEmail = async (personDetails,userTimeZone) => {
           <ul>
               <li><strong>Identity Verification:</strong> Ensuring learner safety as our highest priority,<strong> we request you to switch on ${personDetails.childName}'s camera at the start of each class for a quick identity check.</strong> While ${personDetails.childName} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
               <li><strong>Class Materials:</strong> The required class materials and details about homework submissions, if any, will be sent to you before class. Keep an eye on your email for these details.</li>
-              <li><strong>Class Alerts:</strong> We have blocked your calendar for class; please let us know if you are unable to see it. We send class reminders via email & WhatsApp. Feel free to share your communication preferences with us!</li>
+              <li><strong>Class Alerts:</strong> We have blocked your calendar for class; please let us know if you are unable to see it. We will send class reminders via ${formattedCommPref} as per your communication preferences.</li>
               <li><strong>Feedback:</strong> Class time includes a 10-minute feedback session. We kindly request ${personDetails.childName} to stay back, and share their class experience with us.</li>
               <li><strong>Class Withdrawals:</strong> We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</li>
-              <li><strong>Code of Conduct:</strong> Classes are recorded for student safety, allowing parents to review study situations and enabling us to assess teacher performance. Recorded videos are strictly confidential and for internal use only. We won't disclose them publicly or share with third parties without parental consent.</li>
+              <li><strong>Code of Conduct:</strong> Classes are recorded for student safety. The recorded classes are for internal use only and are strictly confidential. These would not be disclosed or shared without parental consent. PFA the <a href="https://docs.google.com/document/d/1kU49ck4nGge6_k4Myua_eUpBx06MADlFxm_xRdUz7Os/edit" target="_blank">Code of Conduct Policy</a> for your reference.</li>
           </ul>
           </p>
 
           <p>Your feedback is valuable to us! Please feel free to share any feedback with us <a href="https://docs.google.com/forms/d/e/1FAIpQLSflsLJJuG74V1jjS29B-R1TVPbD74e9H5CkKVQMX6CzM87AZQ/viewform">here!</a></p>
-
-          <p>PFA our <a href="https://docs.google.com/document/d/1kU49ck4nGge6_k4Myua_eUpBx06MADlFxm_xRdUz7Os/edit" target="_blank">Code of Conduct Policy</a> for your reference.</p>
 
           <p>Happy Learning! </p>
 

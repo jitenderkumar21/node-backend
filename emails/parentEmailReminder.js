@@ -191,6 +191,7 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
           emailContent+=`
           <li><strong>Identity Verification :</strong> Ensuring learner safety as our highest priority, we request you to switch on ${formattedNames}'s camera at the start of each class for a quick identity check. While ${formattedNames} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
           <li><strong>Feedback :</strong>Class time includes a 10-minute feedback session. We kindly request ${formattedNames} to stay back, and share their class experience with us.</li>
+          <li><strong>Class Withdrawals:</strong> We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</li>
           </ul>
           <p>Happy Learning! </p>
 
