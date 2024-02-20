@@ -171,7 +171,7 @@ const whatsappReminderCron = cron.schedule('*/15 * * * *', async () => {
         await currentClient.connect();
 
         // Fetch entries where reminder_time is less than or equal to the current time and reminder_status is 'NOT_SENT'
-        const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_status = $2 ORDER BY created_on', [currentTimeUTC, 'NOT_SENT']);
+        const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_status = $2 and reminder_type!=$3 ORDER BY created_on', [currentTimeUTC, 'NOT_SENT','TEACHER_REMINDER']);
 
         // Process each entry, send reminders, and update reminder status
         for (const row of result.rows) {
