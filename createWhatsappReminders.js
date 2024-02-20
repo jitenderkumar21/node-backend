@@ -164,17 +164,17 @@ async function createWhatsappReminders(jsonData,userTimeZone) {
             const morningReminderTime = calculateMorningReminderTime(info.classStartTime,userTimeZone);
             // console.log('beforeClassReminderTime',beforeClassReminderTime);
             // console.log('morningReminderTime',morningReminderTime);
-            await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15');
-            await createReminder(info,morningReminderTime,'MORNING_8');
-            await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_P');
-            await createReminder(info,morningReminderTime,'MORNING_8_P');
+            // await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15');
+            // await createReminder(info,morningReminderTime,'MORNING_8');
+            // await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_P');
+            // await createReminder(info,morningReminderTime,'MORNING_8_P');
         }if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix)) && communicationPreference.includes('Email')){
             const beforeClassReminderTime = calculateReminderTime(info.classStartTime);
             const morningReminderTime = calculateMorningReminderTime(info.classStartTime,userTimeZone);
             // console.log('beforeClassReminderTime',beforeClassReminderTime);
             // console.log('morningReminderTime',morningReminderTime);
-            createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_EMAIL');
-            createReminder(info,morningReminderTime,'MORNING_8_EMAIL');
+            // createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_EMAIL');
+            // createReminder(info,morningReminderTime,'MORNING_8_EMAIL');
         }else{
             console.log('Not creating reminder as communicationPreference:',communicationPreference);
         }
