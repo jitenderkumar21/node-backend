@@ -4,6 +4,7 @@ const { Client } = require('pg');
 const request = require('request');
 const axios = require('axios');
 const sendParentReminderEmail = require('../emails/parentEmailReminder');
+const classCancelltionInfo = require('../sheets/classCancellationInfo');
 
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
@@ -44,6 +45,7 @@ const sendReminder = async (reminderId,reminder_type, additionalInfo) => {
 
 const sendWhatsappReminder = async (reminderId,reminder_type, additionalInfo, callback) => {
     try {
+        const classStartTimesMap = await classCancelltionInfo();
         const parentName = additionalInfo.parentName;
         const kidName = additionalInfo.kidName;
         const namesArray = kidName.split(',').map(name => name.trim());
@@ -70,24 +72,19 @@ const sendWhatsappReminder = async (reminderId,reminder_type, additionalInfo, ca
             message = `
 Hello ${parentName},
 
-Just a quick reminder that ${formattedNames}'s class is scheduled for today. Please make sure ${formattedNames} ${isMultipleKids ? 'are' : 'is'} in a quiet space for learning! 
+Just a friendly reminder that ${formattedNames}'s class is scheduled for today.
 
-Here are more details about the class:
-
+Class Details
 - Class Name: ${className}
 - Class Timing: ${classTiming}
-- Zoom Meeting Link: ${zoomMeetingLink}
-- Meeting ID: ${meetingId}
-- Passcode: ${passcode}
+- Zoom Details:
+    - ${zoomMeetingLink}
+    - ${meetingId}
+    - ${passcode}
 
-We would request you to join class with your video on, so that our team can verify the learner’s identity.
+If you have any questions or if ${formattedNames} cannot join today, feel free to text us back!
 
-If you have any questions or if your ${isMultipleKids ? 'kids' : 'kid'} cannot join today, feel free to text us back!
-
-Excited to see your ${isMultipleKids ? 'kids' : 'kid'} in the class!
-
-Best Regards,
-Coral Academy
+Happy Learning!
 `;
       
     }else if (reminder_type === 'BEFORE_CLASS_15') {
@@ -100,33 +97,29 @@ Just a friendly reminder that ${formattedNames}'s class is in 15 Minutes. Please
 Class Details
 - Class Name: ${className}
 - Class Timing: ${classTiming}
-- Zoom Meeting Link: ${zoomMeetingLink}
-- Meeting ID: ${meetingId}
-- Passcode: ${passcode}
+- Zoom Details:
+    - ${zoomMeetingLink}
+    - ${meetingId}
+    - ${passcode}
 
 We would request you to join class with your video on, so that our team can verify the learner's identity.
 
 If you have any questions or if ${formattedNames} cannot join today, feel free to text us back!
-We hope to see ${formattedNames} in class!
 
-Best Regards,
-Coral Academy
+Happy Learning!
 `;
     }else {
-            
-if (prerequisite !== 'There are no prerequisites needed for the class.') {
-    message = `
-Here are the prerequisites for the class:
 
-- ${prerequisite}
-
-Best Regards,
-Coral Academy
-`
-} else {
-    callback(false, 'Skipping reminder due to "No prerequisite"');
-    return;
-
+        if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][1].toLowerCase() !== 'there are no prerequisites needed for the class.') {
+            message = `Prerequisites: ${classStartTimesMap[classid][1]}`
+        }
+        if (classStartTimesMap[classid][7] !== undefined && classStartTimesMap[classid][7] !== '') {
+            message += `Class Material : ${classStartTimesMap[classid][7]}</li>`;
+        }
+          
+        if(message==undefined || message=='') {
+            callback(false, 'Skipping reminder due to "No prerequisite"');
+            return; 
         }
 }
 
