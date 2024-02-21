@@ -56,7 +56,7 @@ const sendTeacherReminderEmail = async (reminderId,teacherReminderInfo) => {
         <title>Class Reminder - ${teacherReminderInfo.className}</title>
         <style>
           .learner-table {
-            width: 100%;
+            width: 60%;
             border-collapse: collapse;
             margin-top: 20px;
           }
@@ -84,13 +84,13 @@ const sendTeacherReminderEmail = async (reminderId,teacherReminderInfo) => {
       </head>
       <body>
         <p>Hi ${teacherReminderInfo.teacherName},</p>
-        <p>Just a friendly reminder that your class ${teacherReminderInfo.className} is scheduled today.</p>
+        <p>Just a friendly reminder that your class <strong>${teacherReminderInfo.className}</strong> is scheduled today.</p>
         <p><u><strong>Class Details:</strong></u></p>
         <p>Day & Date: ${teacherReminderInfo.DayandDate}</p>
         <p>Time: ${teacherReminderInfo.classTime}</p>
         <p>Zoom Link: ${teacherReminderInfo.zoomMeetingLink} , Meeting ID: ${teacherReminderInfo.meetingId}, Passcode: ${teacherReminderInfo.passcode}
         <p>Please find the learner details below:</p>
-        <p>Total Enrollments: ${totalEnrollments}</p>
+        <p>Total Enrollments: ${totalEnrollments} (This number might vary due to some expected no shows & last minute enrollments)</p>
 
         ${learnerDetailsTable}
         <p><strong><u>Things to note :</u></strong></p>
