@@ -5,7 +5,7 @@ const sendTeacherReminderEmail = require('../emails/teacherEmailReminder');
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
 
-const teacherEmailReminderCron = cron.schedule('* * * * *', async () => {
+const teacherEmailReminderCron = cron.schedule('*/30 * * * *', async () => {
     const currentClient = new Client({
         connectionString: connectionString,
     });
