@@ -5,7 +5,7 @@ const sendTeacherReminderEmail = require('../emails/teacherEmailReminder');
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
 
-const teacherEmailReminderCron = cron.schedule('*/5 * * * *', async () => {
+const teacherEmailReminderCron = cron.schedule('* * * * *', async () => {
     const currentClient = new Client({
         connectionString: connectionString,
     });
@@ -16,11 +16,12 @@ const teacherEmailReminderCron = cron.schedule('*/5 * * * *', async () => {
         // Connect to the PostgreSQL database
         await currentClient.connect();
 
-        const currentTimePlus20Minutes = new Date(new Date().getTime() + 20 * 60 * 1000).toUTCString();
+        const currentTimePlus20Minutes = new Date(new Date().getTime() - 20 * 60 * 1000).toUTCString();
+        console.log('currentTimePlus20Minutes',currentTimePlus20Minutes);
 
         // Fetch entries where reminder_time is less than or equal to the current time and reminder_status is 'NOT_SENT'
         const result = await currentClient.query(
-            'SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_time < $2 AND reminder_status = $3 AND reminder_type = $4 ORDER BY created_on',
+            'SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_time > $2 AND reminder_status = $3 AND reminder_type = $4 ORDER BY created_on',
             [currentTimeUTC, currentTimePlus20Minutes, 'NOT_SENT', 'TEACHER_REMINDER']
           );
 
