@@ -177,8 +177,8 @@ const whatsappReminderCron = cron.schedule('*/15 * * * *', async () => {
         for (const row of result.rows) {
             const reminderId = row.id;
             const additionalInfo = row.additional_info;
-            // console.log(reminderId, additionalInfo)
-            await sendReminder(reminderId,row.reminder_type, additionalInfo);
+            console.log(reminderId, additionalInfo)
+            // await sendReminder(reminderId,row.reminder_type, additionalInfo);
         }
     } catch (error) {
         console.error('Error in cron job:', error);
