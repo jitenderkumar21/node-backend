@@ -15,30 +15,30 @@ const sendReminder = async (reminderId,reminder_type, additionalInfo) => {
         sendParentReminderEmail(reminderId,reminder_type, additionalInfo)
     }
     else{
-        console.log('Sending whatsapp reminder');
+        console.log('Not Sending Whatsapp Reminder for reminderId: ', reminderId);
     // Send WhatsApp reminder with callback to handle success and response body
-        await sendWhatsappReminder(reminderId,reminder_type, additionalInfo, (success, responseBody) => {
-            // After sending the reminder, update the reminder_status and save response body
-            const updateClient = new Client({
-                connectionString: connectionString,
-            });
-            updateClient.connect();
-            const statusToUpdate = success ? 'SUCCESS' : 'FAILURE';
-            updateClient.query('UPDATE reminders SET reminder_status = $1, response_body = $2 WHERE id = $3', [statusToUpdate, responseBody, reminderId], (err, result) => {
-                updateClient.end();
-                if (err) {
-                    console.error('Error updating reminder status:', err);
-                } else {
-                    console.log('Reminder status updated successfully for ID:', reminderId);
-                }
-            });
-            // if(statusToUpdate==='FAILURE'){
-            //     console.log('WA reminder failed, sending email reminder for ID:', reminderId);
-            //     if(reminder_type==='BEFORE_CLASS_15' || reminder_type==='MORNING_8'){
-            //         sendParentReminderEmail(reminderId,reminder_type, additionalInfo)
-            //     }
-            // }
-        });
+        // await sendWhatsappReminder(reminderId,reminder_type, additionalInfo, (success, responseBody) => {
+        //     // After sending the reminder, update the reminder_status and save response body
+        //     const updateClient = new Client({
+        //         connectionString: connectionString,
+        //     });
+        //     updateClient.connect();
+        //     const statusToUpdate = success ? 'SUCCESS' : 'FAILURE';
+        //     updateClient.query('UPDATE reminders SET reminder_status = $1, response_body = $2 WHERE id = $3', [statusToUpdate, responseBody, reminderId], (err, result) => {
+        //         updateClient.end();
+        //         if (err) {
+        //             console.error('Error updating reminder status:', err);
+        //         } else {
+        //             console.log('Reminder status updated successfully for ID:', reminderId);
+        //         }
+        //     });
+        //     // if(statusToUpdate==='FAILURE'){
+        //     //     console.log('WA reminder failed, sending email reminder for ID:', reminderId);
+        //     //     if(reminder_type==='BEFORE_CLASS_15' || reminder_type==='MORNING_8'){
+        //     //         sendParentReminderEmail(reminderId,reminder_type, additionalInfo)
+        //     //     }
+        //     // }
+        // });
     }
 };
 
@@ -165,21 +165,21 @@ const whatsappReminderCron = cron.schedule('* * * * *', async () => {
     });
     try {
         const currentTimeUTC = new Date().toUTCString();
-        const currentTimePlus20Minutes = new Date(new Date().getTime() + 20 * 60 * 1000).toUTCString();
+        const currentTimeMinus20Minutes = new Date(new Date().getTime() - 20 * 60 * 1000).toUTCString();
         console.log(`Cron job is running every 15 minute at ${currentTimeUTC}`);
 
         // Connect to the PostgreSQL database
         await currentClient.connect();
 
         // Fetch entries where reminder_time is less than or equal to the current time and reminder_status is 'NOT_SENT'
-        const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_time < $2 AND reminder_status = $3 and reminder_type!=$4 AND class_id=$5 ORDER BY created_on', [currentTimeUTC,currentTimePlus20Minutes, 'NOT_SENT','TEACHER_REMINDER','125_1']);
+        const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_time > $2 AND reminder_status = $3 and reminder_type!=$4 AND class_id=$5 ORDER BY created_on', [currentTimeUTC,currentTimeMinus20Minutes, 'NOT_SENT','TEACHER_REMINDER','125_1']);
 
         // Process each entry, send reminders, and update reminder status
         for (const row of result.rows) {
             const reminderId = row.id;
             const additionalInfo = row.additional_info;
-            console.log(reminderId, row.class_id, additionalInfo)
-            // await sendReminder(reminderId,row.reminder_type, additionalInfo);
+            // console.log(reminderId, row.class_id, additionalInfo)
+            await sendReminder(reminderId,row.reminder_type, additionalInfo);
         }
     } catch (error) {
         console.error('Error in cron job:', error);
