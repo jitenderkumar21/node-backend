@@ -17,7 +17,7 @@ const sendReminder = async (reminderId,reminder_type, additionalInfo) => {
         sendParentReminderEmail(reminderId,reminder_type, additionalInfo)
     }
     else{
-        console.log('Sending whatsapp reminder');
+        console.log('Not Sending Whatsapp Reminder for reminderId: ', reminderId);
     // Send WhatsApp reminder with callback to handle success and response body
         await sendWhatsappReminder(reminderId,reminder_type, additionalInfo, (success, responseBody) => {
             // After sending the reminder, update the reminder_status and save response body
@@ -162,23 +162,21 @@ const whatsappReminderCron = cron.schedule('*/15 * * * *', async () => {
     });
     try {
         const currentTimeUTC = new Date().toUTCString();
+        const currentTimeMinus20Minutes = new Date(new Date().getTime() - 20 * 60 * 1000).toUTCString();
         console.log(`Cron job is running every 15 minute at ${currentTimeUTC}`);
 
         // // Connect to the PostgreSQL database
         await currentClient.connect();
 
         // Fetch entries where reminder_time is less than or equal to the current time and reminder_status is 'NOT_SENT'
-        const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_status = $2 and reminder_type!=$3 ORDER BY created_on', [currentTimeUTC, 'NOT_SENT','TEACHER_REMINDER']);
+        const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_time > $2 AND reminder_status = $3 and reminder_type!=$4 ORDER BY created_on', [currentTimeUTC,currentTimeMinus20Minutes, 'NOT_SENT','TEACHER_REMINDER']);
 
         // // Process each entry, send reminders, and update reminder status
         for (const row of result.rows) {
             const reminderId = row.id;
             const additionalInfo = row.additional_info;
-            console.log(reminderId, additionalInfo)
-            if(reminderId===2919 || reminderId===2917 || reminderId===2918 || reminderId===2916){
-                console.log('yes');
-                await sendReminder(reminderId,row.reminder_type, additionalInfo);
-            }
+            // console.log(reminderId, row.class_id, additionalInfo)
+            await sendReminder(reminderId,row.reminder_type, additionalInfo);
         }
     } catch (error) {
         console.error('Error in cron job:', error);
