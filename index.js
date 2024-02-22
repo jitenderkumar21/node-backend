@@ -331,5 +331,5 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
   // myCronJob.start();
   whatsappReminderCron.start();
-  teacherEmailReminderCron.start();
+  // teacherEmailReminderCron.start();
 });
