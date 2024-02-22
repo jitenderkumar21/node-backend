@@ -165,18 +165,18 @@ const whatsappReminderCron = cron.schedule('*/15 * * * *', async () => {
         console.log(`Cron job is running every 15 minute at ${currentTimeUTC}`);
 
         // // Connect to the PostgreSQL database
-        await currentClient.connect();
+        // await currentClient.connect();
 
-        // Fetch entries where reminder_time is less than or equal to the current time and reminder_status is 'NOT_SENT'
-        const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_time > $2 AND reminder_status = $3 and reminder_type!=$4 ORDER BY created_on', [currentTimeUTC,currentTimeMinus20Minutes, 'NOT_SENT','TEACHER_REMINDER']);
+        // // Fetch entries where reminder_time is less than or equal to the current time and reminder_status is 'NOT_SENT'
+        // const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_time > $2 AND reminder_status = $3 and reminder_type!=$4 ORDER BY created_on', [currentTimeUTC,currentTimeMinus20Minutes, 'NOT_SENT','TEACHER_REMINDER']);
 
-        // // Process each entry, send reminders, and update reminder status
-        for (const row of result.rows) {
-            const reminderId = row.id;
-            const additionalInfo = row.additional_info;
-            // console.log(reminderId, row.class_id, additionalInfo)
-            await sendReminder(reminderId,row.reminder_type, additionalInfo);
-        }
+        // // // Process each entry, send reminders, and update reminder status
+        // for (const row of result.rows) {
+        //     const reminderId = row.id;
+        //     const additionalInfo = row.additional_info;
+        //     // console.log(reminderId, row.class_id, additionalInfo)
+        //     // await sendReminder(reminderId,row.reminder_type, additionalInfo);
+        // }
     } catch (error) {
         console.error('Error in cron job:', error);
     } finally {
