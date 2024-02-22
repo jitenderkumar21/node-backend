@@ -81,10 +81,9 @@ Just a friendly reminder that ${formattedNames}'s class is scheduled for today.
 Class Details
 - Class Name: ${className}
 - Class Timing: ${classTiming}
-- Zoom Details:
-    - ${zoomMeetingLink}
-    - ${meetingId}
-    - ${passcode}
+- Zoom Meeting Link: ${zoomMeetingLink}
+- Meeting ID: ${meetingId}
+- Passcode: ${passcode}
 
 If you have any questions or if ${formattedNames} cannot join today, feel free to text us back!
 
@@ -101,10 +100,9 @@ Just a friendly reminder that ${formattedNames}'s class is in 15 Minutes. Please
 Class Details
 - Class Name: ${className}
 - Class Timing: ${classTiming}
-- Zoom Details:
-    - ${zoomMeetingLink}
-    - ${meetingId}
-    - ${passcode}
+- Zoom Meeting Link: ${zoomMeetingLink}
+- Meeting ID: ${meetingId}
+- Passcode: ${passcode}
 
 We would request you to join class with your video on, so that our team can verify the learner's identity.
 
@@ -115,7 +113,8 @@ Happy Learning!
     }else {
         message = '';
         if (classStartTimesMap[classid] && classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][1].toLowerCase() !== 'there are no prerequisites needed for the class.') {
-            message+= `Prerequisites: ${classStartTimesMap[classid][1]}`
+            message+= `Prerequisites: ${classStartTimesMap[classid][1]}
+`
         }
         if (classStartTimesMap[classid][7] !== undefined && classStartTimesMap[classid][7] !== '') {
             message += `Class Material : ${classStartTimesMap[classid][7]}`;
