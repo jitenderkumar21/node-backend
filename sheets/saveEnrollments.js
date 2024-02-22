@@ -3,6 +3,9 @@ const moment = require('moment-timezone');
 const teacherInviteInfo = require('../teacherInviteInfo'); // Import the module
 const getIpInfo = require('../location/IPInfo'); // Import the module
 const ClassUtility = require('../utils/subClassUtility');
+require('dotenv').config();
+const {  insertSystemReport } = require('../dao/systemReportDao')
+const { bulkInsertEnrollments } = require('../dao/enrollmentsDao');
 
 const saveEnrollments = async (personDetails,ipAddress) => {
   try {
@@ -40,6 +43,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
           personDetails.childName,
           personDetails.email,
           personDetails.childAge,
+          personDetails.commPref.join(','),
           personDetails.phoneNumber,
           inviteClassInfo[1],
           personDetails.knowabout,
@@ -67,6 +71,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
         personDetails.childName,
         personDetails.email,
         personDetails.childAge,
+        personDetails.commPref.join(','),
         personDetails.phoneNumber,
         '', 
         personDetails.knowabout,
@@ -98,7 +103,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
     // Create client instance for auth
     const client = await auth.getClient();
 
-    const spreadsheetId = '1zBKa0aa_P3M-Zq-x3lDh4jI9b7s--L4QYsNYqfVaJ-Y';
+    const spreadsheetId = process.env.RESPONSE_SHEET_ID;
 
     // Write rows to spreadsheet
     await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.append({
@@ -110,10 +115,14 @@ const saveEnrollments = async (personDetails,ipAddress) => {
         values: rows,
       },
     });
-
     console.log('Enrollments Saved in Format 1 successfully');
+    bulkInsertEnrollments(rows);
+    const reportData = { channel: 'SHEETS', type: 'Save Enrollments', status: 'SUCCESS', parentEmail: personDetails.email};
+    insertSystemReport(reportData);
   } catch (err) {
-    console.error('Error writing to Google Sheets:', err);
+    console.error('Error writing to Format 1 Sheets:', err);
+    const reportData = { channel: 'SHEETS', type: 'Save Enrollments', status: 'FAILURE', reason: err.message, parentEmail: personDetails.email};
+    insertSystemReport(reportData);
   }
 };
 

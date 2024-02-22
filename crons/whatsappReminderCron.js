@@ -4,6 +4,8 @@ const { Client } = require('pg');
 const request = require('request');
 const axios = require('axios');
 const sendParentReminderEmail = require('../emails/parentEmailReminder');
+const classCancelltionInfo = require('../sheets/classCancellationInfo');
+const {  insertSystemReport } = require('../dao/systemReportDao')
 
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
@@ -17,33 +19,36 @@ const sendReminder = async (reminderId,reminder_type, additionalInfo) => {
     else{
         console.log('Not Sending Whatsapp Reminder for reminderId: ', reminderId);
     // Send WhatsApp reminder with callback to handle success and response body
-        // await sendWhatsappReminder(reminderId,reminder_type, additionalInfo, (success, responseBody) => {
-        //     // After sending the reminder, update the reminder_status and save response body
-        //     const updateClient = new Client({
-        //         connectionString: connectionString,
-        //     });
-        //     updateClient.connect();
-        //     const statusToUpdate = success ? 'SUCCESS' : 'FAILURE';
-        //     updateClient.query('UPDATE reminders SET reminder_status = $1, response_body = $2 WHERE id = $3', [statusToUpdate, responseBody, reminderId], (err, result) => {
-        //         updateClient.end();
-        //         if (err) {
-        //             console.error('Error updating reminder status:', err);
-        //         } else {
-        //             console.log('Reminder status updated successfully for ID:', reminderId);
-        //         }
-        //     });
-        //     // if(statusToUpdate==='FAILURE'){
-        //     //     console.log('WA reminder failed, sending email reminder for ID:', reminderId);
-        //     //     if(reminder_type==='BEFORE_CLASS_15' || reminder_type==='MORNING_8'){
-        //     //         sendParentReminderEmail(reminderId,reminder_type, additionalInfo)
-        //     //     }
-        //     // }
-        // });
+        await sendWhatsappReminder(reminderId,reminder_type, additionalInfo, (success, responseBody) => {
+            // After sending the reminder, update the reminder_status and save response body
+            const updateClient = new Client({
+                connectionString: connectionString,
+            });
+            updateClient.connect();
+            const statusToUpdate = success ? 'SUCCESS' : 'FAILURE';
+            updateClient.query('UPDATE reminders SET reminder_status = $1, response_body = $2 WHERE id = $3', [statusToUpdate, responseBody, reminderId], (err, result) => {
+                updateClient.end();
+                if (err) {
+                    console.error('Error updating reminder status:', err);
+                } else {
+                    console.log('Reminder status updated successfully for ID:', reminderId);
+                }
+            });
+            if(statusToUpdate==='FAILURE'){
+                console.log('WA reminder failed, sending email reminder for ID:', reminderId);
+                const reportData = { channel: 'WHATSAPP', type: 'Parent Reminder', status: 'FAILURE', reason: error.message, parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId};
+                insertSystemReport(reportData);
+            }else{
+                const reportData = { channel: 'WHATSAPP', type: 'Parent Reminder', status: 'SUCCESS', parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId};
+                insertSystemReport(reportData);
+            }
+        });
     }
 };
 
 const sendWhatsappReminder = async (reminderId,reminder_type, additionalInfo, callback) => {
     try {
+        const classStartTimesMap = await classCancelltionInfo();
         const parentName = additionalInfo.parentName;
         const kidName = additionalInfo.kidName;
         const namesArray = kidName.split(',').map(name => name.trim());
@@ -58,6 +63,7 @@ const sendWhatsappReminder = async (reminderId,reminder_type, additionalInfo, ca
         const className = additionalInfo.className;
         const classTiming = additionalInfo.classTiming;
         const prerequisite = additionalInfo.prerequisites;
+        const classid = additionalInfo.classId;
 
         // Hardcoded Zoom meeting details
         const zoomMeetingLink = additionalInfo.zoomMeetingLink;
@@ -70,24 +76,19 @@ const sendWhatsappReminder = async (reminderId,reminder_type, additionalInfo, ca
             message = `
 Hello ${parentName},
 
-Just a quick reminder that ${formattedNames}'s class is scheduled for today. Please make sure ${formattedNames} ${isMultipleKids ? 'are' : 'is'} in a quiet space for learning! 
+Just a friendly reminder that ${formattedNames}'s class is scheduled for today.
 
-Here are more details about the class:
-
+Class Details
 - Class Name: ${className}
 - Class Timing: ${classTiming}
-- Zoom Meeting Link: ${zoomMeetingLink}
-- Meeting ID: ${meetingId}
-- Passcode: ${passcode}
+- Zoom Details:
+    - ${zoomMeetingLink}
+    - ${meetingId}
+    - ${passcode}
 
-We would request you to join class with your video on, so that our team can verify the learner’s identity.
+If you have any questions or if ${formattedNames} cannot join today, feel free to text us back!
 
-If you have any questions or if your ${isMultipleKids ? 'kids' : 'kid'} cannot join today, feel free to text us back!
-
-Excited to see your ${isMultipleKids ? 'kids' : 'kid'} in the class!
-
-Best Regards,
-Coral Academy
+Happy Learning!
 `;
       
     }else if (reminder_type === 'BEFORE_CLASS_15') {
@@ -100,33 +101,29 @@ Just a friendly reminder that ${formattedNames}'s class is in 15 Minutes. Please
 Class Details
 - Class Name: ${className}
 - Class Timing: ${classTiming}
-- Zoom Meeting Link: ${zoomMeetingLink}
-- Meeting ID: ${meetingId}
-- Passcode: ${passcode}
+- Zoom Details:
+    - ${zoomMeetingLink}
+    - ${meetingId}
+    - ${passcode}
 
 We would request you to join class with your video on, so that our team can verify the learner's identity.
 
 If you have any questions or if ${formattedNames} cannot join today, feel free to text us back!
-We hope to see ${formattedNames} in class!
 
-Best Regards,
-Coral Academy
+Happy Learning!
 `;
     }else {
-            
-if (prerequisite !== 'There are no prerequisites needed for the class.') {
-    message = `
-Here are the prerequisites for the class:
-
-- ${prerequisite}
-
-Best Regards,
-Coral Academy
-`
-} else {
-    callback(false, 'Skipping reminder due to "No prerequisite"');
-    return;
-
+        message = '';
+        if (classStartTimesMap[classid] && classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][1].toLowerCase() !== 'there are no prerequisites needed for the class.') {
+            message+= `Prerequisites: ${classStartTimesMap[classid][1]}`
+        }
+        if (classStartTimesMap[classid][7] !== undefined && classStartTimesMap[classid][7] !== '') {
+            message += `Class Material : ${classStartTimesMap[classid][7]}`;
+        }
+          
+        if(message==undefined || message=='') {
+            callback(false, 'Skipping reminder due to No prerequisite or Class Materials');
+            return; 
         }
 }
 
@@ -168,13 +165,13 @@ const whatsappReminderCron = cron.schedule('*/15 * * * *', async () => {
         const currentTimeMinus20Minutes = new Date(new Date().getTime() - 20 * 60 * 1000).toUTCString();
         console.log(`Cron job is running every 15 minute at ${currentTimeUTC}`);
 
-        // Connect to the PostgreSQL database
+        // // Connect to the PostgreSQL database
         await currentClient.connect();
 
         // Fetch entries where reminder_time is less than or equal to the current time and reminder_status is 'NOT_SENT'
         const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_time > $2 AND reminder_status = $3 and reminder_type!=$4 ORDER BY created_on', [currentTimeUTC,currentTimeMinus20Minutes, 'NOT_SENT','TEACHER_REMINDER']);
 
-        // Process each entry, send reminders, and update reminder status
+        // // Process each entry, send reminders, and update reminder status
         for (const row of result.rows) {
             const reminderId = row.id;
             const additionalInfo = row.additional_info;

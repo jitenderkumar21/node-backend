@@ -2,7 +2,7 @@ const nodemailer = require('nodemailer');
 const classCancelltionInfo = require('../sheets/classCancellationInfo');
 const path = require('path');
 const { Client } = require('pg');
-
+const {  insertSystemReport } = require('../dao/systemReportDao')
 
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
@@ -108,7 +108,7 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
         
             emailContent+=`
             <li><strong>Identity Verification :</strong> Ensuring learner safety as our highest priority, we request you to switch on ${formattedNames}'s camera at the start of each class for a quick identity check. While ${formattedNames} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
-            <li><strong>Class Alerts :</strong> We have blocked your calendar for class; please let us know if you are unable to see it. We send class reminders via email & whatsapp. Feel free to share your communication preferences with us!</li>
+            <li><strong>Class Alerts :</strong> We have blocked your calendar for class; please let us know if you are unable to see it.</li>
             <li><strong>Feedback :</strong>Class time includes a 10-minute feedback session. We kindly request ${formattedNames} to stay back, and share their class experience with us.</li>
             <li><strong>Class Withdrawals :</strong> We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</li>
             </ul>
@@ -191,6 +191,7 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
           emailContent+=`
           <li><strong>Identity Verification :</strong> Ensuring learner safety as our highest priority, we request you to switch on ${formattedNames}'s camera at the start of each class for a quick identity check. While ${formattedNames} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
           <li><strong>Feedback :</strong>Class time includes a 10-minute feedback session. We kindly request ${formattedNames} to stay back, and share their class experience with us.</li>
+          <li><strong>Class Withdrawals:</strong> We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</li>
           </ul>
           <p>Happy Learning! </p>
 
@@ -218,15 +219,21 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
         if (error) {
           console.error('Error sending email reminder to parent for ID::', reminderId);
           updateReminderStatus(reminderId, 'FAILURE', 'Error sending email: ' + error.message);
+          const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'FAILURE', reason: error.message, parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId};
+          insertSystemReport(reportData);
         } else {
           console.log('Reminder Email sent to parent for ID:', reminderId);
           updateReminderStatus(reminderId, 'SUCCESS', 'Email sent successfully');
+          const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'SUCCESS', parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId};
+          insertSystemReport(reportData);
         }
       });
     }catch(err) {
       console.error('Error sending email reminder to parent for ID::', reminderId);
       updateReminderStatus(reminderId, 'FAILURE', 'Unexpected Error sending email: ' + err.message);
-      }
+      const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'FAILURE', reason: err.message, parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId};
+      insertSystemReport(reportData);
+    }
 
   };
 

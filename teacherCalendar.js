@@ -8,6 +8,8 @@ const moment = require('moment-timezone');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 const ClassUtility = require('./utils/subClassUtility');
 const { fetchClassInvitations, insertClassInvitation} = require('./dao/classIdToInviteMapping');
+const {  insertSystemReport } = require('./dao/systemReportDao')
+const createTeacherReminder = require('./reminders/createTeacherReminder')
 
 const teacherCalendar = async (personDetails) => {
 
@@ -109,7 +111,7 @@ try{
                     const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
                     // console.log('Modified class name',modifiedClassName);
                     if(classInviteId==undefined){
-        
+                        createTeacherReminder(subClassId,modifiedClassName,inviteClassInfo,classIdTimings);                       
                         const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
                         const userEndDateTime = classIdTimings.get(subClassId)[1];    // Replace this with the user's input
                         const convertToDateTimeFormat = (userDateTime) => {
@@ -205,6 +207,8 @@ Thankyou!
                             // Extract the event ID from the response
                             const eventId = response.data.id;
                             console.log(`Teacher Event created successfully for emails: ${teacherEmails} . Event ID:`, eventId);
+                            const reportData = { channel: 'CALENDER', type: 'Teacher Calender Block', status: 'SUCCESS', classId: classid};
+                            insertSystemReport(reportData);
                             }
                         );
                                    
@@ -225,7 +229,9 @@ authorize().then(listEvents).catch(console.error);
 
 
 }catch (err) {
-    console.error('Error sending clender invite to teacher', err);
+    const reportData = { channel: 'CALENDER', type: 'Teacher Calender Block', status: 'FAILURE', reason: 'Internal Server Error'};
+    insertSystemReport(reportData);
+    console.error('Error sending calender invite to teacher', err);
 }
 
 };

@@ -1,6 +1,7 @@
 // googleSheets.js
 
 const { google } = require('googleapis');
+require('dotenv').config();
 
 const teacherInviteInfo = async () => {
   try {
@@ -15,7 +16,7 @@ const teacherInviteInfo = async () => {
     // Create client instance for auth
     const client = await auth.getClient();
 
-    const spreadsheetId = '1S0TqlZmzF-U2id7XsNnUXQxTPxqxMDqMez3RIhIZJf4';
+    const spreadsheetId = process.env.CLASSES_SHEET_ID;
 
     const readResult = await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.get({
         auth,
@@ -30,7 +31,7 @@ const teacherInviteInfo = async () => {
       if (rows.length) {
         rows.slice(1).forEach((row) => {
             var classId = row[0];
-            var value = [row[1],row[11],row[12],row[19],row[20],row[22],row[23],row[24]];
+            var value = [row[1],row[11],row[12],row[19],row[20],row[22],row[23],row[24],row[14]];
             teacherInviteInfo[classId] = value;
         });
       } else {

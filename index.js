@@ -19,15 +19,25 @@ const moment = require('moment-timezone');
 const momentTime = require('moment');
 const sendEmailToTeacher = require('./emails/teacherEmail');
 const whatsappReminderCron = require('./crons/whatsappReminderCron');
+const teacherEmailReminderCron = require('./crons/teacherEmailReminderCron');
 const createWhatsappReminders = require('./createWhatsappReminders');
 const getIpInfo = require('./location/IPInfo'); // Import the module
 const saveEnrollments = require('./sheets/saveEnrollments');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
+const {  getAllSystemReports } = require('./dao/systemReportDao')
+const teacherInviteInfo = require('./teacherInviteInfo');
+// const classIdTimingMap = require('./sheets/classIdTimingMap');
 const {
   updateCounts,
   getAllClassCounts
 } = require('./dao/classesDao');
-// classIdTimingMap
+
+const {
+  insertParentInfo,
+  getParentInfoByEmail,
+} = require('./dao/parentsInfoDao')
+
+const {getEnrollmentsByClassId} = require('./dao/enrollmentsDao');
 
 
 app.use(express.json());
@@ -52,10 +62,10 @@ app.post('/test', async (req, res) => {
   let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
   let classDisplayName = "Class on Sunday";
   // const ipAddress = req.ip || req.connection.remoteAddress;
-  // saveEnrollments(req.body,'152.59.194.85');
+  saveEnrollments(req.body,'152.59.194.85');
   // createWhatsappReminders(req.body,req.query.timezone);
-  sendEmailToUs(req.body,req.query.timezone,'152.59.194.85')
-  res.send('Sent teacher Email');
+  const result = await getParentInfoByEmail('jitender.kumar@iitgn.ac.in');
+  res.send(result);
 });
 
 app.get('/test2', async (req, res) => {
@@ -103,6 +113,27 @@ app.get('/info', async (req, res) => {
   const userTimeZone = req.query.timezone;
   const classes = await classesInfo(userTimeZone);
   res.json(classes);
+});
+
+app.get('/cms/report', async (req, res) => {
+  const pageNumber = req.query.pageNumber;
+  const filters = { classId: req.query.classId, status: req.query.status, channel: req.query.channel, type: req.query.type }
+  const systemReport = await getAllSystemReports(filters,pageNumber);
+  res.json(systemReport);
+});
+
+app.get('/cms/enrollments', async (req, res) => {
+  const classId = req.query.classId;
+  const pageNumber = req.query.pageNumber;
+  const systemReport = await getEnrollmentsByClassId(classId,pageNumber);
+  res.json(systemReport);
+});
+
+
+app.get('/parent/info', async (req, res) => {
+  const email = req.query.email;
+  const result = await getParentInfoByEmail(email);
+  res.json(result);
 });
 
 
@@ -228,6 +259,7 @@ app.post('/save', async (req, res) => {
   createWhatsappReminders(req.body,req.query.timezone);
   
   saveEnrollment(req.body,ipAddress);
+  insertParentInfo(req.body);
   res.status(200).json({ message: 'Registration Successful' });
   });
 
@@ -299,4 +331,5 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
   // myCronJob.start();
   whatsappReminderCron.start();
+  // teacherEmailReminderCron.start();
 });

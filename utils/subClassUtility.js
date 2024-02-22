@@ -57,6 +57,23 @@ class subClassUtility {
         return `CST : ${classStartTime} - ${classEndTime}`;
     }
 
+    static getClassStartTime(timeZoneAbbreviation,classStartTime,classEndTime){
+        let offset = 8;
+        if(timeZoneAbbreviation=='MST'){
+            offset=7;
+        }else if(timeZoneAbbreviation=='EST'){
+            offset=5;
+        }else if(timeZoneAbbreviation=='CST'){
+            offset=6;
+        }
+        classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(offset, 'hours');
+        classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(offset, 'hours');
+        classStartTime =  classStartTime.format('h:mm A');
+        classEndTime =  classEndTime.format('h:mm A');
+        return `${timeZoneAbbreviation} : ${classStartTime} - ${classEndTime}`;
+
+    }
+
     static getClassDisplayTiming(userTimeZone,classStartTime,classEndTime){
         let timeZoneAbbreviation = 'PST';
         userTimeZone = moment.tz([2023, 0], userTimeZone).zoneAbbr();

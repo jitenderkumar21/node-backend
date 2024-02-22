@@ -154,20 +154,22 @@ async function createWhatsappReminders(jsonData,userTimeZone) {
     // console.log('classIdTimings', classIdTimings);
     jsonData.phoneNumber = cleanPhoneNumber(jsonData.phoneNumber);
     const additionalInfoArray = createAdditionalInfo(jsonData,userTimeZone, classStartTimesMap,classIdTimings);
+    const communicationPreference = jsonData.commPref;
     // console.log('additionalInfo', additionalInfoArray);
     for (const info of additionalInfoArray) {
+        console.log(info);
         const prefix = "want another slot";
         let timeslot = info.classTiming;
-        if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix)) && info.receiverNumber!=undefined && info.receiverNumber!=''){
+        if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix)) && info.receiverNumber!=undefined && info.receiverNumber!='' && communicationPreference.includes('WhatsApp')){
             const beforeClassReminderTime = calculateReminderTime(info.classStartTime);
             const morningReminderTime = calculateMorningReminderTime(info.classStartTime,userTimeZone);
             // console.log('beforeClassReminderTime',beforeClassReminderTime);
             // console.log('morningReminderTime',morningReminderTime);
-            // await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15');
-            // await createReminder(info,morningReminderTime,'MORNING_8');
-            // await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_P');
-            // await createReminder(info,morningReminderTime,'MORNING_8_P');
-        }if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix))){
+            await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15');
+            await createReminder(info,morningReminderTime,'MORNING_8');
+            await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_P');
+            await createReminder(info,morningReminderTime,'MORNING_8_P');
+        }if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix)) && communicationPreference.includes('Email')){
             const beforeClassReminderTime = calculateReminderTime(info.classStartTime);
             const morningReminderTime = calculateMorningReminderTime(info.classStartTime,userTimeZone);
             // console.log('beforeClassReminderTime',beforeClassReminderTime);
