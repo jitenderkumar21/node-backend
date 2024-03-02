@@ -48,6 +48,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
           inviteClassInfo[1],
           personDetails.knowabout,
           personDetails.additionalInfo,
+          personDetails.comments,
           classIdFomatted,
           classDetail.classTag,
           classDetail.className,
