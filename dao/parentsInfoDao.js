@@ -8,7 +8,6 @@ async function insertParentInfo(enrollmentDetails) {
   const client = new Client({
     connectionString: connectionString,
   });
-w
   try {
     await client.connect();
 
