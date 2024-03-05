@@ -123,7 +123,7 @@ try{
                         let displayClassTime = '';
                         const timeZoneAbbreviation = 'PST';
                         if (classStartTime.isValid() && classEndTime.isValid()) {
-                            const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
+                            const formattedClassStartTime = classStartTime.format('MMMM D, dddd, h:mm A');
                             const formattedClassEndTime = classEndTime.format('h:mm A');
                             displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
                           }

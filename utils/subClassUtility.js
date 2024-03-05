@@ -13,7 +13,7 @@ class subClassUtility {
     }
     static getdateMonthAndDay(classStartTime){
         classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
-        const dayAndMonth = classStartTime.format('D MMMM, dddd');
+        const dayAndMonth = classStartTime.format('MMMM D, dddd');
         return dayAndMonth;
     }
     static getModifiedClassName(subClassId,className,classTag){
@@ -96,7 +96,7 @@ class subClassUtility {
         }
         let displayClassTime = '';
         if (classStartTime.isValid() && classEndTime.isValid()) {
-            const formattedClassStartTime = classStartTime.format('D MMM, ddd, h:mm A');
+            const formattedClassStartTime = classStartTime.format('MMM D, ddd, h:mm A');
             const formattedClassEndTime = classEndTime.format('h:mm A');
             displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
         }

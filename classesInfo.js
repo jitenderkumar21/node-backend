@@ -123,7 +123,7 @@ const classesInfo = async (userTimeZone) => {
                 // console.log(moment.utc());
                 // console.log(isPast,subClassId,classStartDate,classStartDate.isValid());
                 if (classStartDate.isValid()) {
-                  const formattedClassStartDate = `Class ${counter + 1}: ${classStartDate.format('D MMMM')}`;
+                  const formattedClassStartDate = `Class ${counter + 1}: ${classStartDate.format('MMMM D')}`;
                   const timeslot = { subClassId, timing: formattedClassStartDate, isPast };
                   timeslots.push(timeslot);
                 }
