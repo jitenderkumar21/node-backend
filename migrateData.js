@@ -158,7 +158,7 @@ const migrateData = async () => {
       await google.sheets({ version: 'v4', auth: client }).spreadsheets.values.append({
         auth,
         spreadsheetId,
-        range: 'Sheet4!A:P', // Adjust the range as needed
+        range: 'Sheet8!A:P', // Adjust the range as needed
         valueInputOption: 'USER_ENTERED',
         resource: {
           values: googleSheetsData,
