@@ -77,6 +77,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
         '', 
         personDetails.knowabout,
         personDetails.additionalInfo,
+        personDetails.comments,
         '', 
         '',
         '',
