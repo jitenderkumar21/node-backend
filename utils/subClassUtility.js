@@ -101,7 +101,43 @@ class subClassUtility {
             displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
         }
         return displayClassTime;
-}
+    }
+
+    static getTeacherNames(subClassesInfo, subClassIds) {
+        try {
+          const teacherNames = [];
+      
+          subClassIds.forEach((subClassId, index) => {
+            const subClassInfo = subClassesInfo[subClassId];
+      
+            // Check if the subClassInfo exists and has a valid teacherName
+            if (subClassInfo && subClassInfo.teacherName) {
+              teacherNames.push(subClassInfo.teacherName);
+            }
+          });
+      
+          const numberOfTeachers = teacherNames.length;
+      
+          // Check if there are more than one teacher names
+          if (numberOfTeachers > 1) {
+            // Join all names except the last one with commas
+            const joinedNames = teacherNames.slice(0, numberOfTeachers - 1).join(', ');
+      
+            // Add the last name with "and"
+            return `${joinedNames} and ${teacherNames[numberOfTeachers - 1]}`;
+          } else if (numberOfTeachers === 1) {
+            // Only one teacher name, no need for "and"
+            return teacherNames[0];
+          } else {
+            // No valid teacher names
+            return '';
+          }
+        } catch (err) {
+          console.error('Error getting teacher names', err);
+          return '';
+        }
+      }
+      
 
     
 }

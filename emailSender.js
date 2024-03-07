@@ -2,11 +2,11 @@ const nodemailer = require('nodemailer');
 const ClassUtility = require('./utils/subClassUtility');
 const {  insertSystemReport } = require('./dao/systemReportDao')
 const classIdTimingMap = require('./sheets/classIdTimingMap');
-const teacherInviteInfo = require('./teacherInviteInfo'); // Import the module
+const getSubClassesInfo = require('./sheets/getSubClassesInfo');
 const { v4: uuidv4 } = require('uuid');
 
 const sendEmail = async (personDetails,userTimeZone) => {
-    const invitesInfo =  await teacherInviteInfo();
+    const subClassesInfo = await getSubClassesInfo();
     const classIdTimings = await classIdTimingMap();
 
     const transporter = nodemailer.createTransport({
@@ -46,7 +46,6 @@ const sendEmail = async (personDetails,userTimeZone) => {
             `;
       classDetails.forEach((classDetail) => {
         let { classid, className, classTag, timeslots } = classDetail;
-        const inviteClassInfo = invitesInfo[classid];
         if (classTag.toLowerCase() === 'course') {
             classTag = 'Course *';
             if (timeslots && timeslots.length > 0) {
@@ -63,19 +62,20 @@ const sendEmail = async (personDetails,userTimeZone) => {
     
                     futureTimeslots.forEach((timeslot, index) => {
                         let { timing, subClassId } = timeslot;
+                        
                         const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
                         const userEndDateTime = classIdTimings.get(subClassId)[1]; 
                         let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
                         
                         classes += `${classDisplayTiming}${index < futureTimeslots.length - 1 ? '<br>' : ''}`;
                     });
-    
+                    let subClassInfo = subClassesInfo[classid+'_1'];
                     classes += `</td>
                                 <td>${classTag}</td>
                                 <td>
-                                    <p class="custom-para"><a href=${inviteClassInfo[5]}>Zoom Link</a></p>
-                                    <p class="custom-para">Meeting ID: ${inviteClassInfo[6]}</p>
-                                    <p class="custom-para">Passcode: ${inviteClassInfo[7]}</p>
+                                    <p class="custom-para"><a href=${subClassInfo.zoomMeetingLink}>Zoom Link</a></p>
+                                    <p class="custom-para">Meeting ID: ${subClassInfo.meetingId}</p>
+                                    <p class="custom-para">Passcode: ${subClassInfo.passcode}</p>
                                 </td>
                             </tr>
                     `;
@@ -89,6 +89,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
     
                 futureTimeslots.forEach((timeslot) => {
                     let { timing,subClassId } = timeslot;
+                    let subClassInfo = subClassesInfo[subClassId];
                     const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
                     const userEndDateTime = classIdTimings.get(subClassId)[1]; 
                     let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
@@ -100,9 +101,9 @@ const sendEmail = async (personDetails,userTimeZone) => {
                                 <td>${classDisplayTiming}</td>
                                 <td>${classTag}</td>
                                 <td>
-                                    <p class="custom-para"><a href=${inviteClassInfo[5]}>Zoom Link</a></p>
-                                    <p class="custom-para">Meeting ID: ${inviteClassInfo[6]}</p>
-                                    <p class="custom-para">Passcode: ${inviteClassInfo[7]}</p>
+                                    <p class="custom-para"><a href=${subClassInfo.zoomMeetingLink}>Zoom Link</a></p>
+                                    <p class="custom-para">Meeting ID: ${subClassInfo.meetingId}</p>
+                                    <p class="custom-para">Passcode: ${subClassInfo.passcode}</p>
                                 </td>
                             </tr>
                     `;

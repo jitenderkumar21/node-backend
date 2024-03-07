@@ -4,9 +4,8 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 const {  insertSystemReport } = require('../dao/systemReportDao')
 
-const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) => {
+const sendEmailToTeacher = (subClassDTO,classes,text,modifiedClassName) => {
 
-    // console.log('sending confirmation mail to teacher',teacherInviteInfo);
     const ATTACHMENT_PATH = path.join(process.cwd(), 'assets/Coral Academy Background.png');
    
     const transporter = nodemailer.createTransport({
@@ -73,14 +72,14 @@ const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) =>
       </head>
       <body>
         <div class="container">
-          <p>Hi ${teacherInviteInfo[1]},</p>
+          <p>Hi ${subClassDTO.teacherName},</p>
           <p>Hope you are doing well!</p>
           <p>Excited to inform you that the following ${text} been successfully scheduled:</p>
           ${classes}
           <p>Kindly find the class Zoom link details below:</p>
-          <p>Zoom Meeting Link : <a href=${teacherInviteInfo[5]} target="_blank">Zoom Link</a></p>
-          <p>Meeting ID :  ${teacherInviteInfo[6]} </p>
-          <p>Passcode : ${teacherInviteInfo[7]}</p>
+          <p>Zoom Meeting Link : <a href=${subClassDTO.zoomMeetingLink} target="_blank">Zoom Link</a></p>
+          <p>Meeting ID :  ${subClassDTO.meetingId} </p>
+          <p>Passcode : ${subClassDTO.passcode}</p>
 
           <p>We have blocked your calendar for class; please let us know if you are unable to see it. The  enrollments will be sent to you atleast 6 hours before class, however, they might vary due to last minute enrollments.</p>
           
@@ -124,7 +123,7 @@ const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) =>
       // Email content
       const mailOptions = {
         from: 'support@coralacademy.com', // Sender's email address
-        to:teacherInviteInfo[2].split(',')[0],
+        to:subClassDTO.teacherEmail.split(',')[0],
         subject: `Coral Academy: Class Confirmed - ${modifiedClassName}`,
         html:emailContent,
         attachments: [
@@ -145,13 +144,13 @@ const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) =>
         } else {
           const reportData = { channel: 'EMAIL', type: 'Teacher Confimation', status: 'SUCCESS'};
           insertSystemReport(reportData);
-          console.log('Confirmation Email sent to teacher:', teacherInviteInfo[2].split(',')[0]);
+          console.log('Confirmation Email sent to teacher:', subClassDTO.teacherEmail.split(',')[0]);
         }
       });
 
   };
 
-function createTableAndSendEmail(timeslot,classTag,className,teacherInviteInfo,classIdTimings){
+function createTableAndSendEmail(timeslot,classTag,className,subClassDTO,classIdTimings){
   let classes = `
               <table class="class-table">
                   <tr>
@@ -185,10 +184,10 @@ function createTableAndSendEmail(timeslot,classTag,className,teacherInviteInfo,c
           </tr>`;
   classes += `</table>`;
   // console.log('Created classes: ', classes);
-  sendEmailToTeacher(teacherInviteInfo,classes,'class has',classNameWithNumber);
+  sendEmailToTeacher(subClassDTO,classes,'class has',classNameWithNumber);
 }
 
-function createTableForCoursesAndSendEmail(timeslots,className,teacherInviteInfo,classIdTimings){
+function createTableForCoursesAndSendEmail(timeslots,className,subClassDTO,classIdTimings){
   let classes = `
               <table class="class-table">
                   <tr>
@@ -227,7 +226,7 @@ function createTableForCoursesAndSendEmail(timeslots,className,teacherInviteInfo
   }
   classes += `</table>`;
   // console.log('Created classes: ', classes);
-  sendEmailToTeacher(teacherInviteInfo,classes,'classes have',className);
+  sendEmailToTeacher(subClassDTO,classes,'classes have',className);
 }
 
 

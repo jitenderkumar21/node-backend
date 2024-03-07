@@ -3,6 +3,8 @@
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
 require('dotenv').config();
+const getSubClassesInfo = require('./sheets/getSubClassesInfo');
+const ClassUtility = require('./utils/subClassUtility');
 
 const classesInfo = async (userTimeZone) => {
   try {
@@ -45,13 +47,14 @@ const classesInfo = async (userTimeZone) => {
         'teacher_pic',
         'age_group',
         'duration',
-        'link',
-        'tutor'
+        'link'
       ];
   
       const rows = readResult.data.values;
       const arrayOfObjects = [];
       const jsonObject = {};
+
+      const subClassesInfo = await getSubClassesInfo();
 
       if (rows.length) {
         rows.slice(1).forEach((row) => {
@@ -100,9 +103,12 @@ const classesInfo = async (userTimeZone) => {
             let timeslots = [];
             const MAX_SLOTS = parseInt(row[25]) || 1;
             // console.log('Max slots',MAX_SLOTS);
+        
+            let subClassIds = [];
             for (let counter = 0; counter < MAX_SLOTS; counter++) {
       
                 const subClassId = `${row[0]}_${counter + 1}`; // Assuming 'id' is the first column
+                subClassIds.push(subClassId);
                 const classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').format('HH:mm');
 
                 const classStartDate = counter === 0
@@ -129,6 +135,9 @@ const classesInfo = async (userTimeZone) => {
                 }
                 
             }
+            let tutor = ClassUtility.getTeacherNames(subClassesInfo,subClassIds);
+            console.log('Teacher Name',tutor);
+            jsonObject['tutor']=tutor;
             jsonObject['timeslots']=timeslots;
 
             jsonObject['isSlotOpen']=['yes','yes']

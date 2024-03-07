@@ -1,6 +1,7 @@
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
 const teacherInviteInfo = require('../teacherInviteInfo'); // Import the module
+const getSubClassesInfo = require('./sheets/getSubClassesInfo');
 const getIpInfo = require('../location/IPInfo'); // Import the module
 const ClassUtility = require('../utils/subClassUtility');
 require('dotenv').config();
@@ -10,6 +11,7 @@ const { bulkInsertEnrollments } = require('../dao/enrollmentsDao');
 const saveEnrollments = async (personDetails,ipAddress) => {
   try {
     const invitesInfo =  await teacherInviteInfo();
+    const subClassesInfo = await getSubClassesInfo();
     const ipInfo = await getIpInfo(ipAddress);
 
     const date = new Date();
@@ -36,6 +38,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
       .filter((timeslot) => !timeslot.isPast)  // Filter out timeslots where isPast is true
       .map((timeslot) => {
         const { subClassId, timing, isPast } = timeslot;
+        let subClassInfo = subClassesInfo[subClassId];
         const classIdFomatted = ClassUtility.getClassId(subClassId, classDetail.classTag);
         const values = [
           formattedTimestamp,
@@ -45,7 +48,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
           personDetails.childAge,
           personDetails.commPref.join(','),
           personDetails.phoneNumber,
-          inviteClassInfo[1],
+          subClassInfo.teacherName,
           personDetails.knowabout,
           personDetails.additionalInfo,
           personDetails.comments,

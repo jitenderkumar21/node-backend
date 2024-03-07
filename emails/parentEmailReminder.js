@@ -1,5 +1,5 @@
 const nodemailer = require('nodemailer');
-const classCancelltionInfo = require('../sheets/classCancellationInfo');
+const getSubClassesInfo = require('../sheets/getSubClassesInfo');
 const path = require('path');
 const { Client } = require('pg');
 const {  insertSystemReport } = require('../dao/systemReportDao')
@@ -8,7 +8,8 @@ const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-c
 
 const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => {
         try{
-        const classStartTimesMap = await classCancelltionInfo();
+        const subClassesInfo = await getSubClassesInfo();
+        const subClassDTO = subClassesInfo[additionalInfo.subClassId];
         const parentName = additionalInfo.parentName;
         const kidName = additionalInfo.kidName;
         const classid = additionalInfo.classId;
@@ -94,16 +95,16 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
             <p>Zoom Meeting Details: <a href="${zoomMeetingLink}" target="_blank">Zoom Link</a>,&nbsp;&nbsp;&nbsp; Meeting ID: ${meetingId}, &nbsp;&nbsp;&nbsp; Passcode: ${passcode}</p>
             <ul>
             `
-            if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][1].toLowerCase() !== 'there are no prerequisites needed for the class.') {
-              emailContent += `<li><strong>Prerequisite</strong> : ${classStartTimesMap[classid][1]}</li>`;
+            if (subClassDTO && subClassDTO.prerequisite !== undefined && subClassDTO.prerequisite !== '' && subClassDTO.prerequisite.toLowerCase() !== 'there are no prerequisites needed for the class.') {
+              emailContent += `<li><strong>Prerequisite</strong> : ${subClassDTO.prerequisite}</li>`;
             }
               
-            if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][7] !== undefined && classStartTimesMap[classid][7] !== '') {
+            if (subClassDTO.prerequisite !== undefined && subClassDTO.prerequisite !== '' && subClassDTO.classMaterial !== undefined && subClassDTO.classMaterial !== '') {
               emailContent += '\n';
             }
               
-            if (classStartTimesMap[classid][7] !== undefined && classStartTimesMap[classid][7] !== '') {
-              emailContent += `<li><strong>Class Materials</strong> : ${classStartTimesMap[classid][7]}</li>`;
+            if (subClassDTO && subClassDTO.classMaterial !== undefined && subClassDTO.classMaterial !== '') {
+              emailContent += `<li><strong>Class Materials</strong> : ${subClassDTO.classMaterial}</li>`;
             }
         
             emailContent+=`

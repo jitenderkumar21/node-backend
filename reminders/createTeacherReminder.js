@@ -80,26 +80,26 @@ function calculateMorningReminderTime(classStartTime,userTimeZone) {
     return reminderTimeMoment.toISOString();
 }
 
-async function createTeacherReminder(subClassId, className, teacherInviteInfo,classIdTimings) {
+async function createTeacherReminder(subClassId, className, subClassDTO,classIdTimings) {
     try{
         console.log('Creating teacher reminder for subClassid:',subClassId);
         console.log('Creating teacher reminder for className:',className);
         const classIdTimingMap = classIdTimings.get(subClassId);
         const dateMonthAndDay = ClassUtility.getdateMonthAndDay(classIdTimingMap[0]);
-        const classStartTime = ClassUtility.getClassStartTime(teacherInviteInfo[8],classIdTimingMap[0],classIdTimingMap[1]);
+        const classStartTime = ClassUtility.getClassStartTime(subClassDTO.teacherTimezone,classIdTimingMap[0],classIdTimingMap[1]);
         const reminderInfo = {
-            email:teacherInviteInfo[2].split(',')[0],
-            teacherName: teacherInviteInfo[1],
+            email:subClassDTO.teacherEmail.split(',')[0],
+            teacherName: subClassDTO.teacherName,
             className: className,
             DayandDate: dateMonthAndDay,
             classTime: classStartTime,
             subClassId: subClassId,
-            zoomMeetingLink: teacherInviteInfo[5],
-            meetingId: teacherInviteInfo[6],
-            passcode: teacherInviteInfo[7],
+            zoomMeetingLink: subClassDTO.zoomMeetingLink,
+            meetingId: subClassDTO.meetingId,
+            passcode: subClassDTO.passcode,
         };
 
-        const morningReminderTime = calculateMorningReminderTime(classIdTimingMap[0],teacherInviteInfo[8]);
+        const morningReminderTime = calculateMorningReminderTime(classIdTimingMap[0],subClassDTO.teacherTimezone);
         const reminderType = 'TEACHER_REMINDER'; 
 
         await createReminder(reminderInfo, morningReminderTime, reminderType);

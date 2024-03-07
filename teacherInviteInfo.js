@@ -31,6 +31,7 @@ const teacherInviteInfo = async () => {
       if (rows.length) {
         rows.slice(1).forEach((row) => {
             var classId = row[0];
+            // className, Tname, Temail, 3 timings, 3 meeting details, Ttimezone
             var value = [row[1],row[11],row[12],row[19],row[20],row[22],row[23],row[24],row[14]];
             teacherInviteInfo[classId] = value;
         });

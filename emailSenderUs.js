@@ -1,14 +1,14 @@
 const nodemailer = require('nodemailer');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 const ClassUtility = require('./utils/subClassUtility');
-const teacherInviteInfo = require('./teacherInviteInfo'); // Import the module
+const getSubClassesInfo = require('./sheets/getSubClassesInfo');
 const getIpInfo = require('./location/IPInfo'); // Import the module
 const {  insertSystemReport } = require('./dao/systemReportDao')
 
 const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
   try{
     const classIdTimings = await classIdTimingMap();
-    const invitesInfo =  await teacherInviteInfo();
+    const subClassesInfo = await getSubClassesInfo();
     const ipInfo = await getIpInfo(ipAddress);
     const transporter = nodemailer.createTransport({
         service: 'Gmail', // Use your email service provider
@@ -31,8 +31,7 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
             `;
       classDetails.forEach((classDetail) => {
         let { classid, className, classTag, timeslots } = classDetail;
-        const inviteClassInfo = invitesInfo[classid];
-        // const inviteClassInfo = invitesInfo[classid];
+      
         if (classTag.toLowerCase() === 'course') {
             classTag = 'Course';
             if (timeslots && timeslots.length > 0) {
@@ -55,10 +54,10 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
                         
                         classes += `${classDisplayTiming}${index < futureTimeslots.length - 1 ? '<br>' : ''}`;
                     });
-    
+                    let subClassInfo = subClassesInfo[classid+'_1'];
                     classes += `</td>
                                 <td>${classTag}</td>
-                                <td>${inviteClassInfo[1]}</td>
+                                <td>${subClassInfo.teacherName}</td>
                             </tr>
                     `;
                 }
@@ -71,6 +70,7 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
     
                 futureTimeslots.forEach((timeslot) => {
                     let { timing,subClassId } = timeslot;
+                    let subClassInfo = subClassesInfo[subClassId];
                     const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
                     const userEndDateTime = classIdTimings.get(subClassId)[1]; 
                     let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
@@ -81,7 +81,7 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
                                 <td>${modifiedClassName}</td>
                                 <td>${classDisplayTiming}</td>
                                 <td>${classTag}</td>
-                                <td>${inviteClassInfo[1]}</td>
+                                <td>${subClassInfo.teacherName}</td>
                             </tr>
                     `;
                 });
