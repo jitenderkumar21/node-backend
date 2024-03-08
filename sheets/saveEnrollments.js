@@ -1,7 +1,7 @@
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
 const teacherInviteInfo = require('../teacherInviteInfo'); // Import the module
-const getSubClassesInfo = require('./sheets/getSubClassesInfo');
+const getSubClassesInfo = require('../sheets/getSubClassesInfo');
 const getIpInfo = require('../location/IPInfo'); // Import the module
 const ClassUtility = require('../utils/subClassUtility');
 require('dotenv').config();

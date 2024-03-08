@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 const {  insertSystemReport } = require('../dao/systemReportDao')
 
-const sendEmailToTeacher = (subClassDTO,classes,text,modifiedClassName) => {
+const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassName) => {
 
     const ATTACHMENT_PATH = path.join(process.cwd(), 'assets/Coral Academy Background.png');
    
@@ -72,15 +72,11 @@ const sendEmailToTeacher = (subClassDTO,classes,text,modifiedClassName) => {
       </head>
       <body>
         <div class="container">
-          <p>Hi ${subClassDTO.teacherName},</p>
+          <p>Hi ${teacherName},</p>
           <p>Hope you are doing well!</p>
           <p>Excited to inform you that the following ${text} been successfully scheduled:</p>
           ${classes}
-          <p>Kindly find the class Zoom link details below:</p>
-          <p>Zoom Meeting Link : <a href=${subClassDTO.zoomMeetingLink} target="_blank">Zoom Link</a></p>
-          <p>Meeting ID :  ${subClassDTO.meetingId} </p>
-          <p>Passcode : ${subClassDTO.passcode}</p>
-
+  
           <p>We have blocked your calendar for class; please let us know if you are unable to see it. The  enrollments will be sent to you atleast 6 hours before class, however, they might vary due to last minute enrollments.</p>
           
           <p><strong><u>Things to note :</u></strong></p>
@@ -123,7 +119,7 @@ const sendEmailToTeacher = (subClassDTO,classes,text,modifiedClassName) => {
       // Email content
       const mailOptions = {
         from: 'support@coralacademy.com', // Sender's email address
-        to:subClassDTO.teacherEmail.split(',')[0],
+        to:teacherEmail.split(',')[0],
         subject: `Coral Academy: Class Confirmed - ${modifiedClassName}`,
         html:emailContent,
         attachments: [
@@ -157,6 +153,7 @@ function createTableAndSendEmail(timeslot,classTag,className,subClassDTO,classId
                       <th>Class Name</th>
                       <th>Date</th>
                       <th>Time</th>
+                      <th>Zoom Details</th>
                   </tr>
           `;
 
@@ -164,7 +161,7 @@ function createTableAndSendEmail(timeslot,classTag,className,subClassDTO,classId
   const classNumber = subClassId.split('_')[1]; // Assuming subClassId format is "33_1"
   let classNameWithNumber = className;
   // Append class number to the className
-  if(classTag.toLowerCase() === 'ongoing'){
+  if(classTag.toLowerCase() === 'ongoing' || classNumber.toLowerCase() === 'playlist-2'){
       classNameWithNumber = `${className} Class ${classNumber}`;
   }
   const classIdTimingMap = classIdTimings.get(subClassId);
@@ -181,28 +178,38 @@ function createTableAndSendEmail(timeslot,classTag,className,subClassDTO,classId
           classes += `${cstTiming}<br>`;
           classes += `${pstTiming}`; 
           classes+= `</td>
+                  <td>
+                    <p class="custom-para"><a href=${subClassDTO.zoomMeetingLink}>Zoom Link</a></p>
+                    <p class="custom-para">Meeting ID: ${subClassDTO.meetingId}</p>
+                    <p class="custom-para">Passcode: ${subClassDTO.passcode}</p>
+                  </td>
           </tr>`;
   classes += `</table>`;
   // console.log('Created classes: ', classes);
   sendEmailToTeacher(subClassDTO,classes,'class has',classNameWithNumber);
 }
 
-function createTableForCoursesAndSendEmail(timeslots,className,subClassDTO,classIdTimings){
+function createTableForCoursesAndSendEmail(timeslots,className,subClassesInfo,classIdTimings){
   let classes = `
               <table class="class-table">
                   <tr>
                       <th>Class Name</th>
                       <th>Date</th>
                       <th>Time</th>
+                      <th>Zoom Details</th>
                   </tr>
           `;
   
   if (timeslots && timeslots.length > 0) {
       // Filter out timeslots where isPast is true
       const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
-
+      let teacherEmail = '';
+      let teacherName = '';
       futureTimeslots.forEach((timeslot) => {
           const { timing, subClassId } = timeslot;
+          let subClassDTO = subClassesInfo[subClassId];
+          teacherEmail = subClassDTO.teacherEmail;
+          teacherName = subClassDTO.teacherName;
           const classNumber = subClassId.split('_')[1]; // Assuming subClassId format is "33_1"
 
           // Append class number to the className
@@ -221,12 +228,17 @@ function createTableForCoursesAndSendEmail(timeslots,className,subClassDTO,class
           classes += `${cstTiming}<br>`;
           classes += `${pstTiming}`; 
           classes+= `</td>
+                  <td>
+                    <p class="custom-para"><a href=${subClassDTO.zoomMeetingLink}>Zoom Link</a></p>
+                    <p class="custom-para">Meeting ID: ${subClassDTO.meetingId}</p>
+                    <p class="custom-para">Passcode: ${subClassDTO.passcode}</p>
+                  </td>
           </tr>`;
       });
+      classes += `</table>`;
+    // console.log('Created classes: ', classes);
+      sendEmailToTeacher(teacherName,teacherEmail,classes,'classes have',className);
   }
-  classes += `</table>`;
-  // console.log('Created classes: ', classes);
-  sendEmailToTeacher(subClassDTO,classes,'classes have',className);
 }
 
 

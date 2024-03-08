@@ -1,5 +1,5 @@
 const { Client } = require('pg');
-const getSubClassesInfo = require('../sheets/getSubClassesInfo');
+const getSubClassesInfo = require('./sheets/getSubClassesInfo');
 const moment = require('moment-timezone');
 const ClassUtility = require('./utils/subClassUtility');
 const classIdTimingMap = require('./sheets/classIdTimingMap')

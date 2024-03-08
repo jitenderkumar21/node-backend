@@ -127,9 +127,9 @@ try{
                           }
                         const lowercaseClassTag = classTag.toLowerCase();
 
-                        if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'onetime') {
+                        if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'onetime' || lowercaseClassTag === 'playlist-2') {
                             createTableAndSendEmail(timeslot,classTag,className,[...subClassDTO,displayClassTime],classIdTimings);    
-                        }else if (lowercaseClassTag === 'course'){
+                        }else if (lowercaseClassTag === 'course' || lowercaseClassTag === 'playlist-1'){
                             // console.log('Push timeslot to courseTimeslots for',subClassId);
                             courseTimeslots.push(timeslot);
                         }                     
@@ -214,7 +214,7 @@ Thankyou!
             });
             if (courseTimeslots.length > 0) {
                 // console.log('Sending Teacher email for courseTimeslots',courseTimeslots);
-                createTableForCoursesAndSendEmail(courseTimeslots,className,subClassDTO,classIdTimings);
+                createTableForCoursesAndSendEmail(courseTimeslots,className,subClassesInfo,classIdTimings);
               }
         }
         });

@@ -19,7 +19,7 @@ class subClassUtility {
     static getModifiedClassName(subClassId,className,classTag){
         const lowercaseClassTag = classTag.toLowerCase();
         const classNumber = subClassId.split('_')[1];
-        if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'course') {
+        if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'course' || lowercaseClassTag === 'playlist-1' || lowercaseClassTag === 'playlist-2') {
             return `${className}-Class ${classNumber}`;
         } else {
             return className;
@@ -28,7 +28,7 @@ class subClassUtility {
     static getModifiedClassNameV2(subClassId,className,classTag){
         const lowercaseClassTag = classTag.toLowerCase();
         const classNumber = subClassId.split('_')[1];
-        if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'course') {
+        if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'course' || lowercaseClassTag === 'playlist-1' || lowercaseClassTag === 'playlist-2') {
             return `Class ${classNumber} : ${className}`;
         } else {
             return className;

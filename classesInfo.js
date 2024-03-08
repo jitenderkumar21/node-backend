@@ -47,7 +47,8 @@ const classesInfo = async (userTimeZone) => {
         'teacher_pic',
         'age_group',
         'duration',
-        'link'
+        'link',
+        'tutor'
       ];
   
       const rows = readResult.data.values;
@@ -119,7 +120,7 @@ const classesInfo = async (userTimeZone) => {
                         : moment.utc(row[25 + counter] + ' ' + classStartTime, 'YYYY-MM-DD HH:mm');
                 const isPast = classStartDateUTC.isBefore(moment.utc());
                 const teacherPreference = parseInt(row[18]) || 1;
-                if(row[17].toLowerCase()==='course' && counter+1===teacherPreference){
+                if( (row[17].toLowerCase()==='course' || row[17].toLowerCase()==='playlist-1' || row[17].toLowerCase()==='playlist-2' ) && counter+1===teacherPreference){
                   jsonObject['isMoveToPast']=isPast;
                 }else if(row[17].toLowerCase()==='ongoing' && counter+1==MAX_SLOTS){
                   jsonObject['isMoveToPast']=isPast;
@@ -135,9 +136,9 @@ const classesInfo = async (userTimeZone) => {
                 }
                 
             }
-            let tutor = ClassUtility.getTeacherNames(subClassesInfo,subClassIds);
-            console.log('Teacher Name',tutor);
-            jsonObject['tutor']=tutor;
+            // let tutor = ClassUtility.getTeacherNames(subClassesInfo,subClassIds);
+            // console.log('Teacher Name',tutor);
+            // jsonObject['tutor']=tutor;
             jsonObject['timeslots']=timeslots;
 
             jsonObject['isSlotOpen']=['yes','yes']

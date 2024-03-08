@@ -54,62 +54,61 @@ const sendEmail = async (personDetails,userTimeZone) => {
     
                 if (futureTimeslots.length > 0) {
                     isCoursePresent = true;
-                    confirmedClassesFlag = true;
-                    classes += `
-                            <tr>
-                                <td>${className}</td>
-                                <td>`;
+                    // confirmedClassesFlag = true;
+                    // classes += `
+                    //         <tr>
+                    //             <td>${className}</td>
+                    //             <td>`;
     
-                    futureTimeslots.forEach((timeslot, index) => {
-                        let { timing, subClassId } = timeslot;
+                    // futureTimeslots.forEach((timeslot, index) => {
+                    //     let { timing, subClassId } = timeslot;
                         
-                        const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
-                        const userEndDateTime = classIdTimings.get(subClassId)[1]; 
-                        let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
+                    //     const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
+                    //     const userEndDateTime = classIdTimings.get(subClassId)[1]; 
+                    //     let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
                         
-                        classes += `${classDisplayTiming}${index < futureTimeslots.length - 1 ? '<br>' : ''}`;
-                    });
-                    let subClassInfo = subClassesInfo[classid+'_1'];
-                    classes += `</td>
-                                <td>${classTag}</td>
-                                <td>
-                                    <p class="custom-para"><a href=${subClassInfo.zoomMeetingLink}>Zoom Link</a></p>
-                                    <p class="custom-para">Meeting ID: ${subClassInfo.meetingId}</p>
-                                    <p class="custom-para">Passcode: ${subClassInfo.passcode}</p>
-                                </td>
-                            </tr>
-                    `;
+                    //     classes += `${classDisplayTiming}${index < futureTimeslots.length - 1 ? '<br>' : ''}`;
+                    // });
+                    // let subClassInfo = subClassesInfo[classid+'_1'];
+                    // classes += `</td>
+                    //             <td>${classTag}</td>
+                    //             <td>
+                    //                 <p class="custom-para"><a href=${subClassInfo.zoomMeetingLink}>Zoom Link</a></p>
+                    //                 <p class="custom-para">Meeting ID: ${subClassInfo.meetingId}</p>
+                    //                 <p class="custom-para">Passcode: ${subClassInfo.passcode}</p>
+                    //             </td>
+                    //         </tr>
+                    // `;
                 }
             }
-        } else {
-            // For other class types
-            if (timeslots && timeslots.length > 0) {
-                // Filter out timeslots where isPast is true
-                const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
-    
-                futureTimeslots.forEach((timeslot) => {
-                    let { timing,subClassId } = timeslot;
-                    let subClassInfo = subClassesInfo[subClassId];
-                    const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
-                    const userEndDateTime = classIdTimings.get(subClassId)[1]; 
-                    let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
-                    const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
-                    confirmedClassesFlag = true;
-                    classes += `
-                            <tr>
-                                <td>${modifiedClassName}</td>
-                                <td>${classDisplayTiming}</td>
-                                <td>${classTag}</td>
-                                <td>
-                                    <p class="custom-para"><a href=${subClassInfo.zoomMeetingLink}>Zoom Link</a></p>
-                                    <p class="custom-para">Meeting ID: ${subClassInfo.meetingId}</p>
-                                    <p class="custom-para">Passcode: ${subClassInfo.passcode}</p>
-                                </td>
-                            </tr>
-                    `;
-                });
-            }
         }
+            // For other class types
+          if (timeslots && timeslots.length > 0) {
+              // Filter out timeslots where isPast is true
+              const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
+  
+              futureTimeslots.forEach((timeslot) => {
+                  let { timing,subClassId } = timeslot;
+                  let subClassInfo = subClassesInfo[subClassId];
+                  const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
+                  const userEndDateTime = classIdTimings.get(subClassId)[1]; 
+                  let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
+                  const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
+                  confirmedClassesFlag = true;
+                  classes += `
+                          <tr>
+                              <td>${modifiedClassName}</td>
+                              <td>${classDisplayTiming}</td>
+                              <td>${classTag}</td>
+                              <td>
+                                  <p class="custom-para"><a href=${subClassInfo.zoomMeetingLink}>Zoom Link</a></p>
+                                  <p class="custom-para">Meeting ID: ${subClassInfo.meetingId}</p>
+                                  <p class="custom-para">Passcode: ${subClassInfo.passcode}</p>
+                              </td>
+                          </tr>
+                  `;
+              });
+          }
     });
 
       classes+=`</table>`;

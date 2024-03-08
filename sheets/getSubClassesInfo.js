@@ -27,7 +27,6 @@ const getSubClassesInfo = async () => {
     });
 
     const rows = readResult.data.values;
-    console.log(rows);
     const subClassesInfo = {};
 
     if (rows.length) {

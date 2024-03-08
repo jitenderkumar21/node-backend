@@ -32,61 +32,60 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
       classDetails.forEach((classDetail) => {
         let { classid, className, classTag, timeslots } = classDetail;
       
-        if (classTag.toLowerCase() === 'course') {
-            classTag = 'Course';
-            if (timeslots && timeslots.length > 0) {
-                // Filter out timeslots where isPast is true
-                const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
+        // if (classTag.toLowerCase() === 'course') {
+        //     classTag = 'Course';
+        //     if (timeslots && timeslots.length > 0) {
+        //         // Filter out timeslots where isPast is true
+        //         const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
     
-                if (futureTimeslots.length > 0) {
-                    isCoursePresent = true;
-                    confirmedClassesFlag = true;
-                    classes += `
-                            <tr>
-                                <td>${className}</td>
-                                <td>`;
+        //         if (futureTimeslots.length > 0) {
+        //             isCoursePresent = true;
+        //             confirmedClassesFlag = true;
+        //             classes += `
+        //                     <tr>
+        //                         <td>${className}</td>
+        //                         <td>`;
     
-                    futureTimeslots.forEach((timeslot, index) => {
-                        let { timing, subClassId } = timeslot;
-                        const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
-                        const userEndDateTime = classIdTimings.get(subClassId)[1]; 
-                        let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
+        //             futureTimeslots.forEach((timeslot, index) => {
+        //                 let { timing, subClassId } = timeslot;
+        //                 const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
+        //                 const userEndDateTime = classIdTimings.get(subClassId)[1]; 
+        //                 let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
                         
-                        classes += `${classDisplayTiming}${index < futureTimeslots.length - 1 ? '<br>' : ''}`;
-                    });
-                    let subClassInfo = subClassesInfo[classid+'_1'];
-                    classes += `</td>
-                                <td>${classTag}</td>
-                                <td>${subClassInfo.teacherName}</td>
-                            </tr>
-                    `;
-                }
-            }
-        } else {
+        //                 classes += `${classDisplayTiming}${index < futureTimeslots.length - 1 ? '<br>' : ''}`;
+        //             });
+        //             let subClassInfo = subClassesInfo[classid+'_1'];
+        //             classes += `</td>
+        //                         <td>${classTag}</td>
+        //                         <td>${subClassInfo.teacherName}</td>
+        //                     </tr>
+        //             `;
+        //         }
+        //     }
+        // } else {
             // For other class types
-            if (timeslots && timeslots.length > 0) {
-                // Filter out timeslots where isPast is true
-                const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
-    
-                futureTimeslots.forEach((timeslot) => {
-                    let { timing,subClassId } = timeslot;
-                    let subClassInfo = subClassesInfo[subClassId];
-                    const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
-                    const userEndDateTime = classIdTimings.get(subClassId)[1]; 
-                    let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
-                    const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
-                    confirmedClassesFlag = true;
-                    classes += `
-                            <tr>
-                                <td>${modifiedClassName}</td>
-                                <td>${classDisplayTiming}</td>
-                                <td>${classTag}</td>
-                                <td>${subClassInfo.teacherName}</td>
-                            </tr>
-                    `;
-                });
-            }
-        }
+          if (timeslots && timeslots.length > 0) {
+              // Filter out timeslots where isPast is true
+              const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
+  
+              futureTimeslots.forEach((timeslot) => {
+                  let { timing,subClassId } = timeslot;
+                  let subClassInfo = subClassesInfo[subClassId];
+                  const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
+                  const userEndDateTime = classIdTimings.get(subClassId)[1]; 
+                  let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
+                  const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
+                  confirmedClassesFlag = true;
+                  classes += `
+                          <tr>
+                              <td>${modifiedClassName}</td>
+                              <td>${classDisplayTiming}</td>
+                              <td>${classTag}</td>
+                              <td>${subClassInfo.teacherName}</td>
+                          </tr>
+                  `;
+              });
+          }
     });
 
       classes+=`</table>`;
