@@ -2,7 +2,7 @@
 
 const { google } = require('googleapis');
 require('dotenv').config();
-const SubClassDTO = require('../dto/subClassDTO'); // Import the SubClassDTO
+const SubClassDTO = require('../dto/SubClassDTO'); // Import the SubClassDTO
 
 /**
  * Fetches sub-classes information from a Google Sheets document.
