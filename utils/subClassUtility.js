@@ -11,6 +11,15 @@ class subClassUtility {
             return subClassId.replace(/_\d+$/, '');
         }
     }
+
+    static getModifiedClassTag(classTag){
+        const lowercaseClassTag = classTag.toLowerCase();
+        if(lowercaseClassTag === 'playlist-1' || lowercaseClassTag === 'playlist-2'){
+            return 'Playlist';
+        }
+        return classTag;
+    }
+
     static getdateMonthAndDay(classStartTime){
         classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
         const dayAndMonth = classStartTime.format('MMMM D, dddd');

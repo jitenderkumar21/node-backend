@@ -75,12 +75,13 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
                   const userEndDateTime = classIdTimings.get(subClassId)[1]; 
                   let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
                   const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
+                  const modifiedClassTag = ClassUtility.getModifiedClassTag(classTag);
                   confirmedClassesFlag = true;
                   classes += `
                           <tr>
                               <td>${modifiedClassName}</td>
                               <td>${classDisplayTiming}</td>
-                              <td>${classTag}</td>
+                              <td>${modifiedClassTag}</td>
                               <td>${subClassInfo.teacherName}</td>
                           </tr>
                   `;
@@ -155,8 +156,10 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
             <li><strong>Learner's Name :</strong> ${personDetails.childName}</li>
             <li><strong>Learner's Age :</strong> ${personDetails.childAge}</li>
             <li><strong>Phone Number :</strong> ${personDetails.phoneNumber}</li>
+            <li><strong>Communication Preference :</strong> ${personDetails.commPref.join(',')}</li>
             <li><strong>How did you get to know about us ? :</strong> ${personDetails.knowabout}</li>
             <li><strong>Which Facebook group referred you to us ?/Could you please specify source ? : </strong> ${personDetails.additionalInfo}</li>
+            <li><strong>Drop us your questions or comments! :</strong> ${personDetails.comments}</li>
             <li><strong>Parent Country & City :</strong>${ipInfo.country} - ${ipInfo.city}</li>
 
             <p><strong>Enrolled classes below: </strong></p>

@@ -94,12 +94,13 @@ const sendEmail = async (personDetails,userTimeZone) => {
                   const userEndDateTime = classIdTimings.get(subClassId)[1]; 
                   let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
                   const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
+                  const modifiedClassTag = ClassUtility.getModifiedClassTag(classTag);
                   confirmedClassesFlag = true;
                   classes += `
                           <tr>
                               <td>${modifiedClassName}</td>
                               <td>${classDisplayTiming}</td>
-                              <td>${classTag}</td>
+                              <td>${modifiedClassTag}</td>
                               <td>
                                   <p class="custom-para"><a href=${subClassInfo.zoomMeetingLink}>Zoom Link</a></p>
                                   <p class="custom-para">Meeting ID: ${subClassInfo.meetingId}</p>

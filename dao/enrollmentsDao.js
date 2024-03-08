@@ -126,7 +126,7 @@ async function getEnrollmentsByClassId(classId, pageNumber = 1) {
       `
       SELECT *
       FROM enrollments
-      WHERE class_id = $1
+      WHERE id = $1
       ORDER BY timestamp
       OFFSET $2
       LIMIT $3;
