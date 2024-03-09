@@ -46,7 +46,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
             `;
       classDetails.forEach((classDetail) => {
         let { classid, className, classTag, timeslots } = classDetail;
-        if (classTag.toLowerCase() === 'course') {
+        if (classTag.toLowerCase() === 'course' || classTag.toLowerCase() === 'playlist-1' || classTag.toLowerCase() === 'playlist-2') {
             classTag = 'Course *';
             if (timeslots && timeslots.length > 0) {
                 // Filter out timeslots where isPast is true
@@ -120,10 +120,20 @@ const sendEmail = async (personDetails,userTimeZone) => {
       }
       let confirmedClassMessage1 = '';
       let confirmedClassMessage2 = '';
+      let confirmedClassMessage3 = '';
       if(confirmedClassesFlag==true){
         confirmedClassMessage1 = 'Here are your confirmed classes :';
+        confirmedClassMessage3 = `<ul>
+        <li><strong>Identity Verification:</strong> Ensuring learner safety as our highest priority,<strong> we request you to switch on ${personDetails.childName}'s camera at the start of each class for a quick identity check.</strong> While ${personDetails.childName} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
+        <li><strong>Class Entry:</strong>  We request learners to join class on time to ensure an uninterrupted learning experience. Late entries may be restricted after the initial 10 minutes, for the smooth flow of the class.</li>
+        <li><strong>Class Materials:</strong> The required class materials and details about homework submissions, if any, will be sent to you before class. Keep an eye on your email for these details.</li>
+        <li><strong>Class Alerts:</strong> We have blocked your calendar for class; please let us know if you are unable to see it. We will be sending you class reminders as well. </li>
+        <li><strong>Feedback:</strong> Class time includes a 10-minute feedback session. We kindly request ${personDetails.childName} to stay back, and share their class experience with us.</li>
+        <li><strong>Class Withdrawals:</strong> We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</li>
+        <li><strong>Code of Conduct:</strong> Classes are recorded for student safety. The recorded classes are for internal use only and are strictly confidential. These would not be disclosed or shared without parental consent. PFA the <a href="https://docs.google.com/document/d/1kU49ck4nGge6_k4Myua_eUpBx06MADlFxm_xRdUz7Os/edit" target="_blank">Code of Conduct Policy</a> for your reference.</li>
+    </ul>`
         if(isCoursePresent == true){
-          confirmedClassMessage2 = `* We recommend that ${personDetails.childName} attends all classes throughout the course to get the most out of them, as each class builds on the last one.`;
+          confirmedClassMessage2 = `* We recommend that ${personDetails.childName} attends all classes throughout the playlist/course to get the most out of them.`;
         }
       }else{
         classes = '';
@@ -213,16 +223,8 @@ const sendEmail = async (personDetails,userTimeZone) => {
           <p><i>${confirmedClassMessage2}</i></p>  
           <p>${message}</p>
           <p>
-          <ul>
-              <li><strong>Identity Verification:</strong> Ensuring learner safety as our highest priority,<strong> we request you to switch on ${personDetails.childName}'s camera at the start of each class for a quick identity check.</strong> While ${personDetails.childName} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
-              <li><strong>Class Materials:</strong> The required class materials and details about homework submissions, if any, will be sent to you before class. Keep an eye on your email for these details.</li>
-              <li><strong>Class Alerts:</strong> We have blocked your calendar for class; please let us know if you are unable to see it. We will send class reminders via ${formattedCommPref} as per your communication preferences.</li>
-              <li><strong>Feedback:</strong> Class time includes a 10-minute feedback session. We kindly request ${personDetails.childName} to stay back, and share their class experience with us.</li>
-              <li><strong>Class Withdrawals:</strong> We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</li>
-              <li><strong>Code of Conduct:</strong> Classes are recorded for student safety. The recorded classes are for internal use only and are strictly confidential. These would not be disclosed or shared without parental consent. PFA the <a href="https://docs.google.com/document/d/1kU49ck4nGge6_k4Myua_eUpBx06MADlFxm_xRdUz7Os/edit" target="_blank">Code of Conduct Policy</a> for your reference.</li>
-          </ul>
+          ${confirmedClassMessage3}
           </p>
-
           <p>Your feedback is valuable to us! Please feel free to share any feedback with us <a href="https://docs.google.com/forms/d/e/1FAIpQLSflsLJJuG74V1jjS29B-R1TVPbD74e9H5CkKVQMX6CzM87AZQ/viewform">here!</a></p>
 
           <p>Happy Learning! </p>

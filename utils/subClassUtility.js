@@ -15,7 +15,10 @@ class subClassUtility {
     static getModifiedClassTag(classTag){
         const lowercaseClassTag = classTag.toLowerCase();
         if(lowercaseClassTag === 'playlist-1' || lowercaseClassTag === 'playlist-2'){
-            return 'Playlist';
+            return 'Playlist*';
+        }
+        if(lowercaseClassTag === 'course'){
+            return 'Course*';
         }
         return classTag;
     }
