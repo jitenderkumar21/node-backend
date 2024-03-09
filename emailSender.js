@@ -47,7 +47,6 @@ const sendEmail = async (personDetails,userTimeZone) => {
       classDetails.forEach((classDetail) => {
         let { classid, className, classTag, timeslots } = classDetail;
         if (classTag.toLowerCase() === 'course' || classTag.toLowerCase() === 'playlist-1' || classTag.toLowerCase() === 'playlist-2') {
-            classTag = 'Course *';
             if (timeslots && timeslots.length > 0) {
                 // Filter out timeslots where isPast is true
                 const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);

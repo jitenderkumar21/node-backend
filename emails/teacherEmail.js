@@ -148,6 +148,8 @@ const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassN
   };
 
 function createTableAndSendEmail(timeslot,classTag,className,subClassDTO,classIdTimings){
+  const teacherEmail = subClassDTO.teacherEmail;
+  const teacherName = subClassDTO.teacherName;
   let classes = `
               <table class="class-table">
                   <tr>
@@ -187,7 +189,7 @@ function createTableAndSendEmail(timeslot,classTag,className,subClassDTO,classId
           </tr>`;
   classes += `</table>`;
   // console.log('Created classes: ', classes);
-  sendEmailToTeacher(subClassDTO,classes,'class has',classNameWithNumber);
+  sendEmailToTeacher(teacherName,teacherEmail,classes,'class has',classNameWithNumber);
 }
 
 function createTableForCoursesAndSendEmail(timeslots,className,subClassesInfo,classIdTimings){
