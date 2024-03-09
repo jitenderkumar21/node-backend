@@ -4,7 +4,7 @@ class subClassUtility {
     static getClassId(subClassId, classTag) {
         const lowercaseClassTag = classTag.toLowerCase();
 
-        if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'course') {
+        if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'course' || lowercaseClassTag === 'playlist-1' || lowercaseClassTag === 'playlist-2') {
             return subClassId;
         } else {
             // Remove _ followed by a number from the end of subClassId

@@ -128,7 +128,7 @@ try{
                         const lowercaseClassTag = classTag.toLowerCase();
 
                         if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'onetime' || lowercaseClassTag === 'playlist-2') {
-                            createTableAndSendEmail(timeslot,classTag,className,[...subClassDTO,displayClassTime],classIdTimings);    
+                            createTableAndSendEmail(timeslot,classTag,className,subClassDTO,classIdTimings);    
                         }else if (lowercaseClassTag === 'course' || lowercaseClassTag === 'playlist-1'){
                             // console.log('Push timeslot to courseTimeslots for',subClassId);
                             courseTimeslots.push(timeslot);
