@@ -137,7 +137,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
       }else{
         classes = '';
         if(personDetails.want_another_slot!== undefined && personDetails.want_another_slot !== ''){
-          message = `We noticed that you have also requested additional time slots for some classes - ${personDetails.want_another_slot}.  We will try our best to schedule classes that work for you.</p>`;
+          message = `We noticed that you have requested additional time slots for some classes - ${personDetails.want_another_slot}.  We will try our best to schedule classes that work for you.</p>`;
         }
       }
       
