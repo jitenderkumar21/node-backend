@@ -171,7 +171,7 @@ async function createWhatsappReminders(jsonData,userTimeZone) {
             // await createReminder(info,morningReminderTime,'MORNING_8');
             // await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_P');
             // await createReminder(info,morningReminderTime,'MORNING_8_P');
-        }if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix)) && ( communicationPreference.includes('Email') || communicationPreference.includes('WhatsApp') ) ){
+        }if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix)) && ( communicationPreference.includes('Email') || communicationPreference.includes('WhatsApp') || communicationPreference.includes('Text') ) ){
             const beforeClassReminderTime = calculateReminderTime(info.classStartTime);
             const morningReminderTime = calculateMorningReminderTime(info.classStartTime,userTimeZone);
             // console.log('beforeClassReminderTime',beforeClassReminderTime);
