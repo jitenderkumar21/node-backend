@@ -164,7 +164,7 @@ function createTableAndSendEmail(timeslot,classTag,className,subClassDTO,classId
   const classNumber = subClassId.split('_')[1]; // Assuming subClassId format is "33_1"
   let classNameWithNumber = className;
   // Append class number to the className
-  if(classTag.toLowerCase() === 'ongoing' || classNumber.toLowerCase() === 'playlist-2'){
+  if(classTag.toLowerCase() === 'ongoing' || classTag.toLowerCase() === 'playlist-2'){
       classNameWithNumber = `${className} Class ${classNumber}`;
   }
   const classIdTimingMap = classIdTimings.get(subClassId);
