@@ -255,7 +255,7 @@ app.post('/save', async (req, res) => {
   // googleSheets(req.body);
   await teacherCalendarInvite(req.body);
   calendarInvite(req.body);
-  // createWhatsappReminders(req.body,req.query.timezone);
+  createWhatsappReminders(req.body,req.query.timezone);
   
   saveEnrollment(req.body,ipAddress);
   insertParentInfo(req.body);
