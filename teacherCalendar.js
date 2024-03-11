@@ -109,7 +109,7 @@ try{
                     const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
                     // console.log('Modified class name',modifiedClassName);
                     if(classInviteId==undefined){
-                        // createTeacherReminder(subClassId,modifiedClassName,subClassDTO,classIdTimings);                       
+                        createTeacherReminder(subClassId,modifiedClassName,subClassDTO,classIdTimings);                       
                         const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
                         const userEndDateTime = classIdTimings.get(subClassId)[1];    // Replace this with the user's input
                         const convertToDateTimeFormat = (userDateTime) => {
