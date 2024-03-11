@@ -62,6 +62,11 @@ const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassN
             font-size: 16px;
             line-height: 1.6;
           }
+          .custom-para {
+            color: #666;
+            font-size: 12px;
+            line-height: 1.0;
+          }
           li {
             color: black;
             font-size: 16px;
@@ -79,9 +84,9 @@ const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassN
   
           <p>We have blocked your calendar for class; please let us know if you are unable to see it. The  enrollments will be sent to you atleast 6 hours before class, however, they might vary due to last minute enrollments.</p>
           
-          <p><strong><u>Things to note :</u></strong></p>
+          <p><strong>Things to note :</strong></p>
 
-          <p><strong><u>Before Class : </u></strong></p>
+          <p><strong><u>Before Class</u></strong></p>
           <ul>
               <li><strong>Class Prerequisites :</strong> We request you to email us the class prerequisites & materials (if any) at the earliest, so that we can send those to parents well in advance.</li>
               <li><strong>Student Homework & Uploads :</strong> Please inform us if your class requires completion of any student homework, so that we can request parents to upload the same.</li>
@@ -90,14 +95,14 @@ const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassN
               <li><strong>Code of conduct :</strong> Classes are recorded for student safety, allowing parents to review study situations. Recorded videos are strictly confidential and for internal use only. We won't disclose them publicly or share with third parties without your consent.</li>
           </ul>
 
-          <p><strong><u>During Class :</u></strong></p>
+          <p><strong><u>During Class</u></strong></p>
           <ul>
             <li><strong>Learner Verification :</strong> For learner safety, we request you to verify learners through a quick live video check-in at the beginning of each class, to visually confirm that the learner in question is a child. The learner can then turn off video after their check-in. If you’ve never seen the learner on video before, and they’re unable or unwilling to enable their video, please remove them from the class.</li>
             <li><strong>Post Class Interaction :</strong> Kindly inform students to stay back after you exit the class - We will be spending 10 minutes with the students to understand their topic preferences and get class feedback.</li>
             <li><strong>Support :</strong> A team member will join your class as a co-host, helping you navigate the waiting room and resolve any technical glitches.</li>
           </ul>
 
-          <p><strong><u>After Class :</u></strong></p>
+          <p><strong><u>After Class</u></strong></p>
           <ul>
             <li><strong>Payments :</strong> Payments for class will be processed weekly (every Saturday), post class.</li>
             <li><strong>Feedback :</strong> Your feedback is valuable to us! Please feel free to share your thoughts on how we can improve and make your experience even better.</li>

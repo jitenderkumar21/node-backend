@@ -122,7 +122,10 @@ const sendEmail = async (personDetails,userTimeZone) => {
       let confirmedClassMessage3 = '';
       if(confirmedClassesFlag==true){
         confirmedClassMessage1 = 'Here are your confirmed classes :';
-        confirmedClassMessage3 = `<ul>
+        confirmedClassMessage3 = `
+        <p><strong><u>Things to note :</u></strong></p>
+        
+        <ul>
         <li><strong>Identity Verification:</strong> Ensuring learner safety as our highest priority,<strong> we request you to switch on ${personDetails.childName}'s camera at the start of each class for a quick identity check.</strong> While ${personDetails.childName} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
         <li><strong>Class Entry:</strong>  We request learners to join class on time to ensure an uninterrupted learning experience. Late entries may be restricted after the initial 10 minutes, for the smooth flow of the class.</li>
         <li><strong>Class Materials:</strong> The required class materials and details about homework submissions, if any, will be sent to you before class. Keep an eye on your email for these details.</li>
