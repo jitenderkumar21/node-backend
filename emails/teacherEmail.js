@@ -90,8 +90,8 @@ const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassN
           <ul>
               <li><strong>Class Prerequisites :</strong> We request you to email us the class prerequisites & materials (if any) at the earliest, so that we can send those to parents well in advance.</li>
               <li><strong>Student Homework & Uploads :</strong> Please inform us if your class requires completion of any student homework, so that we can request parents to upload the same.</li>
-              <li><strong>Class Entry :</strong>  Feel free to inform our team if you'd like us to restrict admitting students who join the class after the 10-minute mark.</li>
-              <li><strong>Zoom Background :</strong> We request you to use the attached Coral Academy background on zoom during class.</li>
+              <li><strong>Class Entry :</strong> Feel free to inform our team if you'd like us to restrict admitting students who join the class, after the 10-minute mark.</li>
+              <li><strong>Zoom Background :</strong> We request you to use the attached Coral Academy background on Zoom during class.</li>
               <li><strong>Code of conduct :</strong> Classes are recorded for student safety, allowing parents to review study situations. Recorded videos are strictly confidential and for internal use only. We won't disclose them publicly or share with third parties without your consent.</li>
           </ul>
 
@@ -104,13 +104,13 @@ const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassN
 
           <p><strong><u>After Class</u></strong></p>
           <ul>
-            <li><strong>Payments :</strong> Payments for class will be processed weekly (every Saturday), post class.</li>
+            <li><strong>Payments :</strong> Payments for the class will be processed weekly, every Saturday, post class.</li>
             <li><strong>Feedback :</strong> Your feedback is valuable to us! Please feel free to share your thoughts on how we can improve and make your experience even better.</li>
           </ul>
 
           <p>PFA our <a href="https://docs.google.com/document/d/1lIqvqEB6Z7ic84JWlPAqKlILxlOsTixYPPlIHVfLToI/edit?usp=sharing" target="_blank">Code of Conduct Policy</a> for your reference.</p>
 
-          <p>Please feel free to email us or text/call on (872)-222-8643 for any assistance required.</p>
+          <p>Please feel free to email us or text/call at (872)-222-8643 for any assistance required.</p>
 
           <p>Looking forward to class!</p>
           

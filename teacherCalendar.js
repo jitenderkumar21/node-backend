@@ -150,11 +150,11 @@ Meeting Link: ${subClassDTO.zoomMeetingLink}
 Meeting ID: ${subClassDTO.meetingId}
 Passcode: ${subClassDTO.passcode}
 
-- Please verify learners with a quick video check-in at the start of each class to visually ensure that the learner is a child.After check-in, they can turn off the video. If a learner is unwilling or unable to enable video, kindly remove them from the class.
+- Please verify learners with a quick video check-in at the start of each class to visually ensure that the learner is a child. After check-in, they can turn off the video. If a learner is unwilling or unable to enable video, kindly remove them from the class.
 
 - Please email class materials & any homework to us if you haven't already. Include the deadline for homework submissions and we'll inform parents & pass on the homework to you.
 
-Thankyou!
+Thank you!
 `;
 
 

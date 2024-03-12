@@ -156,13 +156,13 @@ Happy Learning!
     }
 };
 
-const whatsappReminderCron = cron.schedule('*/60 * * * *', async () => {
+const whatsappReminderCron = cron.schedule('*/15 * * * *', async () => {
     const currentClient = new Client({
         connectionString: connectionString,
     });
     try {
-        // const currentTimeUTC = new Date().toUTCString();
-        // const currentTimeMinus20Minutes = new Date(new Date().getTime() - 20 * 60 * 1000).toUTCString();
+        const currentTimeUTC = new Date().toUTCString();
+        const currentTimeMinus20Minutes = new Date(new Date().getTime() - 20 * 60 * 1000).toUTCString();
         // console.log(`Cron job is running every 15 minute at ${currentTimeUTC}`);
 
         // // // Connect to the PostgreSQL database
@@ -176,7 +176,10 @@ const whatsappReminderCron = cron.schedule('*/60 * * * *', async () => {
         //     const reminderId = row.id;
         //     const additionalInfo = row.additional_info;
         //     // console.log(reminderId, row.class_id, additionalInfo)
-        //     await sendReminder(reminderId,row.reminder_type, additionalInfo);
+        //     if(reminderId === 3482 || reminderId === 3474 || reminderId === 3457 || reminderId === 3456){
+        //         console.log(reminderId, row.class_id, additionalInfo)
+        //         await sendReminder(reminderId,row.reminder_type, additionalInfo);
+        //     }
         // }
     } catch (error) {
         console.error('Error in cron job:', error);

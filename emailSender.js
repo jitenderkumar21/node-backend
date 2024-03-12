@@ -30,6 +30,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
       let flag = true;
       let confirmedClassesFlag = false;
       let isCoursePresent = false;
+      let subject = "";
       
       let classes = '';
       let classes2 = '';
@@ -121,13 +122,14 @@ const sendEmail = async (personDetails,userTimeZone) => {
       let confirmedClassMessage2 = '';
       let confirmedClassMessage3 = '';
       if(confirmedClassesFlag==true){
+        subject = `Let the Learning Begin! ${personDetails.childName} is Enrolled!`;
         confirmedClassMessage1 = 'Here are your confirmed classes :';
         confirmedClassMessage3 = `
         <p><strong><u>Things to note :</u></strong></p>
         
         <ul>
         <li><strong>Identity Verification:</strong> Ensuring learner safety as our highest priority,<strong> we request you to switch on ${personDetails.childName}'s camera at the start of each class for a quick identity check.</strong> While ${personDetails.childName} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
-        <li><strong>Class Entry:</strong>  We request learners to join class on time to ensure an uninterrupted learning experience. Late entries may be restricted after the initial 10 minutes, for the smooth flow of the class.</li>
+        <li><strong>Class Entry:</strong> We request learners to join class on time to ensure an uninterrupted learning experience. Late entries may be restricted after the initial 10 minutes, to maintain the flow of class. </li>
         <li><strong>Class Materials:</strong> The required class materials and details about homework submissions, if any, will be sent to you before class. Keep an eye on your email for these details.</li>
         <li><strong>Class Alerts:</strong> We have blocked your calendar for class; please let us know if you are unable to see it. We will be sending you class reminders as well. </li>
         <li><strong>Feedback:</strong> Class time includes a 10-minute feedback session. We kindly request ${personDetails.childName} to stay back, and share their class experience with us.</li>
@@ -139,6 +141,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
         }
       }else{
         classes = '';
+        subject = 'Welcome aboard! Thank You for Your Timing Preferences';
         if(personDetails.want_another_slot!== undefined && personDetails.want_another_slot !== ''){
           message = `We noticed that you have requested additional time slots for some classes - ${personDetails.want_another_slot}.  We will try our best to schedule classes that work for you.</p>`;
         }
@@ -242,7 +245,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
       const mailOptions = {
         from: 'support@coralacademy.com', // Sender's email address
         to:personDetails.email,
-        subject: `Let the Learning Begin! ${personDetails.childName} is Enrolled!`,
+        subject: subject,
         // text: 'This is the email body text.',
         html:emailContent,
         headers: {

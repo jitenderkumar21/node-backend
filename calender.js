@@ -169,7 +169,11 @@ if (subClassInfo && subClassInfo.prerequisite !== undefined && subClassInfo.prer
 if (subClassInfo && subClassInfo.classMaterial !== '') {
     eventDescription += `Class Material: ${subClassInfo.classMaterial}\n`;
 }
+eventDescription+=`
 
+Class Entry : We request learners to join class on time to ensure an uninterrupted learning experience. Late entries may be restricted after the initial 10 minutes, to maintain the flow of class. 
+
+`
 eventDescription += `
 Meeting Link: ${subClassInfo.zoomMeetingLink}
 Meeting ID: ${subClassInfo.meetingId}

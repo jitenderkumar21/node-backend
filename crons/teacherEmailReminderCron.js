@@ -30,7 +30,9 @@ const teacherEmailReminderCron = cron.schedule('*/60 * * * *', async () => {
         //     const reminderId = row.id;
         //     const additionalInfo = row.additional_info;
         //     // console.log(reminderId, additionalInfo)
-        //     await sendTeacherReminderEmail(reminderId, additionalInfo);
+        //     if(reminderId === 3468 || reminderId === 3467 || reminderId === 3471 || reminderId === 3469){
+        //         await sendTeacherReminderEmail(reminderId, additionalInfo);
+        //     }
         // }
     } catch (error) {
         console.error('Error in cron job:', error);
