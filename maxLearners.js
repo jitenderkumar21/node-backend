@@ -38,33 +38,13 @@ const maxLearners = async () => {
             classIdToValue[classId] = value;
             let slots = [];
             let displayClassTime = "";
-            let timeZoneAbbreviation = 'PST';
-            let classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
-            let classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+            let timeZoneAbbreviation = 'PDT';
+            let classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+            let classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
             if (classStartTime.isValid() && classEndTime.isValid()) {
               const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
               const formattedClassEndTime = classEndTime.format('h:mm A');
 
-              // Format the final string
-              displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
-              slots.push(displayClassTime);
-            }
-            classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
-            classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
-            if (classStartTime.isValid() && classEndTime.isValid()) {
-              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
-              const formattedClassEndTime = classEndTime.format('h:mm A');
-              timeZoneAbbreviation = 'MST';
-              // Format the final string
-              displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
-              slots.push(displayClassTime);
-            }
-            classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
-            classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
-            if (classStartTime.isValid() && classEndTime.isValid()) {
-              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
-              const formattedClassEndTime = classEndTime.format('h:mm A');
-              timeZoneAbbreviation = 'EST';
               // Format the final string
               displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
               slots.push(displayClassTime);
@@ -74,7 +54,27 @@ const maxLearners = async () => {
             if (classStartTime.isValid() && classEndTime.isValid()) {
               const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
               const formattedClassEndTime = classEndTime.format('h:mm A');
-              timeZoneAbbreviation = 'CST';
+              timeZoneAbbreviation = 'MDT';
+              // Format the final string
+              displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
+              slots.push(displayClassTime);
+            }
+            classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(4, 'hours');
+            classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(4, 'hours');
+            if (classStartTime.isValid() && classEndTime.isValid()) {
+              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
+              const formattedClassEndTime = classEndTime.format('h:mm A');
+              timeZoneAbbreviation = 'EDT';
+              // Format the final string
+              displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
+              slots.push(displayClassTime);
+            }
+            classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
+            classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
+            if (classStartTime.isValid() && classEndTime.isValid()) {
+              const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
+              const formattedClassEndTime = classEndTime.format('h:mm A');
+              timeZoneAbbreviation = 'CDT';
               // Format the final string
               displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
               slots.push(displayClassTime);

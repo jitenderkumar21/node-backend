@@ -6,6 +6,7 @@ class SubClassDTO {
     /**
      * @param {string} classId - The ID of the class.
      * @param {string} subClassId - The ID of the sub-class.
+     * @param {string} subClassName - The name of the sub-class.
      * @param {string} teacherName - The name of the teacher.
      * @param {string} teacherEmail - The email of the teacher.
      * @param {string} teacherTimezone - The timezone of the teacher.
@@ -18,6 +19,7 @@ class SubClassDTO {
     constructor(
       classId,
       subClassId,
+      subClassName,
       teacherName,
       teacherEmail,
       teacherTimezone,
@@ -29,6 +31,7 @@ class SubClassDTO {
     ) {
       this.classId = classId;
       this.subClassId = subClassId;
+      this.subClassName = subClassName;
       this.teacherName = teacherName;
       this.teacherEmail = teacherEmail;
       this.teacherTimezone = teacherTimezone;

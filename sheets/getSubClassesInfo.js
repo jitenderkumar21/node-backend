@@ -36,14 +36,15 @@ const getSubClassesInfo = async () => {
         const subClassInfo = new SubClassDTO(
           row[0], // classId
           row[1], // subClassId
-          row[2], // teacherName
-          row[3], // teacherEmail
-          row[4], // teacherTimezone
-          row[5], // classMaterial
-          row[6], // prerequisite
-          row[7], // zoomMeetingLink
-          row[8], // meetingId
-          row[9]  // passcode
+          row[2], // subClassName
+          row[3], // teacherName
+          row[4], // teacherEmail
+          row[5], // teacherTimezone
+          row[6], // classMaterial
+          row[7], // prerequisite
+          row[8], // zoomMeetingLink
+          row[9], // meetingId
+          row[10]  // passcode
         );
 
         subClassesInfo[subClassId] = subClassInfo;

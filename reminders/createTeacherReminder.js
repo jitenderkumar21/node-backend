@@ -49,33 +49,33 @@ function calculateMorningReminderTime(classStartTime,userTimeZone) {
     let classStartTimeMoment;
     let reminderTimeMoment;
     if(timeZoneAbbreviation=='MST'){
-        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
-        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(7, 'hours');
-        if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
-            reminderTimeMoment.subtract(1, 'day');
-        }    
-        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(14, 'hours');
-    }else if(timeZoneAbbreviation=='EST'){
-        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
-        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(7, 'hours');
-        if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
-            reminderTimeMoment.subtract(1, 'day');
-        }    
-        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(12, 'hours');
-    }else if(timeZoneAbbreviation=='CST'){
         classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
         reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(7, 'hours');
         if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
             reminderTimeMoment.subtract(1, 'day');
         }    
         reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(13, 'hours');
-    }else{
-        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+    }else if(timeZoneAbbreviation=='EST'){
+        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(4, 'hours');
         reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(7, 'hours');
         if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
             reminderTimeMoment.subtract(1, 'day');
         }    
-        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(15, 'hours');
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(11, 'hours');
+    }else if(timeZoneAbbreviation=='CST'){
+        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(7, 'hours');
+        if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
+            reminderTimeMoment.subtract(1, 'day');
+        }    
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(12, 'hours');
+    }else{
+        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(7, 'hours');
+        if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
+            reminderTimeMoment.subtract(1, 'day');
+        }    
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(14, 'hours');
     }
     return reminderTimeMoment.toISOString();
 }

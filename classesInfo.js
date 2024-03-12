@@ -10,13 +10,13 @@ const classesInfo = async (userTimeZone) => {
   try {
 
     let timeZoneAbbreviation = moment.tz([2023, 0], userTimeZone).zoneAbbr();
-    let offset = 8;
+    let offset = 7;
     if(timeZoneAbbreviation=='MST'){
-      offset=7;
-    }else if(timeZoneAbbreviation=='EST'){
-      offset=5;
-    }else if(timeZoneAbbreviation=='CST'){
       offset=6;
+    }else if(timeZoneAbbreviation=='EST'){
+      offset=4;
+    }else if(timeZoneAbbreviation=='CST'){
+      offset=5;
     }
 
     const auth = new google.auth.GoogleAuth({
@@ -55,7 +55,7 @@ const classesInfo = async (userTimeZone) => {
       const arrayOfObjects = [];
       const jsonObject = {};
 
-      const subClassesInfo = await getSubClassesInfo();
+      // const subClassesInfo = await getSubClassesInfo();
 
       if (rows.length) {
         rows.slice(1).forEach((row) => {
@@ -68,19 +68,19 @@ const classesInfo = async (userTimeZone) => {
             // console.log(row);
             jsonObject['expand']=true;
 
-            let classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
-            let classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+            let classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+            let classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
             
             
             if(timeZoneAbbreviation=='MST'){
-              classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
-              classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
-            }else if(timeZoneAbbreviation=='EST'){
-              classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
-              classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
-            }else if(timeZoneAbbreviation=='CST'){
               classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
               classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
+            }else if(timeZoneAbbreviation=='EST'){
+              classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(4, 'hours');
+              classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(4, 'hours');
+            }else if(timeZoneAbbreviation=='CST'){
+              classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
+              classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
             }else{
               timeZoneAbbreviation = 'PST';
             }
@@ -94,10 +94,11 @@ const classesInfo = async (userTimeZone) => {
             
               const isOneTime = row[17]?.toLowerCase() === 'onetime';
               // console.log(isOneTime);
-              
+              const modifiedTimeZone = ClassUtility.getModifiedTimeZone(timeZoneAbbreviation);
+
               displayClassTime = isOneTime
-                  ? `${day}, ${startTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`
-                  : `${day}s, ${startTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
+                  ? `${day}, ${startTime} - ${formattedClassEndTime} (${modifiedTimeZone})`
+                  : `${day}s, ${startTime} - ${formattedClassEndTime} (${modifiedTimeZone})`;
                     
             }
             jsonObject['display_timing']=displayClassTime;

@@ -37,7 +37,20 @@ async function bulkInsertEnrollments(enrollments) {
     const filteredEnrollments = enrollments.filter(enrollment => {
       const parentNameContainsTest = enrollment[1] && enrollment[1].toLowerCase().includes('test');
       const childNameContainsTest = enrollment[2] && enrollment[2].toLowerCase().includes('test');
-      const excludedEmails = ['xyz@gmail.com', 'test@gmail.com'];
+      const excludedEmails = ['aishwarya@coralacademy.com',
+        'anisha@coralacademy.com',
+        'jeet@coralacademy.com',
+        'daanish@coralacademy.com',
+        'shivam@coralacademy.com',
+        'dhairya@coralacademy.com',
+        'Aneesh@coralacademy.com',
+        'ramesh.anand@mghyderabad.com',
+        'mvskeerthi86@gmail.com',
+        'sakshi@coralacademy.com',
+        'vyshali@raamgroup.in',
+        'shagun@raamgroup.in',
+        'shagun@coralacademy.com',
+        'rkongara.sap@gmail.com'];
       const emailNotInExcludedList = enrollment[3] && !excludedEmails.includes(enrollment[3].toLowerCase());
     
       return !parentNameContainsTest && !childNameContainsTest && emailNotInExcludedList;

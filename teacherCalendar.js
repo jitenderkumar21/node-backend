@@ -106,7 +106,7 @@ try{
                     // console.log('Sending Teacher invite for subClassId',subClassId);
                     const classInviteId = classInviteIds[subClassId];
                     // console.log('classInviteId',classInviteId);
-                    const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
+                    const modifiedClassName = ClassUtility.getModifiedClassNameV3(subClassId,className,classTag,subClassDTO);
                     // console.log('Modified class name',modifiedClassName);
                     if(classInviteId==undefined){
                         createTeacherReminder(subClassId,modifiedClassName,subClassDTO,classIdTimings);                       
@@ -116,10 +116,10 @@ try{
                             const formattedDateTime = momentTime.utc(userDateTime, 'YYYY-MM-DD HH:mm').format();
                             return formattedDateTime;
                         };
-                        let classStartTime = moment(userStartDateTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
-                        let classEndTime = moment(userEndDateTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+                        let classStartTime = moment(userStartDateTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+                        let classEndTime = moment(userEndDateTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
                         let displayClassTime = '';
-                        const timeZoneAbbreviation = 'PST';
+                        const timeZoneAbbreviation = 'PDT';
                         if (classStartTime.isValid() && classEndTime.isValid()) {
                             const formattedClassStartTime = classStartTime.format('MMMM D, dddd, h:mm A');
                             const formattedClassEndTime = classEndTime.format('h:mm A');
