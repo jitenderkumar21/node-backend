@@ -85,13 +85,13 @@ class subClassUtility {
     static getClassStartTime(timeZoneAbbreviation,classStartTime,classEndTime){
         let offset = 7;
         let modifiedTimeZone = 'PDT';
-        if(timeZoneAbbreviation=='MST'){
+        if(timeZoneAbbreviation=='MST' || timeZoneAbbreviation=='MDT'){
             offset=6;
             modifiedTimeZone = 'MDT';
-        }else if(timeZoneAbbreviation=='EST'){
+        }else if(timeZoneAbbreviation=='EST' || timeZoneAbbreviation=='EDT'){
             offset=4;
             modifiedTimeZone = 'EDT';
-        }else if(timeZoneAbbreviation=='CST'){
+        }else if(timeZoneAbbreviation=='CST' || timeZoneAbbreviation=='CDT'){
             offset=5;
             modifiedTimeZone = 'CDT';
         }
