@@ -62,6 +62,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
           ipInfo.region,
           ipInfo.city,
           moment.tz([2023, 0], ipInfo.timezone).zoneAbbr(),
+          subClassInfo.subClassName,
         ];
     
         return values;

@@ -69,12 +69,12 @@ async function bulkInsertEnrollments(enrollments) {
         enrollment[7],
         enrollment[8],
         enrollment[9],
-        enrollment[10],
-        enrollment[15],
-        enrollment[16],
-        enrollment[17],
+        enrollment[11],
         enrollment[18],
         enrollment[19],
+        enrollment[20],
+        enrollment[21],
+        enrollment[22],
       ];
     });
     // const enrollment = enrollments[0];
