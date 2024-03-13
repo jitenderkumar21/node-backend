@@ -11,7 +11,6 @@ const maxLearners = require('./maxLearners'); // Import the module
 const defaultTimeZone = require('./defaultTimeSlot'); // Import the module
 const calendarInvite = require('./calender'); // Import the module
 const teacherCalendarInvite = require('./teacherCalendar'); // Import the module
-const classCancelltionInfo = require('./sheets/classCancellationInfo'); // Import the module
 const saveEnrollment = require('./sheets/saveEnrollments'); // Import the module
 const getBlockedEmails = require('./sheets/blockedEmails');
 const { google } = require('googleapis');
@@ -25,8 +24,7 @@ const getIpInfo = require('./location/IPInfo'); // Import the module
 const saveEnrollments = require('./sheets/saveEnrollments');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 const {  getAllSystemReports } = require('./dao/systemReportDao')
-const teacherInviteInfo = require('./teacherInviteInfo');
-// const classIdTimingMap = require('./sheets/classIdTimingMap');
+const getSubClassesInfo = require('./sheets/getSubClassesInfo');
 const {
   updateCounts,
   getAllClassCounts
@@ -62,9 +60,10 @@ app.post('/test', async (req, res) => {
   let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
   let classDisplayName = "Class on Sunday";
   // const ipAddress = req.ip || req.connection.remoteAddress;
-  saveEnrollments(req.body,'152.59.194.85');
+  // saveEnrollments(req.body,'152.59.194.85');
   // createWhatsappReminders(req.body,req.query.timezone);
-  const result = await getParentInfoByEmail('jitender.kumar@iitgn.ac.in');
+  // const result = await getParentInfoByEmail('jitender.kumar@iitgn.ac.in');
+  const result = await getSubClassesInfo();
   res.send(result);
 });
 
@@ -292,38 +291,6 @@ app.post('/save', async (req, res) => {
 
   });
 
-
-  // const cron = require('node-cron');
-
-  // Define your task to be executed every minute
-  // const myCronJob = cron.schedule('* * * * *', async () => {
-  //   try {
-  //     const currentTime = new Date();
-  //     console.log(`Cron job is running every minute at ${currentTime}`);
-  
-  //     const cancellationInfo = await classCancelltionInfo();
-  //     for (const [id, info] of Object.entries(cancellationInfo)) {
-  //       console.log(`ID: ${id}, Array:`, info);
-  //       if(info[1]!=undefined && info[2]==undefined) {
-  //         let classTime = moment(info[1], 'YYYY-MM-DD HH:mm').subtract(48,'hours');
-  //         let classStartTimeIST = moment(info[1], 'YYYY-MM-DD HH:mm');
-  //         if(classStartTimeIST.isValid() && classStartTimeIST.isAfter(currentTime)) {
-  //           if(classTime.isValid() && classTime.isBefore(currentTime)) {
-  //             console.log('Cancelling class for id:', id);
-
-  //             }
-
-  //         }
-
-  //       }
-  //     }
-      
-  //   } catch (error) {
-  //     console.error('Error in cron job:', error);
-  //   }
-  // });
-  
-  // Start the cron job
   
 
 

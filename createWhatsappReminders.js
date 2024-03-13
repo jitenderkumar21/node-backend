@@ -1,12 +1,13 @@
 const { Client } = require('pg');
-const classCancelltionInfo = require('./sheets/classCancellationInfo'); // Import the module
+const getSubClassesInfo = require('./sheets/getSubClassesInfo');
 const moment = require('moment-timezone');
 const ClassUtility = require('./utils/subClassUtility');
-const classIdTimingMap = require('./sheets/classIdTimingMap');
+const classIdTimingMap = require('./sheets/classIdTimingMap')
+
 
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
 
-function createAdditionalInfo(data,userTimeZone, classStartTimesMap,classIdTimings) {
+function createAdditionalInfo(data,userTimeZone, subClassesInfo,classIdTimings) {
     const finalJson = [];
     
     data.classDetails.forEach(detail => {
@@ -14,6 +15,7 @@ function createAdditionalInfo(data,userTimeZone, classStartTimesMap,classIdTimin
         detail.timeslots.filter(timeslot => !timeslot.isPast)
         .forEach(timeslot => {
         const subClassId = timeslot.subClassId;
+        const subClassDTO = subClassesInfo[subClassId];
         const classIdTimingMap = classIdTimings.get(subClassId);
         // console.log(subClassId,classIdTimingMap);
         const classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,classIdTimingMap[0],classIdTimingMap[1]);
@@ -28,9 +30,9 @@ function createAdditionalInfo(data,userTimeZone, classStartTimesMap,classIdTimin
             classId: detail.classid,
             subClassId: subClassId,
             receiverNumber: data.phoneNumber,
-            zoomMeetingLink: classStartTimesMap[detail.classid][4],
-            meetingId: classStartTimesMap[detail.classid][5],
-            passcode: classStartTimesMap[detail.classid][6],
+            zoomMeetingLink: subClassDTO.zoomMeetingLink,
+            meetingId: subClassDTO.meetingId,
+            passcode: subClassDTO.passcode,
         };
 
         finalJson.push(row);
@@ -112,33 +114,33 @@ function calculateMorningReminderTime(classStartTime,userTimeZone) {
     let classStartTimeMoment;
     let reminderTimeMoment;
     if(timeZoneAbbreviation=='MST'){
-        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
-        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(8, 'hours');
-        if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
-            reminderTimeMoment.subtract(1, 'day');
-        }    
-        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(15, 'hours');
-    }else if(timeZoneAbbreviation=='EST'){
-        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
-        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(8, 'hours');
-        if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
-            reminderTimeMoment.subtract(1, 'day');
-        }    
-        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(13, 'hours');
-    }else if(timeZoneAbbreviation=='CST'){
         classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
         reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(8, 'hours');
         if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
             reminderTimeMoment.subtract(1, 'day');
         }    
         reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(14, 'hours');
-    }else{
-        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+    }else if(timeZoneAbbreviation=='EST'){
+        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(4, 'hours');
         reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(8, 'hours');
         if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
             reminderTimeMoment.subtract(1, 'day');
         }    
-        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(16, 'hours');
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(12, 'hours');
+    }else if(timeZoneAbbreviation=='CST'){
+        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(8, 'hours');
+        if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
+            reminderTimeMoment.subtract(1, 'day');
+        }    
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(13, 'hours');
+    }else{
+        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(8, 'hours');
+        if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
+            reminderTimeMoment.subtract(1, 'day');
+        }    
+        reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(15, 'hours');
     }
     return reminderTimeMoment.toISOString(); // Converts to PostgreSQL timestamp format
 }
@@ -148,12 +150,12 @@ function cleanPhoneNumber(phoneNumber) {
   }  
 
 async function createWhatsappReminders(jsonData,userTimeZone) {
-    const classStartTimesMap = await classCancelltionInfo();
+    const subClassesInfo = await getSubClassesInfo();
     const classIdTimings = await classIdTimingMap();
     // console.log('classStartTimesMap', classStartTimesMap);
     // console.log('classIdTimings', classIdTimings);
     jsonData.phoneNumber = cleanPhoneNumber(jsonData.phoneNumber);
-    const additionalInfoArray = createAdditionalInfo(jsonData,userTimeZone, classStartTimesMap,classIdTimings);
+    const additionalInfoArray = createAdditionalInfo(jsonData,userTimeZone, subClassesInfo,classIdTimings);
     const communicationPreference = jsonData.commPref;
     // console.log('additionalInfo', additionalInfoArray);
     for (const info of additionalInfoArray) {
@@ -169,7 +171,7 @@ async function createWhatsappReminders(jsonData,userTimeZone) {
             // await createReminder(info,morningReminderTime,'MORNING_8');
             // await createReminder(info,beforeClassReminderTime,'BEFORE_CLASS_15_P');
             // await createReminder(info,morningReminderTime,'MORNING_8_P');
-        }if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix)) && ( communicationPreference.includes('Email') || communicationPreference.includes('WhatsApp') ) ){
+        }if(timeslot!=undefined && !(timeslot.toLowerCase().startsWith(prefix)) && ( communicationPreference.includes('Email') || communicationPreference.includes('WhatsApp') || communicationPreference.includes('Text') ) ){
             const beforeClassReminderTime = calculateReminderTime(info.classStartTime);
             const morningReminderTime = calculateMorningReminderTime(info.classStartTime,userTimeZone);
             // console.log('beforeClassReminderTime',beforeClassReminderTime);

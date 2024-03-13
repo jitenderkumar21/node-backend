@@ -1,14 +1,14 @@
 const nodemailer = require('nodemailer');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 const ClassUtility = require('./utils/subClassUtility');
-const teacherInviteInfo = require('./teacherInviteInfo'); // Import the module
+const getSubClassesInfo = require('./sheets/getSubClassesInfo');
 const getIpInfo = require('./location/IPInfo'); // Import the module
 const {  insertSystemReport } = require('./dao/systemReportDao')
 
 const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
   try{
     const classIdTimings = await classIdTimingMap();
-    const invitesInfo =  await teacherInviteInfo();
+    const subClassesInfo = await getSubClassesInfo();
     const ipInfo = await getIpInfo(ipAddress);
     const transporter = nodemailer.createTransport({
         service: 'Gmail', // Use your email service provider
@@ -31,62 +31,62 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
             `;
       classDetails.forEach((classDetail) => {
         let { classid, className, classTag, timeslots } = classDetail;
-        const inviteClassInfo = invitesInfo[classid];
-        // const inviteClassInfo = invitesInfo[classid];
-        if (classTag.toLowerCase() === 'course') {
-            classTag = 'Course';
-            if (timeslots && timeslots.length > 0) {
-                // Filter out timeslots where isPast is true
-                const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
+      
+        // if (classTag.toLowerCase() === 'course') {
+        //     classTag = 'Course';
+        //     if (timeslots && timeslots.length > 0) {
+        //         // Filter out timeslots where isPast is true
+        //         const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
     
-                if (futureTimeslots.length > 0) {
-                    isCoursePresent = true;
-                    confirmedClassesFlag = true;
-                    classes += `
-                            <tr>
-                                <td>${className}</td>
-                                <td>`;
+        //         if (futureTimeslots.length > 0) {
+        //             isCoursePresent = true;
+        //             confirmedClassesFlag = true;
+        //             classes += `
+        //                     <tr>
+        //                         <td>${className}</td>
+        //                         <td>`;
     
-                    futureTimeslots.forEach((timeslot, index) => {
-                        let { timing, subClassId } = timeslot;
-                        const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
-                        const userEndDateTime = classIdTimings.get(subClassId)[1]; 
-                        let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
+        //             futureTimeslots.forEach((timeslot, index) => {
+        //                 let { timing, subClassId } = timeslot;
+        //                 const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
+        //                 const userEndDateTime = classIdTimings.get(subClassId)[1]; 
+        //                 let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
                         
-                        classes += `${classDisplayTiming}${index < futureTimeslots.length - 1 ? '<br>' : ''}`;
-                    });
-    
-                    classes += `</td>
-                                <td>${classTag}</td>
-                                <td>${inviteClassInfo[1]}</td>
-                            </tr>
-                    `;
-                }
-            }
-        } else {
+        //                 classes += `${classDisplayTiming}${index < futureTimeslots.length - 1 ? '<br>' : ''}`;
+        //             });
+        //             let subClassInfo = subClassesInfo[classid+'_1'];
+        //             classes += `</td>
+        //                         <td>${classTag}</td>
+        //                         <td>${subClassInfo.teacherName}</td>
+        //                     </tr>
+        //             `;
+        //         }
+        //     }
+        // } else {
             // For other class types
-            if (timeslots && timeslots.length > 0) {
-                // Filter out timeslots where isPast is true
-                const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
-    
-                futureTimeslots.forEach((timeslot) => {
-                    let { timing,subClassId } = timeslot;
-                    const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
-                    const userEndDateTime = classIdTimings.get(subClassId)[1]; 
-                    let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
-                    const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
-                    confirmedClassesFlag = true;
-                    classes += `
-                            <tr>
-                                <td>${modifiedClassName}</td>
-                                <td>${classDisplayTiming}</td>
-                                <td>${classTag}</td>
-                                <td>${inviteClassInfo[1]}</td>
-                            </tr>
-                    `;
-                });
-            }
-        }
+          if (timeslots && timeslots.length > 0) {
+              // Filter out timeslots where isPast is true
+              const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
+  
+              futureTimeslots.forEach((timeslot) => {
+                  let { timing,subClassId } = timeslot;
+                  let subClassInfo = subClassesInfo[subClassId];
+                  const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
+                  const userEndDateTime = classIdTimings.get(subClassId)[1]; 
+                  let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
+                  const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
+                  const modifiedClassTag = ClassUtility.getModifiedClassTag(classTag);
+                  confirmedClassesFlag = true;
+                  classes += `
+                          <tr>
+                              <td>${modifiedClassName}</td>
+                              <td>${classDisplayTiming}</td>
+                              <td>${modifiedClassTag}</td>
+                              <td>${subClassInfo.teacherName}</td>
+                          </tr>
+                  `;
+              });
+          }
     });
 
       classes+=`</table>`;
@@ -156,8 +156,10 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
             <li><strong>Learner's Name :</strong> ${personDetails.childName}</li>
             <li><strong>Learner's Age :</strong> ${personDetails.childAge}</li>
             <li><strong>Phone Number :</strong> ${personDetails.phoneNumber}</li>
+            <li><strong>Communication Preference :</strong> ${personDetails.commPref.join(',')}</li>
             <li><strong>How did you get to know about us ? :</strong> ${personDetails.knowabout}</li>
             <li><strong>Which Facebook group referred you to us ?/Could you please specify source ? : </strong> ${personDetails.additionalInfo}</li>
+            <li><strong>Drop us your questions or comments! :</strong> ${personDetails.comments}</li>
             <li><strong>Parent Country & City :</strong>${ipInfo.country} - ${ipInfo.city}</li>
 
             <p><strong>Enrolled classes below: </strong></p>

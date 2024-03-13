@@ -1,28 +1,32 @@
-const { Client } = require('pg');
+const { Pool } = require('pg');
 require('dotenv').config();
 
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
+const pool = new Pool(
+  {
+    connectionString: connectionString
+});
 
 async function connect() {
-  const client = new Client({
-    connectionString: connectionString,
-  });
-
   try {
-    await client.connect();
+    console.time('GettingConnection');
+    const client = await pool.connect();
+    console.timeEnd('GettingConnection');
     return client;
   } catch (error) {
     console.error('Error connecting to the database:', error);
-    throw error;
+    throw new Error('Error connecting to the database');
   }
 }
 
 async function disconnect(client) {
   try {
-    await client.end();
+    console.time('Disconnecting');
+    await client.release();
+    console.timeEnd('Disconnecting');
   } catch (error) {
-    console.error('Error closing database connection:', error);
-    throw error;
+    console.error('Error disconnecting from the database:', error);
+    throw new Error('Error disconnecting from the database');
   }
 }
 
@@ -33,8 +37,23 @@ async function bulkInsertEnrollments(enrollments) {
     const filteredEnrollments = enrollments.filter(enrollment => {
       const parentNameContainsTest = enrollment[1] && enrollment[1].toLowerCase().includes('test');
       const childNameContainsTest = enrollment[2] && enrollment[2].toLowerCase().includes('test');
-      
-      return !parentNameContainsTest && !childNameContainsTest;
+      const excludedEmails = ['aishwarya@coralacademy.com',
+        'anisha@coralacademy.com',
+        'jeet@coralacademy.com',
+        'daanish@coralacademy.com',
+        'shivam@coralacademy.com',
+        'dhairya@coralacademy.com',
+        'Aneesh@coralacademy.com',
+        'ramesh.anand@mghyderabad.com',
+        'mvskeerthi86@gmail.com',
+        'sakshi@coralacademy.com',
+        'vyshali@raamgroup.in',
+        'shagun@raamgroup.in',
+        'shagun@coralacademy.com',
+        'rkongara.sap@gmail.com'];
+      const emailNotInExcludedList = enrollment[3] && !excludedEmails.includes(enrollment[3].toLowerCase());
+    
+      return !parentNameContainsTest && !childNameContainsTest && emailNotInExcludedList;
     });
     console.log('filteredEnrollments',filteredEnrollments);
 
@@ -50,12 +69,12 @@ async function bulkInsertEnrollments(enrollments) {
         enrollment[7],
         enrollment[8],
         enrollment[9],
-        enrollment[10],
-        enrollment[15],
-        enrollment[16],
-        enrollment[17],
+        enrollment[11],
         enrollment[18],
         enrollment[19],
+        enrollment[20],
+        enrollment[21],
+        enrollment[22],
       ];
     });
     // const enrollment = enrollments[0];
@@ -116,12 +135,26 @@ async function getChildInfoByClassId(classId) {
 }
 
 async function getEnrollmentsByClassId(classId, pageNumber = 1) {
-  const pageSize = 10
+  const pageSize = 10;
+  console.time('GettingConnection');
   const client = await connect();
-
+  console.timeEnd('GettingConnection');
   try {
-    const offset = (pageNumber - 1) * pageSize;
+    console.time('getEnrollmentsByClassId'); // Start timing
 
+    console.time('getTotalCount'); // Start timing for total count query
+
+    const totalCountResult = await client.query(
+      `
+      SELECT COUNT(*)
+      FROM enrollments;
+    `);
+    console.timeEnd('getTotalCount'); // End timing for total count query
+
+    const totalEnrollments = parseInt(totalCountResult.rows[0].count, 10);
+
+    console.time('getPaginatedEnrollments'); 
+    const offset = (pageNumber - 1) * pageSize;
     const result = await client.query(
       `
       SELECT *
@@ -134,10 +167,14 @@ async function getEnrollmentsByClassId(classId, pageNumber = 1) {
       [classId, offset, pageSize]
     );
 
+    console.timeEnd('getPaginatedEnrollments');
+    
+
     // Convert the result.rows to JSON objects
     const jsonEnrollments = result.rows.map(enrollment => {
       return {
         // timestamp: enrollment.timestamp,
+        id: enrollment.id,
         parent_name: enrollment.parent_name,
         child_name: enrollment.child_name,
         email: enrollment.email,
@@ -145,12 +182,12 @@ async function getEnrollmentsByClassId(classId, pageNumber = 1) {
         phone_number: enrollment.phone_number,
       };
     });
-
+    console.timeEnd('getEnrollmentsByClassId'); // End timing
     return {
-      total: result.rowCount,
+      total: totalEnrollments,
       pageSize: pageSize,
       pageNumber: pageNumber,
-      totalPages: Math.ceil(result.rowCount / pageSize),
+      totalPages: Math.ceil(totalEnrollments / pageSize),
       enrollments: jsonEnrollments,
     };
   } catch (error) {

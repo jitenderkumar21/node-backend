@@ -7,7 +7,7 @@
   },
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "https://drive.google.com/file/d/1BRbaIzQWgYpsOPI1jbVODkiHUd1wG46g/view?usp=sharing",
   "dependencies": {
     "@google-cloud/local-auth": "^2.1.0",
     "cors": "^2.8.5",
@@ -26,5 +26,13 @@
     "request": "^2.88.2",
     "twilio": "^4.19.0",
     "uuid": "^9.0.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jitenderkumar21/node-backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/jitenderkumar21/node-backend/issues"
+  },
+  "homepage": "https://github.com/jitenderkumar21/node-backend#readme"
 }

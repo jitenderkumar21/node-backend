@@ -2,6 +2,7 @@
 
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
+const ClassUtility = require('./utils/subClassUtility');
 
 const defaultTimeZone = async () => {
   try {
@@ -31,15 +32,16 @@ const defaultTimeZone = async () => {
       if (rows.length) {
         rows.slice(1).forEach((row) => {
             var classId = row[0];
-            let classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
-            let classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+            let classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+            let classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
             let displayClassTime = "";
             if (classStartTime.isValid() && classEndTime.isValid()) {
               const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
               const formattedClassEndTime = classEndTime.format('h:mm A');
               // Format the final string
               let timeZoneAbbreviation = 'PST';
-              displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
+              const modifiedTimeZone = ClassUtility.getModifiedTimeZone(timeZoneAbbreviation);
+              displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${modifiedTimeZone})`;
             }
             defaultTimeZone[classId] = displayClassTime;
         });

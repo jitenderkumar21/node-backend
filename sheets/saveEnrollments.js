@@ -1,6 +1,7 @@
 const { google } = require('googleapis');
 const moment = require('moment-timezone');
 const teacherInviteInfo = require('../teacherInviteInfo'); // Import the module
+const getSubClassesInfo = require('../sheets/getSubClassesInfo');
 const getIpInfo = require('../location/IPInfo'); // Import the module
 const ClassUtility = require('../utils/subClassUtility');
 require('dotenv').config();
@@ -10,6 +11,7 @@ const { bulkInsertEnrollments } = require('../dao/enrollmentsDao');
 const saveEnrollments = async (personDetails,ipAddress) => {
   try {
     const invitesInfo =  await teacherInviteInfo();
+    const subClassesInfo = await getSubClassesInfo();
     const ipInfo = await getIpInfo(ipAddress);
 
     const date = new Date();
@@ -23,8 +25,8 @@ const saveEnrollments = async (personDetails,ipAddress) => {
 
       if (inviteClassInfo[3] !== undefined && inviteClassInfo[4] !== undefined) {
         // PST timings
-        classStartTime = moment(inviteClassInfo[3], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
-        classEndTime = moment(inviteClassInfo[4], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+        classStartTime = moment(inviteClassInfo[3], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+        classEndTime = moment(inviteClassInfo[4], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
       }
       const dateDayTimeColumns = [
         classStartTime ? classStartTime.format('dddd') : '',
@@ -36,6 +38,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
       .filter((timeslot) => !timeslot.isPast)  // Filter out timeslots where isPast is true
       .map((timeslot) => {
         const { subClassId, timing, isPast } = timeslot;
+        let subClassInfo = subClassesInfo[subClassId];
         const classIdFomatted = ClassUtility.getClassId(subClassId, classDetail.classTag);
         const values = [
           formattedTimestamp,
@@ -45,7 +48,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
           personDetails.childAge,
           personDetails.commPref.join(','),
           personDetails.phoneNumber,
-          inviteClassInfo[1],
+          subClassInfo.teacherName,
           personDetails.knowabout,
           personDetails.additionalInfo,
           personDetails.comments,
@@ -59,6 +62,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
           ipInfo.region,
           ipInfo.city,
           moment.tz([2023, 0], ipInfo.timezone).zoneAbbr(),
+          subClassInfo.subClassName,
         ];
     
         return values;

@@ -4,9 +4,8 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 const {  insertSystemReport } = require('../dao/systemReportDao')
 
-const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) => {
+const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassName) => {
 
-    // console.log('sending confirmation mail to teacher',teacherInviteInfo);
     const ATTACHMENT_PATH = path.join(process.cwd(), 'assets/Coral Academy Background.png');
    
     const transporter = nodemailer.createTransport({
@@ -63,6 +62,11 @@ const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) =>
             font-size: 16px;
             line-height: 1.6;
           }
+          .custom-para {
+            color: #666;
+            font-size: 12px;
+            line-height: 1.0;
+          }
           li {
             color: black;
             font-size: 16px;
@@ -73,43 +77,40 @@ const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) =>
       </head>
       <body>
         <div class="container">
-          <p>Hi ${teacherInviteInfo[1]},</p>
+          <p>Hi ${teacherName},</p>
           <p>Hope you are doing well!</p>
           <p>Excited to inform you that the following ${text} been successfully scheduled:</p>
           ${classes}
-          <p>Kindly find the class Zoom link details below:</p>
-          <p>Zoom Meeting Link : <a href=${teacherInviteInfo[5]} target="_blank">Zoom Link</a></p>
-          <p>Meeting ID :  ${teacherInviteInfo[6]} </p>
-          <p>Passcode : ${teacherInviteInfo[7]}</p>
-
+  
           <p>We have blocked your calendar for class; please let us know if you are unable to see it. The  enrollments will be sent to you atleast 6 hours before class, however, they might vary due to last minute enrollments.</p>
           
-          <p><strong><u>Things to note :</u></strong></p>
+          <p><strong>Things to note :</strong></p>
 
-          <p><strong><u>Before Class : </u></strong></p>
+          <p><strong><u>Before Class</u></strong></p>
           <ul>
               <li><strong>Class Prerequisites :</strong> We request you to email us the class prerequisites & materials (if any) at the earliest, so that we can send those to parents well in advance.</li>
               <li><strong>Student Homework & Uploads :</strong> Please inform us if your class requires completion of any student homework, so that we can request parents to upload the same.</li>
-              <li><strong>Zoom Background :</strong> We request you to use the attached Coral Academy background on zoom during class.</li>
+              <li><strong>Class Entry :</strong> Feel free to inform our team if you'd like us to restrict admitting students who join the class, after the 10-minute mark.</li>
+              <li><strong>Zoom Background :</strong> We request you to use the attached Coral Academy background on Zoom during class.</li>
               <li><strong>Code of conduct :</strong> Classes are recorded for student safety, allowing parents to review study situations. Recorded videos are strictly confidential and for internal use only. We won't disclose them publicly or share with third parties without your consent.</li>
           </ul>
 
-          <p><strong><u>During Class :</u></strong></p>
+          <p><strong><u>During Class</u></strong></p>
           <ul>
             <li><strong>Learner Verification :</strong> For learner safety, we request you to verify learners through a quick live video check-in at the beginning of each class, to visually confirm that the learner in question is a child. The learner can then turn off video after their check-in. If you’ve never seen the learner on video before, and they’re unable or unwilling to enable their video, please remove them from the class.</li>
             <li><strong>Post Class Interaction :</strong> Kindly inform students to stay back after you exit the class - We will be spending 10 minutes with the students to understand their topic preferences and get class feedback.</li>
             <li><strong>Support :</strong> A team member will join your class as a co-host, helping you navigate the waiting room and resolve any technical glitches.</li>
           </ul>
 
-          <p><strong><u>After Class :</u></strong></p>
+          <p><strong><u>After Class</u></strong></p>
           <ul>
-            <li><strong>Payments :</strong> Payments for class will be processed within 4 working days, post class.</li>
+            <li><strong>Payments :</strong> Payments for the class will be processed weekly, every Saturday, post class.</li>
             <li><strong>Feedback :</strong> Your feedback is valuable to us! Please feel free to share your thoughts on how we can improve and make your experience even better.</li>
           </ul>
 
           <p>PFA our <a href="https://docs.google.com/document/d/1lIqvqEB6Z7ic84JWlPAqKlILxlOsTixYPPlIHVfLToI/edit?usp=sharing" target="_blank">Code of Conduct Policy</a> for your reference.</p>
 
-          <p>Please feel free to email us or text/call on (872)-222-8643 for any assistance required.</p>
+          <p>Please feel free to email us or text/call at (872)-222-8643 for any assistance required.</p>
 
           <p>Looking forward to class!</p>
           
@@ -124,7 +125,7 @@ const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) =>
       // Email content
       const mailOptions = {
         from: 'support@coralacademy.com', // Sender's email address
-        to:teacherInviteInfo[2].split(',')[0],
+        to:teacherEmail.split(',')[0],
         subject: `Coral Academy: Class Confirmed - ${modifiedClassName}`,
         html:emailContent,
         attachments: [
@@ -145,19 +146,22 @@ const sendEmailToTeacher = (teacherInviteInfo,classes,text,modifiedClassName) =>
         } else {
           const reportData = { channel: 'EMAIL', type: 'Teacher Confimation', status: 'SUCCESS'};
           insertSystemReport(reportData);
-          console.log('Confirmation Email sent to teacher:', teacherInviteInfo[2].split(',')[0]);
+          console.log('Confirmation Email sent to teacher:', subClassDTO.teacherEmail.split(',')[0]);
         }
       });
 
   };
 
-function createTableAndSendEmail(timeslot,classTag,className,teacherInviteInfo,classIdTimings){
+function createTableAndSendEmail(timeslot,classTag,className,subClassDTO,classIdTimings){
+  const teacherEmail = subClassDTO.teacherEmail;
+  const teacherName = subClassDTO.teacherName;
   let classes = `
               <table class="class-table">
                   <tr>
                       <th>Class Name</th>
                       <th>Date</th>
                       <th>Time</th>
+                      <th>Zoom Details</th>
                   </tr>
           `;
 
@@ -165,7 +169,7 @@ function createTableAndSendEmail(timeslot,classTag,className,teacherInviteInfo,c
   const classNumber = subClassId.split('_')[1]; // Assuming subClassId format is "33_1"
   let classNameWithNumber = className;
   // Append class number to the className
-  if(classTag.toLowerCase() === 'ongoing'){
+  if(classTag.toLowerCase() === 'ongoing' || classTag.toLowerCase() === 'playlist-2'){
       classNameWithNumber = `${className} Class ${classNumber}`;
   }
   const classIdTimingMap = classIdTimings.get(subClassId);
@@ -182,28 +186,38 @@ function createTableAndSendEmail(timeslot,classTag,className,teacherInviteInfo,c
           classes += `${cstTiming}<br>`;
           classes += `${pstTiming}`; 
           classes+= `</td>
+                  <td>
+                    <p class="custom-para"><a href=${subClassDTO.zoomMeetingLink}>Zoom Link</a></p>
+                    <p class="custom-para">Meeting ID: ${subClassDTO.meetingId}</p>
+                    <p class="custom-para">Passcode: ${subClassDTO.passcode}</p>
+                  </td>
           </tr>`;
   classes += `</table>`;
   // console.log('Created classes: ', classes);
-  sendEmailToTeacher(teacherInviteInfo,classes,'class has',classNameWithNumber);
+  sendEmailToTeacher(teacherName,teacherEmail,classes,'class has',classNameWithNumber);
 }
 
-function createTableForCoursesAndSendEmail(timeslots,className,teacherInviteInfo,classIdTimings){
+function createTableForCoursesAndSendEmail(timeslots,className,subClassesInfo,classIdTimings){
   let classes = `
               <table class="class-table">
                   <tr>
                       <th>Class Name</th>
                       <th>Date</th>
                       <th>Time</th>
+                      <th>Zoom Details</th>
                   </tr>
           `;
   
   if (timeslots && timeslots.length > 0) {
       // Filter out timeslots where isPast is true
       const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
-
+      let teacherEmail = '';
+      let teacherName = '';
       futureTimeslots.forEach((timeslot) => {
           const { timing, subClassId } = timeslot;
+          let subClassDTO = subClassesInfo[subClassId];
+          teacherEmail = subClassDTO.teacherEmail;
+          teacherName = subClassDTO.teacherName;
           const classNumber = subClassId.split('_')[1]; // Assuming subClassId format is "33_1"
 
           // Append class number to the className
@@ -222,12 +236,17 @@ function createTableForCoursesAndSendEmail(timeslots,className,teacherInviteInfo
           classes += `${cstTiming}<br>`;
           classes += `${pstTiming}`; 
           classes+= `</td>
+                  <td>
+                    <p class="custom-para"><a href=${subClassDTO.zoomMeetingLink}>Zoom Link</a></p>
+                    <p class="custom-para">Meeting ID: ${subClassDTO.meetingId}</p>
+                    <p class="custom-para">Passcode: ${subClassDTO.passcode}</p>
+                  </td>
           </tr>`;
       });
+      classes += `</table>`;
+    // console.log('Created classes: ', classes);
+      sendEmailToTeacher(teacherName,teacherEmail,classes,'classes have',className);
   }
-  classes += `</table>`;
-  // console.log('Created classes: ', classes);
-  sendEmailToTeacher(teacherInviteInfo,classes,'classes have',className);
 }
 
 

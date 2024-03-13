@@ -84,7 +84,7 @@ const sendTeacherReminderEmail = async (reminderId,teacherReminderInfo) => {
       </head>
       <body>
         <p>Hi ${teacherReminderInfo.teacherName},</p>
-        <p>Just a friendly reminder that your class <strong>${teacherReminderInfo.className}</strong> is scheduled today.</p>
+        <p>Just a friendly reminder that your class <strong>${teacherReminderInfo.className}</strong> is scheduled for today.</p>
         <p><u><strong>Class Details:</strong></u></p>
         <p>Day & Date: ${teacherReminderInfo.DayandDate}</p>
         <p>Time: ${teacherReminderInfo.classTime}</p>
@@ -93,30 +93,31 @@ const sendTeacherReminderEmail = async (reminderId,teacherReminderInfo) => {
         <p>Total Enrollments: ${totalEnrollments} (This number might vary due to some expected no shows & last minute enrollments)</p>
 
         ${learnerDetailsTable}
-        <p><strong><u>Things to note :</u></strong></p>
+        <p><strong>Things to note :</strong></p>
 
-          <p><strong><u>Before Class : </u></strong></p>
+          <p><strong><u>Before Class</u></strong></p>
           <ul>
               <li><strong>Class Prerequisites :</strong> We request you to email us the class prerequisites & materials (if any) at the earliest, so that we can send those to parents well in advance.</li>
               <li><strong>Student Homework & Uploads :</strong> Please inform us if your class requires completion of any student homework, so that we can request parents to upload the same.</li>
+              <li><strong>Class Entry :</strong> Feel free to inform our team if you'd like us to restrict admitting students who join the class after the 10-minute mark.</li>
               <li><strong>Zoom Background :</strong> We request you to use the attached Coral Academy background on zoom during class.</li>
-              <li><strong>Code of conduct :</strong> Classes are recorded for student safety, allowing parents to review study situations. Recorded videos are strictly confidential and for internal use only. We won't disclose them publicly or share with third parties without your consent.</li>
+              <li><strong>Code of conduct :</strong> Classes are recorded for student safety. The recorded classes are for internal use only and are strictly confidential. These would not be disclosed or shared without your consent. </li>
           </ul>
 
-          <p><strong><u>During Class :</u></strong></p>
+          <p><strong><u>During Class</u></strong></p>
           <ul>
             <li><strong>Learner Verification :</strong> For learner safety, we request you to verify learners through a quick live video check-in at the beginning of each class, to visually confirm that the learner in question is a child. The learner can then turn off video after their check-in. If you’ve never seen the learner on video before, and they’re unable or unwilling to enable their video, please remove them from the class.</li>
             <li><strong>Post Class Interaction :</strong> Kindly inform students to stay back after you exit the class - We will be spending 10 minutes with the students to understand their topic preferences and get class feedback.</li>
             <li><strong>Support :</strong> A team member will join your class as a co-host, helping you navigate the waiting room and resolve any technical glitches.</li>
           </ul>
 
-          <p><strong><u>After Class :</u></strong></p>
+          <p><strong><u>After Class</u></strong></p>
           <ul>
-            <li><strong>Payments :</strong> Payments for class will be processed within 4 working days, post class.</li>
+            <li><strong>Payments :</strong> Payments for the class will be processed weekly, every Saturday, post class.</li>
             <li><strong>Feedback :</strong> Your feedback is valuable to us! Please feel free to share your thoughts on how we can improve and make your experience even better.</li>
           </ul>
 
-          <p>Please feel free to email us or text/call on (872)-222-8643 for any assistance required.</p>
+          <p>Please feel free to email us or text/call at (872)-222-8643 for any assistance required.</p>
 
           <p>Looking forward to class!</p>
           

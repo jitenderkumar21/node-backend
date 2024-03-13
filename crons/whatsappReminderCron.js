@@ -4,7 +4,7 @@ const { Client } = require('pg');
 const request = require('request');
 const axios = require('axios');
 const sendParentReminderEmail = require('../emails/parentEmailReminder');
-const classCancelltionInfo = require('../sheets/classCancellationInfo');
+const getSubClassesInfo = require('../sheets/getSubClassesInfo');
 const {  insertSystemReport } = require('../dao/systemReportDao')
 
 const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
@@ -48,7 +48,8 @@ const sendReminder = async (reminderId,reminder_type, additionalInfo) => {
 
 const sendWhatsappReminder = async (reminderId,reminder_type, additionalInfo, callback) => {
     try {
-        const classStartTimesMap = await classCancelltionInfo();
+        const subClassesInfo = await getSubClassesInfo();
+        const subClassDTO = subClassesInfo[additionalInfo.subClassId];
         const parentName = additionalInfo.parentName;
         const kidName = additionalInfo.kidName;
         const namesArray = kidName.split(',').map(name => name.trim());
@@ -112,12 +113,12 @@ Happy Learning!
 `;
     }else {
         message = '';
-        if (classStartTimesMap[classid] && classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][1].toLowerCase() !== 'there are no prerequisites needed for the class.') {
-            message+= `Prerequisites: ${classStartTimesMap[classid][1]}
+        if (subClassDTO && subClassDTO.prerequisite !== undefined && subClassDTO.prerequisite !== '' && subClassDTO.prerequisite.toLowerCase() !== 'there are no prerequisites needed for the class.') {
+            message+= `Prerequisites: ${subClassDTO.prerequisite}
 `
         }
-        if (classStartTimesMap[classid][7] !== undefined && classStartTimesMap[classid][7] !== '') {
-            message += `Class Material : ${classStartTimesMap[classid][7]}`;
+        if (subClassDTO && subClassDTO.classMaterial !== undefined && subClassDTO.classMaterial !== '') {
+            message += `Class Material : ${subClassDTO.classMaterial}`;
         }
           
         if(message==undefined || message=='') {
@@ -162,21 +163,24 @@ const whatsappReminderCron = cron.schedule('*/15 * * * *', async () => {
     try {
         const currentTimeUTC = new Date().toUTCString();
         const currentTimeMinus20Minutes = new Date(new Date().getTime() - 20 * 60 * 1000).toUTCString();
-        console.log(`Cron job is running every 15 minute at ${currentTimeUTC}`);
+        // console.log(`Cron job is running every 15 minute at ${currentTimeUTC}`);
 
-        // // Connect to the PostgreSQL database
-        await currentClient.connect();
+        // // // Connect to the PostgreSQL database
+        // await currentClient.connect();
 
-        // Fetch entries where reminder_time is less than or equal to the current time and reminder_status is 'NOT_SENT'
-        const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_time > $2 AND reminder_status = $3 and reminder_type!=$4 ORDER BY created_on', [currentTimeUTC,currentTimeMinus20Minutes, 'NOT_SENT','TEACHER_REMINDER']);
+        // // Fetch entries where reminder_time is less than or equal to the current time and reminder_status is 'NOT_SENT'
+        // const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_time > $2 AND reminder_status = $3 and reminder_type!=$4 ORDER BY created_on', [currentTimeUTC,currentTimeMinus20Minutes, 'NOT_SENT','TEACHER_REMINDER']);
 
-        // // Process each entry, send reminders, and update reminder status
-        for (const row of result.rows) {
-            const reminderId = row.id;
-            const additionalInfo = row.additional_info;
-            // console.log(reminderId, row.class_id, additionalInfo)
-            await sendReminder(reminderId,row.reminder_type, additionalInfo);
-        }
+        // // // Process each entry, send reminders, and update reminder status
+        // for (const row of result.rows) {
+        //     const reminderId = row.id;
+        //     const additionalInfo = row.additional_info;
+        //     // console.log(reminderId, row.class_id, additionalInfo)
+        //     if(reminderId === 3482 || reminderId === 3474 || reminderId === 3457 || reminderId === 3456){
+        //         console.log(reminderId, row.class_id, additionalInfo)
+        //         await sendReminder(reminderId,row.reminder_type, additionalInfo);
+        //     }
+        // }
     } catch (error) {
         console.error('Error in cron job:', error);
     } finally {

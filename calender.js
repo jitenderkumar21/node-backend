@@ -1,8 +1,8 @@
 const { fetchClassInvitations, insertClassInvitation} = require('./dao/classIdToInviteMapping');
 const inviteInfo = require('./inviteInfo'); // Import the module
+const getSubClassesInfo = require('./sheets/getSubClassesInfo');
 // const saveEventId = require('./updateEventId'); // Import the module
 const classIdTimingMap = require('./sheets/classIdTimingMap');
-const classCancelltionInfo = require('./sheets/classCancellationInfo');
 const ClassUtility = require('./utils/subClassUtility');
 
 const calendarInvite = async (personDetails) => {
@@ -118,22 +118,19 @@ try{
     async function listEvents(auth) {
     const calendar = google.calendar({version: 'v3', auth});
     
-    const childName = personDetails.childName;
-    const invitesInfo =  await inviteInfo();
+    const subClassesInfo = await getSubClassesInfo();
     const classInviteIds = await fetchClassInvitations();
     const classIdTimings = await classIdTimingMap();
-    const classStartTimesMap = await classCancelltionInfo();
     // console.log('classInviteIds',classInviteIds);
     personDetails.classDetails.forEach((classDetail) => {
         const { classid,className,classTag} = classDetail;
-        const inviteClassInfo = invitesInfo[classid];
-        // console.log('inviteClassInfo',inviteClassInfo);
-        if(inviteClassInfo!=undefined){
+        if(classid!=undefined){
             
             let timeslots = classDetail.timeslots;
             timeslots.filter((timeslot1) => !timeslot1.isPast)
             .forEach((timeslot) => {
                 const { timing, subClassId } = timeslot;
+                const subClassInfo = subClassesInfo[subClassId];
                 const classInviteId = classInviteIds[subClassId];
                 // console.log('classInviteId',classInviteId);
                 const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
@@ -161,22 +158,26 @@ Here's everything you need to know:
 
 `;
 
-if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && classStartTimesMap[classid][1].toLowerCase() !== 'there are no prerequisites needed for the class.') {
-    eventDescription += `Prerequisites: ${classStartTimesMap[classid][1]}\n`;
+if (subClassInfo && subClassInfo.prerequisite !== undefined && subClassInfo.prerequisite !== '' && subClassInfo.prerequisite.toLowerCase() !== 'there are no prerequisites needed for the class.') {
+    eventDescription += `Prerequisites: ${subClassInfo.prerequisite}\n`;
 }
 
-if (classStartTimesMap[classid][1] !== undefined && classStartTimesMap[classid][1] !== '' && inviteClassInfo[5] !== undefined && inviteClassInfo[5] !== '') {
+if (subClassInfo && subClassInfo.prerequisite !== undefined && subClassInfo.prerequisite !== '' && subClassInfo.classMaterial !== '') {
     eventDescription += '\n';
 }
 
-if (inviteClassInfo[5] !== undefined && inviteClassInfo[5] !== '') {
-    eventDescription += `Class Material: ${inviteClassInfo[5]}\n`;
+if (subClassInfo && subClassInfo.classMaterial !== '') {
+    eventDescription += `Class Material: ${subClassInfo.classMaterial}\n`;
 }
+eventDescription+=`
 
+Class Entry : We request learners to join class on time to ensure an uninterrupted learning experience. Late entries may be restricted after the initial 10 minutes, to maintain the flow of class. 
+
+`
 eventDescription += `
-Meeting Link: ${classStartTimesMap[classid][4]}
-Meeting ID: ${classStartTimesMap[classid][5]}
-Passcode: ${classStartTimesMap[classid][6]}
+Meeting Link: ${subClassInfo.zoomMeetingLink}
+Meeting ID: ${subClassInfo.meetingId}
+Passcode: ${subClassInfo.passcode}
 
 Class time includes a 10-minute feedback session. We kindly request the learner to stay back, and share their class experience with us.
 
@@ -185,7 +186,7 @@ Happy Learning!
 
                         var event = {
                         'summary':  ` Coral Academy : ${modifiedClassName}`,
-                        'location': `${classStartTimesMap[classid][4]}`,
+                        'location': `${subClassInfo.zoomMeetingLink}`,
                         'description': eventDescription,
                         'start': {
                             'dateTime': startDateTime,

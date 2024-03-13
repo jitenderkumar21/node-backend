@@ -1,4 +1,4 @@
-const teacherInviteInfo = require('./teacherInviteInfo'); // Import the module
+const getSubClassesInfo = require('./sheets/getSubClassesInfo');
 const {
     sendEmailToTeacher,
     createTableAndSendEmail,
@@ -90,48 +90,46 @@ try{
     async function listEvents(auth) {
     const calendar = google.calendar({version: 'v3', auth});
     
-
-    const invitesInfo =  await teacherInviteInfo();
+    const subClassesInfo = await getSubClassesInfo();
     const classIdTimings = await classIdTimingMap();
     const classInviteIds = await fetchClassInvitations();
 
     personDetails.classDetails.forEach((classDetail) => {
         const { classid,className,classTag} = classDetail;
-        const inviteClassInfo = invitesInfo[classid];
-        // console.log('Sending Teacher invite for ',inviteClassInfo);
-        if(inviteClassInfo!=undefined){
+        if(classid!=undefined){
             let timeslots = classDetail.timeslots;
             let courseTimeslots = [];
             timeslots.filter((timeslot1) => !timeslot1.isPast)
                 .forEach((timeslot) => {
                     const { timing, subClassId } = timeslot;
+                    let subClassDTO = subClassesInfo[subClassId];
                     // console.log('Sending Teacher invite for subClassId',subClassId);
                     const classInviteId = classInviteIds[subClassId];
                     // console.log('classInviteId',classInviteId);
-                    const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
+                    const modifiedClassName = ClassUtility.getModifiedClassNameV3(subClassId,className,classTag,subClassDTO);
                     // console.log('Modified class name',modifiedClassName);
                     if(classInviteId==undefined){
-                        // createTeacherReminder(subClassId,modifiedClassName,inviteClassInfo,classIdTimings);                       
+                        createTeacherReminder(subClassId,modifiedClassName,subClassDTO,classIdTimings);                       
                         const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
                         const userEndDateTime = classIdTimings.get(subClassId)[1];    // Replace this with the user's input
                         const convertToDateTimeFormat = (userDateTime) => {
                             const formattedDateTime = momentTime.utc(userDateTime, 'YYYY-MM-DD HH:mm').format();
                             return formattedDateTime;
                         };
-                        let classStartTime = moment(userStartDateTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
-                        let classEndTime = moment(userEndDateTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+                        let classStartTime = moment(userStartDateTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+                        let classEndTime = moment(userEndDateTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
                         let displayClassTime = '';
-                        const timeZoneAbbreviation = 'PST';
+                        const timeZoneAbbreviation = 'PDT';
                         if (classStartTime.isValid() && classEndTime.isValid()) {
-                            const formattedClassStartTime = classStartTime.format('D MMMM, dddd, h:mm A');
+                            const formattedClassStartTime = classStartTime.format('MMMM D, dddd, h:mm A');
                             const formattedClassEndTime = classEndTime.format('h:mm A');
                             displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
                           }
                         const lowercaseClassTag = classTag.toLowerCase();
 
-                        if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'onetime') {
-                            createTableAndSendEmail(timeslot,classTag,className,[...inviteClassInfo,displayClassTime],classIdTimings);    
-                        }else if (lowercaseClassTag === 'course'){
+                        if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'onetime' || lowercaseClassTag === 'playlist-2') {
+                            createTableAndSendEmail(timeslot,classTag,className,subClassDTO,classIdTimings);    
+                        }else if (lowercaseClassTag === 'course' || lowercaseClassTag === 'playlist-1'){
                             // console.log('Push timeslot to courseTimeslots for',subClassId);
                             courseTimeslots.push(timeslot);
                         }                     
@@ -142,27 +140,27 @@ try{
                         let eventSummary = `Coral Academy: ${modifiedClassName}`;
                         
 const eventDescription = `
-Hi ${inviteClassInfo[1]},
+Hi ${subClassDTO.teacherName},
 
 We are blocking your calendar for ${displayClassTime}.
 
 Zoom details mentioned below :
 
-Meeting Link: ${inviteClassInfo[5]}
-Meeting ID: ${inviteClassInfo[6]}
-Passcode: ${inviteClassInfo[7]}
+Meeting Link: ${subClassDTO.zoomMeetingLink}
+Meeting ID: ${subClassDTO.meetingId}
+Passcode: ${subClassDTO.passcode}
 
-- Please verify learners with a quick video check-in at the start of each class to visually ensure that the learner is a child.After check-in, they can turn off the video. If a learner is unwilling or unable to enable video, kindly remove them from the class.
+- Please verify learners with a quick video check-in at the start of each class to visually ensure that the learner is a child. After check-in, they can turn off the video. If a learner is unwilling or unable to enable video, kindly remove them from the class.
 
 - Please email class materials & any homework to us if you haven't already. Include the deadline for homework submissions and we'll inform parents & pass on the homework to you.
 
-Thankyou!
+Thank you!
 `;
 
 
                         var event = {
                         'summary': eventSummary,
-                        'location': `${inviteClassInfo[5]}`,
+                        'location': `${subClassDTO.zoomMeetingLink}`,
                         'description': eventDescription,
                         'start': {
                             'dateTime': startDateTime,
@@ -186,7 +184,7 @@ Thankyou!
                             ],
                         }
                         };
-                        var teacherEmails = inviteClassInfo[2].split(',');
+                        var teacherEmails = subClassDTO.teacherEmail.split(',');
                         for (var i = 0; i < teacherEmails.length; i++) {
                             event.attendees.push({'email': teacherEmails[i].trim(), 'visibility': 'private'});
                         }
@@ -216,7 +214,7 @@ Thankyou!
             });
             if (courseTimeslots.length > 0) {
                 // console.log('Sending Teacher email for courseTimeslots',courseTimeslots);
-                createTableForCoursesAndSendEmail(courseTimeslots,className,inviteClassInfo,classIdTimings);
+                createTableForCoursesAndSendEmail(courseTimeslots,className,subClassesInfo,classIdTimings);
               }
         }
         });
