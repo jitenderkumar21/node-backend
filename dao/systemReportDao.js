@@ -1,19 +1,16 @@
-// systemReportDao.js
-const { Client } = require('pg');
+const { Pool } = require('pg');
 require('dotenv').config();
 const moment = require('moment-timezone');
 
-const connectionString = process.env.DATABASE_URL;
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+});
 const pageSize = 10;
 
 async function insertSystemReport(systemReportData) {
-  const client = new Client({
-    connectionString: connectionString,
-  });
 
+  const client = await pool.connect();
   try {
-    await client.connect();
-
     try {        
       await insertSystemReportData(client, systemReportData);
     } catch (error) {
@@ -23,7 +20,7 @@ async function insertSystemReport(systemReportData) {
     console.error('Error connecting to the database:', error);
   } finally {
     try {
-      await client.end();
+      client.release();
     } catch (error) {
       console.error('Error closing database connection:', error);
     }
@@ -49,68 +46,77 @@ async function insertSystemReportData(client, reportData) {
 }
 
 async function getAllSystemReports(filters = {}, pageNumber = 1) {
-    console.log(filters);
-    console.log(pageNumber);
-  const client = new Client({
-    connectionString: connectionString,
-  });
+  const { classId, status, channel, type } = filters;
+  const queryParams = [];
+  const conditions = [];
+
+  let paramCount = 1;
+
+  if (classId !== undefined && classId !== '') {
+    conditions.push(`class_id = $${paramCount}::text`);
+    queryParams.push(classId);
+    paramCount++;
+  }
+
+  if (status !== undefined && status !== '') {
+    conditions.push(`status = $${paramCount}::text`);
+    queryParams.push(status);
+    paramCount++;
+  }
+
+  if (channel !== undefined && channel !== '') {
+    conditions.push(`channel = $${paramCount}::text`);
+    queryParams.push(channel);
+    paramCount++;
+  }
+
+  if (type !== undefined && type !== '') {
+    conditions.push(`type = $${paramCount}::text`);
+    queryParams.push(type);
+    paramCount++;
+  }
+
+  const whereClause = conditions.length > 0 ? 'WHERE ' + conditions.join(' AND ') : '';
+  const offset = (pageNumber - 1) * pageSize;
 
   try {
-    await client.connect();
+    const client = await pool.connect();
+    try {
+      const countResult = await client.query(`
+        SELECT COUNT(*) FROM system_report
+        ${whereClause}
+      `, queryParams);
 
-    const { classId, status, channel, type } = filters;
-    const queryParams = [];
-    const conditions = [];
+      const totalRecords = parseInt(countResult.rows[0].count, 10);
 
-    let paramCount = 1;
+      const result = await client.query(`
+        SELECT * FROM system_report
+        ${whereClause}
+        LIMIT ${pageSize} OFFSET $${paramCount}::bigint
+      `, [...queryParams, offset]);
 
-    if (classId !== undefined && classId !== '') {
-      conditions.push(`class_id = $${paramCount}::text`);
-      queryParams.push(classId);
-      paramCount++;
+      const totalPages = Math.ceil(totalRecords / pageSize);
+      const systemReport = result.rows;
+
+      return {
+        total: totalRecords,
+        pageSize: pageSize,
+        pageNumber: pageNumber,
+        totalPages: totalPages,
+        report: systemReport,
+      };
+    } finally {
+      client.release();
     }
-
-    if (status !== undefined && status !== '') {
-      conditions.push(`status = $${paramCount}::text`);
-      queryParams.push(status);
-      paramCount++;
-    }
-
-    if (channel !== undefined && channel !== '') {
-      conditions.push(`channel = $${paramCount}::text`);
-      queryParams.push(channel);
-      paramCount++;
-    }
-
-    if (type !== undefined && type !== '') {
-      conditions.push(`type = $${paramCount}::text`);
-      queryParams.push(type);
-      paramCount++;
-    }
-
-    const whereClause = conditions.length > 0 ? 'WHERE ' + conditions.join(' AND ') : '';
-    const offset = (pageNumber - 1) * pageSize;
-    console.log(`
-    SELECT * FROM system_report
-    ${whereClause}
-    LIMIT 10 OFFSET $${paramCount}::bigint
-  `);
-  console.log(queryParams);
-    const result = await client.query(`
-      SELECT * FROM system_report
-      ${whereClause}
-      LIMIT 10 OFFSET $${paramCount}::bigint
-    `, [...queryParams, offset]);
-
-    return result.rows;
   } catch (error) {
     console.error('Error fetching system reports:', error);
-  } finally {
-    try {
-      await client.end();
-    } catch (error) {
-      console.error('Error closing database connection:', error);
-    }
+    return {
+      total: 0,
+      pageSize: pageSize,
+      pageNumber: pageNumber,
+      totalPages: 0,
+      report: [],
+    };
   }
 }
 

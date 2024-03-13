@@ -155,7 +155,6 @@ Thank you for registering for "${modifiedClassName}" !
 <b><i>We kindly request you to switch on the learner's camera at the start of the class for a quick identity check. After confirmation, learners may choose to participate with the camera off.</i></b>
 
 Here's everything you need to know:
-
 `;
 
 if (subClassInfo && subClassInfo.prerequisite !== undefined && subClassInfo.prerequisite !== '' && subClassInfo.prerequisite.toLowerCase() !== 'there are no prerequisites needed for the class.') {
@@ -170,7 +169,6 @@ if (subClassInfo && subClassInfo.classMaterial !== '') {
     eventDescription += `Class Material: ${subClassInfo.classMaterial}\n`;
 }
 eventDescription+=`
-
 Class Entry : We request learners to join class on time to ensure an uninterrupted learning experience. Late entries may be restricted after the initial 10 minutes, to maintain the flow of class. 
 
 `

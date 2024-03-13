@@ -125,11 +125,11 @@ const sendEmail = async (personDetails,userTimeZone) => {
         subject = `Let the Learning Begin! ${personDetails.childName} is Enrolled!`;
         confirmedClassMessage1 = 'Here are your confirmed classes :';
         confirmedClassMessage3 = `
-        <p><strong><u>Things to note :</u></strong></p>
+        <p><strong><u>Things to note:</u></strong></p>
         
         <ul>
         <li><strong>Identity Verification:</strong> Ensuring learner safety as our highest priority,<strong> we request you to switch on ${personDetails.childName}'s camera at the start of each class for a quick identity check.</strong> While ${personDetails.childName} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
-        <li><strong>Class Entry:</strong> We request learners to join class on time to ensure an uninterrupted learning experience. Late entries may be restricted after the initial 10 minutes, to maintain the flow of class. </li>
+        <li><strong>Class Entry:</strong> We request learners to join class on time to ensure an uninterrupted learning experience. <strong>Late entries may be restricted after the initial 10 minutes, to maintain the flow of class.</strong></li>
         <li><strong>Class Materials:</strong> The required class materials and details about homework submissions, if any, will be sent to you before class. Keep an eye on your email for these details.</li>
         <li><strong>Class Alerts:</strong> We have blocked your calendar for class; please let us know if you are unable to see it. We will be sending you class reminders as well. </li>
         <li><strong>Feedback:</strong> Class time includes a 10-minute feedback session. We kindly request ${personDetails.childName} to stay back, and share their class experience with us.</li>

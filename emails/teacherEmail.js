@@ -88,24 +88,24 @@ const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassN
 
           <p><strong><u>Before Class</u></strong></p>
           <ul>
-              <li><strong>Class Prerequisites :</strong> We request you to email us the class prerequisites & materials (if any) at the earliest, so that we can send those to parents well in advance.</li>
-              <li><strong>Student Homework & Uploads :</strong> Please inform us if your class requires completion of any student homework, so that we can request parents to upload the same.</li>
-              <li><strong>Class Entry :</strong> Feel free to inform our team if you'd like us to restrict admitting students who join the class, after the 10-minute mark.</li>
-              <li><strong>Zoom Background :</strong> We request you to use the attached Coral Academy background on Zoom during class.</li>
-              <li><strong>Code of conduct :</strong> Classes are recorded for student safety, allowing parents to review study situations. Recorded videos are strictly confidential and for internal use only. We won't disclose them publicly or share with third parties without your consent.</li>
+              <li><strong>Class Prerequisites:</strong> We request you to email us the class prerequisites & materials (if any) at the earliest, so that we can send those to parents well in advance.</li>
+              <li><strong>Student Homework & Uploads:</strong> Please inform us if your class requires completion of any student homework, so that we can request parents to upload the same.</li>
+              <li><strong>Class Entry:</strong> Feel free to inform our team if you'd like us to restrict admitting students who join the class, after the 10-minute mark.</li>
+              <li><strong>Zoom Background:</strong> We request you to use the attached Coral Academy background on Zoom during class.</li>
+              <li><strong>Code of conduct:</strong> Classes are recorded for student safety. The recorded classes are for internal use only and are strictly confidential. These would not be disclosed or shared without your consent. </li>
           </ul>
 
           <p><strong><u>During Class</u></strong></p>
           <ul>
-            <li><strong>Learner Verification :</strong> For learner safety, we request you to verify learners through a quick live video check-in at the beginning of each class, to visually confirm that the learner in question is a child. The learner can then turn off video after their check-in. If you’ve never seen the learner on video before, and they’re unable or unwilling to enable their video, please remove them from the class.</li>
-            <li><strong>Post Class Interaction :</strong> Kindly inform students to stay back after you exit the class - We will be spending 10 minutes with the students to understand their topic preferences and get class feedback.</li>
-            <li><strong>Support :</strong> A team member will join your class as a co-host, helping you navigate the waiting room and resolve any technical glitches.</li>
+            <li><strong>Learner Verification:</strong> For learner safety, we request you to verify learners through a quick live video check-in at the beginning of each class, to visually confirm that the learner in question is a child. The learner can then turn off video after their check-in. If you’ve never seen the learner on video before, and they’re unable or unwilling to enable their video, please remove them from the class.</li>
+            <li><strong>Post Class Interaction:</strong> Kindly inform students to stay back after you exit the class - We will be spending 10 minutes with the students to understand their topic preferences and get class feedback.</li>
+            <li><strong>Support:</strong> A team member will join your class as a co-host, helping you navigate the waiting room and resolve any technical glitches.</li>
           </ul>
 
           <p><strong><u>After Class</u></strong></p>
           <ul>
-            <li><strong>Payments :</strong> Payments for the class will be processed weekly, every Saturday, post class.</li>
-            <li><strong>Feedback :</strong> Your feedback is valuable to us! Please feel free to share your thoughts on how we can improve and make your experience even better.</li>
+            <li><strong>Payments:</strong> Payments for the class will be processed weekly, every Saturday, post class.</li>
+            <li><strong>Feedback:</strong> Your feedback is valuable to us! Please feel free to share your thoughts on how we can improve and make your experience even better.</li>
           </ul>
 
           <p>PFA our <a href="https://docs.google.com/document/d/1lIqvqEB6Z7ic84JWlPAqKlILxlOsTixYPPlIHVfLToI/edit?usp=sharing" target="_blank">Code of Conduct Policy</a> for your reference.</p>

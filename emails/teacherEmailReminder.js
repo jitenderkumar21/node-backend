@@ -8,6 +8,7 @@ const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-c
 
 const sendTeacherReminderEmail = async (reminderId,teacherReminderInfo) => {
  console.log('Sending reminder email for',reminderId,teacherReminderInfo);
+ const ATTACHMENT_PATH = path.join(process.cwd(), 'assets/Coral Academy Background.png');
   const transporter = nodemailer.createTransport({
     service: 'Gmail', // Use your email service provider
     auth: {
@@ -133,6 +134,13 @@ const sendTeacherReminderEmail = async (reminderId,teacherReminderInfo) => {
     to: teacherReminderInfo.email,
     subject: `Reminder for class today - ${teacherReminderInfo.className}`,
     html: emailContent,
+    attachments: [
+      {
+          filename: 'coral_academy_background.png',
+          path: ATTACHMENT_PATH,
+          cid: 'unique@coralacademy.com' // Optional content ID for embedding in the email
+      }
+  ],
     headers: {
       References: uuidv4(),
     },

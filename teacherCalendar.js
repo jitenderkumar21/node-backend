@@ -144,7 +144,7 @@ Hi ${subClassDTO.teacherName},
 
 We are blocking your calendar for ${displayClassTime}.
 
-Zoom details mentioned below :
+Zoom details mentioned below:
 
 Meeting Link: ${subClassDTO.zoomMeetingLink}
 Meeting ID: ${subClassDTO.meetingId}
