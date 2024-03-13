@@ -55,7 +55,7 @@ async function bulkInsertEnrollments(enrollments) {
     
       return !parentNameContainsTest && !childNameContainsTest && emailNotInExcludedList;
     });
-    console.log('filteredEnrollments',filteredEnrollments);
+    // console.log('filteredEnrollments',filteredEnrollments);
 
     const values = filteredEnrollments.map((enrollment) => {
       return [
@@ -92,7 +92,7 @@ async function bulkInsertEnrollments(enrollments) {
 }
 
 async function insertEnrollment(enrollment){
-    console.log(enrollment);
+    // console.log(enrollment);
     const client = await connect();
     try{
         await client.query({ text :`
