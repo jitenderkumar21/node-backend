@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 const { Client } = require('pg');
 const { v4: uuidv4 } = require('uuid');
+const path = require('path');
 const { getChildInfoByClassId } = require('../dao/enrollmentsDao');
 const {  insertSystemReport } = require('../dao/systemReportDao')
 
