@@ -122,9 +122,9 @@ app.get('/cms/report', async (req, res) => {
 });
 
 app.get('/cms/enrollments', async (req, res) => {
-  const classId = req.query.classId;
+  const filters = { classId: req.query.classId}
   const pageNumber = req.query.pageNumber;
-  const systemReport = await getEnrollmentsByClassId(classId,pageNumber);
+  const systemReport = await getEnrollmentsByClassId(filters,pageNumber);
   res.json(systemReport);
 });
 
