@@ -53,7 +53,7 @@ async function getAllSystemReports(filters = {}, pageNumber = 1) {
   let paramCount = 1;
 
   if (classId !== undefined && classId !== '') {
-    conditions.push(`class_id = $${paramCount}::text`);
+    conditions.push(`class_id = $${paramCount}`);
     queryParams.push(classId);
     paramCount++;
   }
