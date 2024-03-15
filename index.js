@@ -67,17 +67,134 @@ app.post('/test', async (req, res) => {
   res.send(result);
 });
 
-app.get('/test2', async (req, res) => {
+app.post('/test3', async (req, res) => {
   let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
   let classDisplayName = "Class on Sunday";
-  const ipAddress = req.ip || req.connection.remoteAddress;
-  const userTimeZone = req.query.timezone;
-  const res1 = await getAllClassCounts(req.body.classDetails);
+  // const ipAddress = req.ip || req.connection.remoteAddress;
   // saveEnrollments(req.body,'152.59.194.85');
-  // classIdTimingMap();
-  // sendEmail(req.body,userTimeZone);
+  // createWhatsappReminders(req.body,req.query.timezone);
+  // const result = await getParentInfoByEmail('jitender.kumar@iitgn.ac.in');
+  // const result = await getSubClassesInfo();
+  console.log('Got hit');
+  console.log(req.body);
+  console.log(req);
+  res.send('DOne');
+});
+// https://coral-staging.onrender.com
 
-  res.send('User IP Address: ' + res1);
+app.get('/test2', async (req, res) => {
+  const nodemailer = require('nodemailer');
+
+// Create a Nodemailer transporter
+const transporter = nodemailer.createTransport({
+  service: 'Gmail', // Use your email service provider
+  auth: {
+    user: 'support@coralacademy.com',
+    pass: 'xcvf sxnm yctg jvte',
+  },
+});
+
+// Define the AMP HTML content of your email
+const ampHtmlContent = `
+<!DOCTYPE html>
+<html ⚡4email>
+<head>
+    <meta charset="utf-8">
+    <style amp4email-boilerplate>
+        body { visibility: hidden; }
+        .container { max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; font-size: 16px; color: #000000; }
+        .class-selection { margin-bottom: 20px; }
+        .class-selection legend { font-weight: bold; }
+        .timeslot-label { display: block; margin-bottom: 10px; }
+        .submit-btn { display: block; width: 100%; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+    <script async src="https://cdn.ampproject.org/v0.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Class Selection</h1>
+        <form method="post" action-xhr="https://coral-staging.onrender.com/test3">
+            <div class="class-selection">
+                <fieldset>
+                    <legend>Class 1</legend>
+                    <label class="timeslot-label">
+                        <input type="checkbox" name="class1_timeslot[]" value="morning">
+                        Morning
+                    </label>
+                    <label class="timeslot-label">
+                        <input type="checkbox" name="class1_timeslot[]" value="afternoon">
+                        Afternoon
+                    </label>
+                    <label class="timeslot-label">
+                        <input type="checkbox" name="class1_timeslot[]" value="evening">
+                        Evening
+                    </label>
+                </fieldset>
+            </div>
+
+            <div class="class-selection">
+                <fieldset>
+                    <legend>Class 2</legend>
+                    <label class="timeslot-label">
+                        <input type="checkbox" name="class2_timeslot[]" value="morning">
+                        Morning
+                    </label>
+                    <label class="timeslot-label">
+                        <input type="checkbox" name="class2_timeslot[]" value="afternoon">
+                        Afternoon
+                    </label>
+                    <label class="timeslot-label">
+                        <input type="checkbox" name="class2_timeslot[]" value="evening">
+                        Evening
+                    </label>
+                </fieldset>
+            </div>
+
+            <div class="class-selection">
+                <fieldset>
+                    <legend>Class 3</legend>
+                    <label class="timeslot-label">
+                        <input type="checkbox" name="class3_timeslot[]" value="morning">
+                        Morning
+                    </label>
+                    <label class="timeslot-label">
+                        <input type="checkbox" name="class3_timeslot[]" value="afternoon">
+                        Afternoon
+                    </label>
+                    <label class="timeslot-label">
+                        <input type="checkbox" name="class3_timeslot[]" value="evening">
+                        Evening
+                    </label>
+                </fieldset>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit</button>
+        </form>
+    </div>
+</body>
+</html>
+
+`;
+
+// Define the mail options
+const mailOptions = {
+  from: 'support@coralacademy.com', // Sender's email address
+    to: 'jitender.kumar@iitgn.ac.in',
+    subject: 'Your Subject',
+    html: ampHtmlContent
+};
+
+// Send the email
+transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+        console.log('Error occurred:', error.message);
+        return;
+    }
+    console.log('Email sent successfully!');
+});
+
+
+  res.send('Email Sent');
 });
 
 app.post('/teacher/invite', async (req, res) => {
