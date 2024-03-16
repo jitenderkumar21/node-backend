@@ -49,8 +49,8 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Promise Rejection:', reason);
   // Additional error handling logic can be added here, such as logging or responding to the error.
 });
-const multer = require('multer');
-const upload = multer();
+// const multer = require('multer');
+// const upload = multer();
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
