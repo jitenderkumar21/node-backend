@@ -25,6 +25,7 @@ const saveEnrollments = require('./sheets/saveEnrollments');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 const {  getAllSystemReports } = require('./dao/systemReportDao')
 const getSubClassesInfo = require('./sheets/getSubClassesInfo');
+const bodyParser = require('body-parser');
 const {
   updateCounts,
   getAllClassCounts
@@ -48,7 +49,8 @@ process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Promise Rejection:', reason);
   // Additional error handling logic can be added here, such as logging or responding to the error.
 });
-
+const multer = require('multer');
+const upload = multer();
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
   console.error('Uncaught Exception:', error);
@@ -66,19 +68,20 @@ app.post('/test', async (req, res) => {
   const result = await getSubClassesInfo();
   res.send(result);
 });
+// Middleware to parse JSON and urlencoded form data
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
 
-app.post('/test3', async (req, res) => {
-  let info = ['Test Class','Jeetu','jitender.kumar@iitgn.ac.in',"2023-12-20 15:00","2023-12-20 16:00",undefined];
-  let classDisplayName = "Class on Sunday";
-  // const ipAddress = req.ip || req.connection.remoteAddress;
-  // saveEnrollments(req.body,'152.59.194.85');
-  // createWhatsappReminders(req.body,req.query.timezone);
-  // const result = await getParentInfoByEmail('jitender.kumar@iitgn.ac.in');
-  // const result = await getSubClassesInfo();
-  console.log('Got hit');
-  console.log(req.body);
-  console.log(req);
-  res.send('DOne');
+app.post('/test3', (req, res) => {
+  // Extract form data from request body
+  const formData = req.body;
+
+  // Log form data
+  console.log('Received form data:');
+  console.log(formData);
+
+  // Respond with a success message
+  res.status(200).json({ message: 'Form data received successfully!' });
 });
 // https://coral-staging.onrender.com
 
@@ -106,74 +109,105 @@ const ampHtmlContent = `
         .class-selection { margin-bottom: 20px; }
         .class-selection legend { font-weight: bold; }
         .timeslot-label { display: block; margin-bottom: 10px; }
-        .submit-btn { display: block; width: 100%; padding: 10px; background-color: #007bff; color: #fff; border: none; border-radius: 5px; cursor: pointer; }
+        .button { display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px; cursor: pointer; }
     </style>
     <script async src="https://cdn.ampproject.org/v0.js"></script>
+    <script>
+        function submitForm() {
+            var formData = {
+                class1_timeslot: [],
+                class2_timeslot: [],
+                class3_timeslot: []
+            };
+
+            document.querySelectorAll('input[name="class1_timeslot[]"]:checked').forEach(item => formData.class1_timeslot.push(item.value));
+            document.querySelectorAll('input[name="class2_timeslot[]"]:checked').forEach(item => formData.class2_timeslot.push(item.value));
+            document.querySelectorAll('input[name="class3_timeslot[]"]:checked').forEach(item => formData.class3_timeslot.push(item.value));
+
+            fetch('https://coral-staging.onrender.com/test3', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Form submitted successfully!');
+                } else {
+                    alert('Failed to submit form. Please try again.');
+                }
+            })
+            .catch(error => {
+                alert('An error occurred while submitting the form.');
+                console.error('Error:', error);
+            });
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <h1>Class Selection</h1>
-        <form method="post" action-xhr="https://coral-staging.onrender.com/test3">
-            <div class="class-selection">
-                <fieldset>
-                    <legend>Class 1</legend>
-                    <label class="timeslot-label">
-                        <input type="checkbox" name="class1_timeslot[]" value="morning">
-                        Morning
-                    </label>
-                    <label class="timeslot-label">
-                        <input type="checkbox" name="class1_timeslot[]" value="afternoon">
-                        Afternoon
-                    </label>
-                    <label class="timeslot-label">
-                        <input type="checkbox" name="class1_timeslot[]" value="evening">
-                        Evening
-                    </label>
-                </fieldset>
-            </div>
+        <div class="class-selection">
+            <fieldset>
+                <legend>Class 1</legend>
+                <label class="timeslot-label">
+                    <input type="checkbox" name="class1_timeslot[]" value="morning">
+                    Morning
+                </label>
+                <label class="timeslot-label">
+                    <input type="checkbox" name="class1_timeslot[]" value="afternoon">
+                    Afternoon
+                </label>
+                <label class="timeslot-label">
+                    <input type="checkbox" name="class1_timeslot[]" value="evening">
+                    Evening
+                </label>
+            </fieldset>
+        </div>
 
-            <div class="class-selection">
-                <fieldset>
-                    <legend>Class 2</legend>
-                    <label class="timeslot-label">
-                        <input type="checkbox" name="class2_timeslot[]" value="morning">
-                        Morning
-                    </label>
-                    <label class="timeslot-label">
-                        <input type="checkbox" name="class2_timeslot[]" value="afternoon">
-                        Afternoon
-                    </label>
-                    <label class="timeslot-label">
-                        <input type="checkbox" name="class2_timeslot[]" value="evening">
-                        Evening
-                    </label>
-                </fieldset>
-            </div>
+        <div class="class-selection">
+            <fieldset>
+                <legend>Class 2</legend>
+                <label class="timeslot-label">
+                    <input type="checkbox" name="class2_timeslot[]" value="morning">
+                    Morning
+                </label>
+                <label class="timeslot-label">
+                    <input type="checkbox" name="class2_timeslot[]" value="afternoon">
+                    Afternoon
+                </label>
+                <label class="timeslot-label">
+                    <input type="checkbox" name="class2_timeslot[]" value="evening">
+                    Evening
+                </label>
+            </fieldset>
+        </div>
 
-            <div class="class-selection">
-                <fieldset>
-                    <legend>Class 3</legend>
-                    <label class="timeslot-label">
-                        <input type="checkbox" name="class3_timeslot[]" value="morning">
-                        Morning
-                    </label>
-                    <label class="timeslot-label">
-                        <input type="checkbox" name="class3_timeslot[]" value="afternoon">
-                        Afternoon
-                    </label>
-                    <label class="timeslot-label">
-                        <input type="checkbox" name="class3_timeslot[]" value="evening">
-                        Evening
-                    </label>
-                </fieldset>
-            </div>
+        <div class="class-selection">
+            <fieldset>
+                <legend>Class 3</legend>
+                <label class="timeslot-label">
+                    <input type="checkbox" name="class3_timeslot[]" value="morning">
+                    Morning
+                </label>
+                <label class="timeslot-label">
+                    <input type="checkbox" name="class3_timeslot[]" value="afternoon">
+                    Afternoon
+                </label>
+                <label class="timeslot-label">
+                    <input type="checkbox" name="class3_timeslot[]" value="evening">
+                    Evening
+                </label>
+            </fieldset>
+        </div>
 
-            <button type="submit" class="submit-btn">Submit</button>
-        </form>
+        <div class="button-container">
+            <button class="button" onclick="submitForm()">Submit</button>
+        </div>
     </div>
 </body>
 </html>
-
 `;
 
 // Define the mail options
