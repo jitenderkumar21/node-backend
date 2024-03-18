@@ -1,6 +1,7 @@
 const { Client } = require('pg');
+require('dotenv').config();
 
-const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
+const connectionString = process.env.DATABASE_URL;
 
 async function fetchClassInvitations() {
   // Create a new PostgreSQL client

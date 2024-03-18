@@ -3,9 +3,10 @@ const { Client } = require('pg');
 const { v4: uuidv4 } = require('uuid');
 const path = require('path');
 const { getChildInfoByClassId } = require('../dao/enrollmentsDao');
-const {  insertSystemReport } = require('../dao/systemReportDao')
+const {  insertSystemReport } = require('../dao/systemReportDao');
+require('dotenv').config();
 
-const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
+const connectionString = process.env.DATABASE_URL;
 
 const sendTeacherReminderEmail = async (reminderId,teacherReminderInfo) => {
  console.log('Sending reminder email for',reminderId,teacherReminderInfo);

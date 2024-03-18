@@ -2,10 +2,11 @@ const { Client } = require('pg');
 const getSubClassesInfo = require('./sheets/getSubClassesInfo');
 const moment = require('moment-timezone');
 const ClassUtility = require('./utils/subClassUtility');
-const classIdTimingMap = require('./sheets/classIdTimingMap')
+const classIdTimingMap = require('./sheets/classIdTimingMap');
+require('dotenv').config();
 
 
-const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
+const connectionString = process.env.DATABASE_URL;
 
 function createAdditionalInfo(data,userTimeZone, subClassesInfo,classIdTimings) {
     const finalJson = [];

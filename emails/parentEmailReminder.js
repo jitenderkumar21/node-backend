@@ -4,7 +4,7 @@ const path = require('path');
 const { Client } = require('pg');
 const {  insertSystemReport } = require('../dao/systemReportDao')
 
-const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
+const connectionString = process.env.DATABASE_URL;
 
 const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => {
         try{

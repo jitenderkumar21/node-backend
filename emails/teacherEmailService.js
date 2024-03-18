@@ -1,9 +1,10 @@
 const ClassUtility = require('../utils/subClassUtility');
+require('dotenv').config();
 
 async function sendTeacherEmails(classDetails) {
     const invitesInfo = await teacherInviteInfo();
     const currentClient = new Client({
-        connectionString: 'your_database_connection_string',
+        connectionString: process.env.DATABASE_URL,
     });
 
     try {
