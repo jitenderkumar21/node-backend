@@ -2,7 +2,8 @@ const nodemailer = require('nodemailer');
 const getSubClassesInfo = require('../sheets/getSubClassesInfo');
 const path = require('path');
 const { Client } = require('pg');
-const {  insertSystemReport } = require('../dao/systemReportDao')
+const {  insertSystemReport } = require('../dao/systemReportDao');
+require('dotenv').config();
 
 const connectionString = process.env.DATABASE_URL;
 
