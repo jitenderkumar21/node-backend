@@ -5,9 +5,10 @@ const request = require('request');
 const axios = require('axios');
 const sendParentReminderEmail = require('../emails/parentEmailReminder');
 const getSubClassesInfo = require('../sheets/getSubClassesInfo');
-const {  insertSystemReport } = require('../dao/systemReportDao')
+const {  insertSystemReport } = require('../dao/systemReportDao');
+require('dotenv').config();
 
-const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
+const connectionString = process.env.DATABASE_URL;
 
 
 const sendReminder = async (reminderId,reminder_type, additionalInfo) => {

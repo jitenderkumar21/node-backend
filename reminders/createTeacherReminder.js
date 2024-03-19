@@ -1,8 +1,9 @@
 const { Client } = require('pg');
 const ClassUtility = require('../utils/subClassUtility');
 const moment = require('moment-timezone');
+require('dotenv').config();
 
-const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
+const connectionString = process.env.DATABASE_URL;
 
 async function createReminder(info,reminderTime,reminderType) {
     const client = new Client({

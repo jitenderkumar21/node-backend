@@ -1,7 +1,7 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 
-const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
+const connectionString = process.env.DATABASE_URL;
 const pool = new Pool(
   {
     connectionString: connectionString
@@ -134,40 +134,44 @@ async function getChildInfoByClassId(classId) {
   }
 }
 
-async function getEnrollmentsByClassId(classId, pageNumber = 1) {
+async function getEnrollmentsByClassId(filters = {}, pageNumber = 1) {
+  const { classId} = filters;
+  const queryParams = [];
+  const conditions = [];
+
+  let paramCount = 1;
+
+  if (classId !== undefined && classId !== '') {
+    conditions.push(`class_id = $${paramCount}::text`);
+    queryParams.push(classId);
+    paramCount++;
+  }
+
+
   const pageSize = 10;
-  console.time('GettingConnection');
   const client = await connect();
-  console.timeEnd('GettingConnection');
   try {
-    console.time('getEnrollmentsByClassId'); // Start timing
 
-    console.time('getTotalCount'); // Start timing for total count query
-
+    const whereClause = conditions.length > 0 ? 'WHERE ' + conditions.join(' AND ') : '';
+    
     const totalCountResult = await client.query(
       `
       SELECT COUNT(*)
-      FROM enrollments;
-    `);
-    console.timeEnd('getTotalCount'); // End timing for total count query
+      FROM enrollments ${whereClause};
+    `,queryParams);
+    
 
     const totalEnrollments = parseInt(totalCountResult.rows[0].count, 10);
-
-    console.time('getPaginatedEnrollments'); 
     const offset = (pageNumber - 1) * pageSize;
-    const result = await client.query(
-      `
-      SELECT *
-      FROM enrollments
-      WHERE class_id = $1
-      ORDER BY timestamp
-      OFFSET $2
-      LIMIT $3;
-    `,
-      [classId, offset, pageSize]
-    );
+    
 
-    console.timeEnd('getPaginatedEnrollments');
+    const result = await client.query(`
+        SELECT * FROM enrollments
+        ${whereClause}
+        ORDER BY timestamp
+        LIMIT ${pageSize} OFFSET $${paramCount}::bigint
+      `, [...queryParams, offset]);
+
     
 
     // Convert the result.rows to JSON objects
@@ -182,7 +186,7 @@ async function getEnrollmentsByClassId(classId, pageNumber = 1) {
         phone_number: enrollment.phone_number,
       };
     });
-    console.timeEnd('getEnrollmentsByClassId'); // End timing
+    
     return {
       total: totalEnrollments,
       pageSize: pageSize,

@@ -102,115 +102,121 @@ try{
             timeslots.filter((timeslot1) => !timeslot1.isPast)
                 .forEach((timeslot) => {
                     const { timing, subClassId } = timeslot;
-                    let subClassDTO = subClassesInfo[subClassId];
-                    // console.log('Sending Teacher invite for subClassId',subClassId);
-                    const classInviteId = classInviteIds[subClassId];
-                    // console.log('classInviteId',classInviteId);
-                    const modifiedClassName = ClassUtility.getModifiedClassNameV3(subClassId,className,classTag,subClassDTO);
-                    // console.log('Modified class name',modifiedClassName);
-                    if(classInviteId==undefined){
-                        createTeacherReminder(subClassId,modifiedClassName,subClassDTO,classIdTimings);                       
-                        const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
-                        const userEndDateTime = classIdTimings.get(subClassId)[1];    // Replace this with the user's input
-                        const convertToDateTimeFormat = (userDateTime) => {
-                            const formattedDateTime = momentTime.utc(userDateTime, 'YYYY-MM-DD HH:mm').format();
-                            return formattedDateTime;
-                        };
-                        let classStartTime = moment(userStartDateTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
-                        let classEndTime = moment(userEndDateTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
-                        let displayClassTime = '';
-                        const timeZoneAbbreviation = 'PDT';
-                        if (classStartTime.isValid() && classEndTime.isValid()) {
-                            const formattedClassStartTime = classStartTime.format('MMMM D, dddd, h:mm A');
-                            const formattedClassEndTime = classEndTime.format('h:mm A');
-                            displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
-                          }
-                        const lowercaseClassTag = classTag.toLowerCase();
+                    try{
+                        let subClassDTO = subClassesInfo[subClassId];
+                        // console.log('Sending Teacher invite for subClassId',subClassId);
+                        const classInviteId = classInviteIds[subClassId];
+                        // console.log('classInviteId',classInviteId);
+                        const modifiedClassName = ClassUtility.getModifiedClassNameV3(subClassId,className,classTag,subClassDTO);
+                        // console.log('Modified class name',modifiedClassName);
+                        if(classInviteId==undefined){
+                            createTeacherReminder(subClassId,modifiedClassName,subClassDTO,classIdTimings);                       
+                            const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
+                            const userEndDateTime = classIdTimings.get(subClassId)[1];    // Replace this with the user's input
+                            const convertToDateTimeFormat = (userDateTime) => {
+                                const formattedDateTime = momentTime.utc(userDateTime, 'YYYY-MM-DD HH:mm').format();
+                                return formattedDateTime;
+                            };
+                            let classStartTime = moment(userStartDateTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+                            let classEndTime = moment(userEndDateTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+                            let displayClassTime = '';
+                            const timeZoneAbbreviation = 'PDT';
+                            if (classStartTime.isValid() && classEndTime.isValid()) {
+                                const formattedClassStartTime = classStartTime.format('MMMM D, dddd, h:mm A');
+                                const formattedClassEndTime = classEndTime.format('h:mm A');
+                                displayClassTime = `${formattedClassStartTime} - ${formattedClassEndTime} (${timeZoneAbbreviation})`;
+                            }
+                            const lowercaseClassTag = classTag.toLowerCase();
 
-                        if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'onetime' || lowercaseClassTag === 'playlist-2') {
-                            createTableAndSendEmail(timeslot,classTag,className,subClassDTO,classIdTimings);    
-                        }else if (lowercaseClassTag === 'course' || lowercaseClassTag === 'playlist-1'){
-                            // console.log('Push timeslot to courseTimeslots for',subClassId);
-                            courseTimeslots.push(timeslot);
-                        }                     
-                        const startDateTime = convertToDateTimeFormat(userStartDateTime);
-                        const endDateTime = convertToDateTimeFormat(userEndDateTime);
-                        
-
-                        let eventSummary = `Coral Academy: ${modifiedClassName}`;
-                        
-const eventDescription = `
-Hi ${subClassDTO.teacherName},
-
-We are blocking your calendar for ${displayClassTime}.
-
-Zoom details mentioned below:
-
-Meeting Link: ${subClassDTO.zoomMeetingLink}
-Meeting ID: ${subClassDTO.meetingId}
-Passcode: ${subClassDTO.passcode}
-
-- Please verify learners with a quick video check-in at the start of each class to visually ensure that the learner is a child. After check-in, they can turn off the video. If a learner is unwilling or unable to enable video, kindly remove them from the class.
-
-- Please email class materials & any homework to us if you haven't already. Include the deadline for homework submissions and we'll inform parents & pass on the homework to you.
-
-Thank you!
-`;
-
-
-                        var event = {
-                        'summary': eventSummary,
-                        'location': `${subClassDTO.zoomMeetingLink}`,
-                        'description': eventDescription,
-                        'start': {
-                            'dateTime': startDateTime,
-                            'timeZone': 'Asia/Kolkata',
-                        },
-                        'end': {
-                            'dateTime': endDateTime,
-                            'timeZone': 'Asia/Kolkata',
-                        },
-                        'attendees': [
-                            {'email': 'shivam@coralacademy.com', 'visibility': 'private'},
-                            {'email': 'shagun@coralacademy.com', 'visibility': 'private'},
-                            {'email': 'anisha@coralacademy.com', 'visibility': 'private'},
+                            if (lowercaseClassTag === 'ongoing' || lowercaseClassTag === 'onetime' || lowercaseClassTag === 'playlist-2') {
+                                createTableAndSendEmail(timeslot,classTag,className,subClassDTO,classIdTimings);    
+                            }else if (lowercaseClassTag === 'course' || lowercaseClassTag === 'playlist-1'){
+                                // console.log('Push timeslot to courseTimeslots for',subClassId);
+                                courseTimeslots.push(timeslot);
+                            }                     
+                            const startDateTime = convertToDateTimeFormat(userStartDateTime);
+                            const endDateTime = convertToDateTimeFormat(userEndDateTime);
                             
-                        ],
-                        'reminders': {
-                            'useDefault': false,
-                            'overrides': [
-                            {'method': 'email', 'minutes': 2 * 60},
-                            {'method': 'popup', 'minutes': 10},
-                            ],
-                        }
-                        };
-                        var teacherEmails = subClassDTO.teacherEmail.split(',');
-                        for (var i = 0; i < teacherEmails.length; i++) {
-                            event.attendees.push({'email': teacherEmails[i].trim(), 'visibility': 'private'});
-                        }
 
-                        calendar.events.insert(
-                            {
-                            auth: auth,
-                            calendarId: 'primary', // or the calendar ID where you want to create the event
-                            resource: event,
-                            sendUpdates: 'all',
+                            let eventSummary = `Coral Academy: ${modifiedClassName}`;
+                            
+    const eventDescription = `
+    Hi ${subClassDTO.teacherName},
+
+    We are blocking your calendar for ${displayClassTime}.
+
+    Zoom details mentioned below:
+
+    Meeting Link: ${subClassDTO.zoomMeetingLink}
+    Meeting ID: ${subClassDTO.meetingId}
+    Passcode: ${subClassDTO.passcode}
+
+    - Please verify learners with a quick video check-in at the start of each class to visually ensure that the learner is a child. After check-in, they can turn off the video. If a learner is unwilling or unable to enable video, kindly remove them from the class.
+
+    - Please email class materials & any homework to us if you haven't already. Include the deadline for homework submissions and we'll inform parents & pass on the homework to you.
+
+    Thank you!
+    `;
+
+
+                            var event = {
+                            'summary': eventSummary,
+                            'location': `${subClassDTO.zoomMeetingLink}`,
+                            'description': eventDescription,
+                            'start': {
+                                'dateTime': startDateTime,
+                                'timeZone': 'Asia/Kolkata',
                             },
-                            (err, response) => {
-                            if (err) {
-                                console.error('Error creating event:', err);
-                                return;
+                            'end': {
+                                'dateTime': endDateTime,
+                                'timeZone': 'Asia/Kolkata',
+                            },
+                            'attendees': [
+                                {'email': 'shivam@coralacademy.com', 'visibility': 'private'},
+                                {'email': 'shagun@coralacademy.com', 'visibility': 'private'},
+                                {'email': 'anisha@coralacademy.com', 'visibility': 'private'},
+                                
+                            ],
+                            'reminders': {
+                                'useDefault': false,
+                                'overrides': [
+                                {'method': 'email', 'minutes': 2 * 60},
+                                {'method': 'popup', 'minutes': 10},
+                                ],
                             }
-                        
-                            // Extract the event ID from the response
-                            const eventId = response.data.id;
-                            console.log(`Teacher Event created successfully for emails: ${teacherEmails} . Event ID:`, eventId);
-                            const reportData = { channel: 'CALENDER', type: 'Teacher Calender Block', status: 'SUCCESS', classId: classid};
-                            insertSystemReport(reportData);
+                            };
+                            var teacherEmails = subClassDTO.teacherEmail.split(',');
+                            for (var i = 0; i < teacherEmails.length; i++) {
+                                event.attendees.push({'email': teacherEmails[i].trim(), 'visibility': 'private'});
                             }
-                        );
-                                   
-                }
+
+                            calendar.events.insert(
+                                {
+                                auth: auth,
+                                calendarId: 'primary', // or the calendar ID where you want to create the event
+                                resource: event,
+                                sendUpdates: 'all',
+                                },
+                                (err, response) => {
+                                if (err) {
+                                    console.error('Error creating event:', err);
+                                    return;
+                                }
+                            
+                                // Extract the event ID from the response
+                                const eventId = response.data.id;
+                                console.log(`Teacher Event created successfully for emails: ${teacherEmails} . Event ID:`, eventId);
+                                const reportData = { channel: 'CALENDER', type: 'Teacher Calender Block', status: 'SUCCESS', classId: subClassId};
+                                insertSystemReport(reportData);
+                                }
+                            );
+                                    
+                    }
+            }catch (err) {
+                const reportData = { channel: 'CALENDER', type: 'Teacher Calender Block', status: 'FAILURE', reason: 'Internal Server Error',classId: subClassId};
+                insertSystemReport(reportData);
+            }
+                
             });
             if (courseTimeslots.length > 0) {
                 // console.log('Sending Teacher email for courseTimeslots',courseTimeslots);
@@ -227,8 +233,6 @@ authorize().then(listEvents).catch(console.error);
 
 
 }catch (err) {
-    const reportData = { channel: 'CALENDER', type: 'Teacher Calender Block', status: 'FAILURE', reason: 'Internal Server Error'};
-    insertSystemReport(reportData);
     console.error('Error sending calender invite to teacher', err);
 }
 

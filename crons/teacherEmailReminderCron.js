@@ -1,8 +1,9 @@
 const { Client } = require('pg');
 const cron = require('node-cron');
 const sendTeacherReminderEmail = require('../emails/teacherEmailReminder');
+require('dotenv').config();
 
-const connectionString = 'postgres://demo:C70BvvSmSUTniskWWxVq4uVjVPIzm76O@dpg-ckp61ns1tcps73a0bqfg-a.oregon-postgres.render.com/users_yyu1?ssl=true';
+const connectionString = process.env.DATABASE_URL;
 
 
 const teacherEmailReminderCron = cron.schedule('*/60 * * * *', async () => {
