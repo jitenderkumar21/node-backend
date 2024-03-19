@@ -155,7 +155,7 @@ async function createWhatsappReminders(jsonData,userTimeZone) {
     const classIdTimings = await classIdTimingMap();
     // console.log('classStartTimesMap', classStartTimesMap);
     // console.log('classIdTimings', classIdTimings);
-    jsonData.phoneNumber = cleanPhoneNumber(jsonData.phoneNumber);
+    // jsonData.phoneNumber = cleanPhoneNumber(jsonData.phoneNumber);
     const additionalInfoArray = createAdditionalInfo(jsonData,userTimeZone, subClassesInfo,classIdTimings);
     const communicationPreference = jsonData.commPref;
     // console.log('additionalInfo', additionalInfoArray);
