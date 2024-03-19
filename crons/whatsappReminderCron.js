@@ -158,33 +158,33 @@ Happy Learning!
 };
 
 const whatsappReminderCron = cron.schedule('*/15 * * * *', async () => {
-    // const currentClient = new Client({
-    //     connectionString: connectionString,
-    // });
-    // try {
-    //     const currentTimeUTC = new Date().toUTCString();
-    //     const currentTimeMinus20Minutes = new Date(new Date().getTime() - 20 * 60 * 1000).toUTCString();
-    //     console.log(`Cron job is running every 15 minute at ${currentTimeUTC}`);
+    const currentClient = new Client({
+        connectionString: connectionString,
+    });
+    try {
+        const currentTimeUTC = new Date().toUTCString();
+        const currentTimeMinus20Minutes = new Date(new Date().getTime() - 20 * 60 * 1000).toUTCString();
+        console.log(`Cron job is running every 15 minute at ${currentTimeUTC}`);
 
-    //     // // Connect to the PostgreSQL database
-    //     await currentClient.connect();
+        // // Connect to the PostgreSQL database
+        await currentClient.connect();
 
-    //     // Fetch entries where reminder_time is less than or equal to the current time and reminder_status is 'NOT_SENT'
-    //     const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_time > $2 AND reminder_status = $3 and reminder_type!=$4 ORDER BY created_on', [currentTimeUTC,currentTimeMinus20Minutes, 'NOT_SENT','TEACHER_REMINDER']);
+        // Fetch entries where reminder_time is less than or equal to the current time and reminder_status is 'NOT_SENT'
+        const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_time > $2 AND reminder_status = $3 and reminder_type!=$4 ORDER BY created_on', [currentTimeUTC,currentTimeMinus20Minutes, 'NOT_SENT','TEACHER_REMINDER']);
 
-    //     // // Process each entry, send reminders, and update reminder status
-    //     for (const row of result.rows) {
-    //         const reminderId = row.id;
-    //         const additionalInfo = row.additional_info;
-    //         // console.log(reminderId, row.class_id, additionalInfo)
-    //         await sendReminder(reminderId,row.reminder_type, additionalInfo);
-    //     }
-    // } catch (error) {
-    //     console.error('Error in cron job:', error);
-    // } finally {
-    //     // Close the database connection
-    //     await currentClient.end();
-    // }
+        // // Process each entry, send reminders, and update reminder status
+        for (const row of result.rows) {
+            const reminderId = row.id;
+            const additionalInfo = row.additional_info;
+            // console.log(reminderId, row.class_id, additionalInfo)
+            await sendReminder(reminderId,row.reminder_type, additionalInfo);
+        }
+    } catch (error) {
+        console.error('Error in cron job:', error);
+    } finally {
+        // Close the database connection
+        await currentClient.end();
+    }
 });
 
 module.exports = whatsappReminderCron;
