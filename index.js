@@ -38,6 +38,8 @@ const {
 
 const {getEnrollmentsByClassId} = require('./dao/enrollmentsDao');
 
+const unenroll = require('./service/unenrollService');
+
 
 app.use(express.json());
 
@@ -65,8 +67,8 @@ app.post('/test', async (req, res) => {
   // saveEnrollments(req.body,'152.59.194.85');
   // createWhatsappReminders(req.body,req.query.timezone);
   // const result = await getParentInfoByEmail('jitender.kumar@iitgn.ac.in');
-  const result = await getSubClassesInfo();
-  res.send(result);
+  await unenroll(req.body);
+  res.send('DONE');
 });
 // Middleware to parse JSON and urlencoded form data
 // app.use(bodyParser.json());
@@ -279,6 +281,10 @@ app.get('/cms/enrollments', async (req, res) => {
   res.json(systemReport);
 });
 
+app.post('/cms/unenroll', async (req, res) => {
+  await unenroll(req.body);
+  res.json('Students unrenrolled');
+});
 
 app.get('/parent/info', async (req, res) => {
   const email = req.query.email;
