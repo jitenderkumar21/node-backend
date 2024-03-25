@@ -113,9 +113,9 @@ async function insertEnrollment(enrollment){
 }
 
 async function getChildInfoByClassId(classId) {
-  if (!classId.includes('_')) {
-    classId += '_1';
-  }
+  // if (!classId.includes('_')) {
+  //   classId += '_1';
+  // }
   const client = await connect();
 
   try {
