@@ -119,11 +119,28 @@ async function updateReminder(additionInfo,reminderId) {
   }
 }
 
+async function updateEnrollment(enrollmentId) {
+  console.log('updating enrollment for ',enrollmentId);
+try {
+  // Define the query to update enrollment status
+  const query = `
+    UPDATE enrollments
+    SET is_enrolled = $2
+    WHERE id = $1;
+  `;
+
+  // Execute the query
+  await pool.query(query, [enrollmentId,false]);
+} catch (error) {
+  console.error('Error updating enrollment for', enrollmentId);
+}
+}
+
 async function unenroll(requests) {
     try {
       
       for (const request of requests) {
-        const { class_id, email,child_name } = request;
+        const { id, class_id, email,child_name } = request;
         console.log(`Fetching and processing reminders for classId: ${class_id} and email: ${email}`);
   
         // Fetch reminders
@@ -132,6 +149,7 @@ async function unenroll(requests) {
   
         // Process reminders
         await processReminders(reminders,child_name);
+        updateEnrollment(id);
         console.log('Reminders processed successfully');
       }
     } catch (error) {
