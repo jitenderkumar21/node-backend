@@ -185,7 +185,7 @@ async function getEnrollmentsByClassId(filters = {}, pageNumber = 1) {
         email: enrollment.email,
         child_age: enrollment.child_age,
         phone_number: enrollment.phone_number,
-        is_enrolled: enrollment.is_enrolled,
+        is_enrolled: enrollment.is_enrolled ? "TRUE" : "FALSE",
       };
     });
     
