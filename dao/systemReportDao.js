@@ -31,7 +31,7 @@ async function insertSystemReportData(client, reportData) {
   const { classId, channel, type, status, reason, parentEmail,childName, reminderId } = reportData;
   const responseTime = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
   await client.query(`
-    INSERT INTO system_report (response_time, class_id, channel, type, status, reason, parent_email, child_name, reminder_id)
+    INSERT INTO system_report (response_time, class_id, channel, type, status, reason, parent_email, reminder_id, child_name)
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
   `, [
     responseTime,
@@ -41,8 +41,8 @@ async function insertSystemReportData(client, reportData) {
     status,
     reason,
     parentEmail,
-    childName,
     reminderId,
+    childName,
   ]);
 }
 
