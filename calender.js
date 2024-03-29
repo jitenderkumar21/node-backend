@@ -4,6 +4,7 @@ const getSubClassesInfo = require('./sheets/getSubClassesInfo');
 // const saveEventId = require('./updateEventId'); // Import the module
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 const ClassUtility = require('./utils/subClassUtility');
+const {  insertSystemReport } = require('./dao/systemReportDao')
 
 const calendarInvite = async (personDetails) => {
 
@@ -225,6 +226,8 @@ Happy Learning!
                             const eventId = response.data.id;
                             console.log('Parent Event created successfully. Event ID:', eventId);
                             insertClassInvitation(subClassId,eventId);
+                            const reportData = { channel: 'CALENDER', type: 'Parent Calender Block', status: 'SUCCESS', parentEmail: personDetails.email, childName: personDetails.childName, classId: subClassId};
+                            insertSystemReport(reportData);
                             }
                         );
                         
@@ -232,8 +235,8 @@ Happy Learning!
                     
                         // console.log('Will update event in this case',subClassId);
                         updateEventAndAttendees(auth, calendar, classInviteId, personDetails,modifiedClassName);
-
-
+                        const reportData = { channel: 'CALENDER', type: 'Parent Calender Block', status: 'SUCCESS', parentEmail: personDetails.email, childName: personDetails.childName, classId: subClassId};
+                        insertSystemReport(reportData);
                     }
                      
             

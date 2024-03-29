@@ -229,19 +229,19 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
         if (error) {
           console.error('Error sending email reminder to parent for ID::', reminderId);
           updateReminderStatus(reminderId, 'FAILURE', 'Error sending email: ' + error.message);
-          const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'FAILURE', reason: error.message, parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId};
+          const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'FAILURE', reason: error.message, parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId, childName:additionalInfo.kidName};
           insertSystemReport(reportData);
         } else {
           console.log('Reminder Email sent to parent for ID:', reminderId);
           updateReminderStatus(reminderId, 'SUCCESS', 'Email sent successfully');
-          const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'SUCCESS', parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId};
+          const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'SUCCESS', parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId, childName:additionalInfo.kidName};
           insertSystemReport(reportData);
         }
       });
     }catch(err) {
       console.error('Error sending email reminder to parent for ID::', reminderId);
       updateReminderStatus(reminderId, 'FAILURE', 'Unexpected Error sending email: ' + err.message);
-      const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'FAILURE', reason: err.message, parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId};
+      const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'FAILURE', reason: err.message, parentEmail: additionalInfo.email, classId:additionalInfo.classId, childName:additionalInfo.kidName, reminderId:reminderId};
       insertSystemReport(reportData);
     }
 
