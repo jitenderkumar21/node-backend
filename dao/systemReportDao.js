@@ -9,7 +9,7 @@ const pool = new Pool({
 const pageSize = 10;
 
 async function insertSystemReport(systemReportData) {
-  const { type, status } = reportData;
+  const { type, status } = systemReportData;
   if( status === 'FAILURE' && type !== 'Parent Reminder'){
     sendAlert(systemReportData);
   }
