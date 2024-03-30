@@ -102,7 +102,7 @@ app.post('/teacher/invite', async (req, res) => {
 
 app.get('/info', async (req, res) => {
   const userTimeZone = req.query.timezone;
-  const classes = await classesInfo(userTimeZone);
+  const classes = await cachedClassesInfo(req.query.timezone);
   res.json(classes);
 });
 
