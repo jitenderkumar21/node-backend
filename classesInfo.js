@@ -18,7 +18,7 @@ const cachedClassesInfo = async (userTimeZone) => {
   const result = await classesInfo(userTimeZone);
 
   // Store the result in the cache for future use with a time-to-live (TTL) of, for example, 10 minutes
-  myCache.set(userTimeZone, result, 5); // in seconds
+  myCache.set(userTimeZone, result, 600); // in seconds
 
   return result;
 };
