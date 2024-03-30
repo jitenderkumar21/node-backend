@@ -15,6 +15,7 @@ const sendAlert = async (reportData) => {
     const mailOptions = {
       from: 'support@coralacademy.com',
       to: 'support@coralacademy.com',
+      cc: 'jitender.kumar@iitgn.ac.in',
       subject: 'Service Issue Notification',
       html: generateEmailContent(reportData),
     };
