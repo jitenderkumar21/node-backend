@@ -1,6 +1,7 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 const moment = require('moment-timezone');
+const sendAlert = require('../emails/sendAlert')
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -8,7 +9,10 @@ const pool = new Pool({
 const pageSize = 10;
 
 async function insertSystemReport(systemReportData) {
-
+  const { type, status } = reportData;
+  if( status === 'FAILURE' && type !== 'Parent Reminder'){
+    sendAlert(systemReportData);
+  }
   const client = await pool.connect();
   try {
     try {        
