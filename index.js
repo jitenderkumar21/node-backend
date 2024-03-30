@@ -6,7 +6,7 @@ const cors = require('cors');
 const sendEmail = require('./emailSender');
 const sendEmailToUs = require('./emailSenderUs');
 const googleSheets = require('./googleSheet'); // Import the module
-const classesInfo = require('./classesInfo'); // Import the module
+const {classesInfo,cachedClassesInfo} = require('./classesInfo'); // Import the module
 const maxLearners = require('./maxLearners'); // Import the module
 const defaultTimeZone = require('./defaultTimeSlot'); // Import the module
 const calendarInvite = require('./calender'); // Import the module
@@ -263,7 +263,7 @@ app.post('/teacher/invite', async (req, res) => {
 
 app.get('/info', async (req, res) => {
   const userTimeZone = req.query.timezone;
-  const classes = await classesInfo(userTimeZone);
+  const classes = await cachedClassesInfo(req.query.timezone);
   res.json(classes);
 });
 
