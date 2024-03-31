@@ -316,11 +316,6 @@ app.get('/track.gif', async (req, res) => {
   res.send(Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64'));
 });
 
-app.listen(port, () => {
-  console.log(`Server is listening at http://localhost:${port}`);
-});
-
-
 
 app.post('/save', async (req, res) => {
   const userTimeZone = req.query.timezone;
