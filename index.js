@@ -99,135 +99,29 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Define the AMP HTML content of your email
-const ampHtmlContent = `
-<!DOCTYPE html>
-<html ⚡4email>
-<head>
-    <meta charset="utf-8">
-    <style amp4email-boilerplate>
-        body { visibility: hidden; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; font-size: 16px; color: #000000; }
-        .class-selection { margin-bottom: 20px; }
-        .class-selection legend { font-weight: bold; }
-        .timeslot-label { display: block; margin-bottom: 10px; }
-        .button { display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px; cursor: pointer; }
-    </style>
-    <script async src="https://cdn.ampproject.org/v0.js"></script>
-    <script>
-        function submitForm() {
-            var formData = {
-                class1_timeslot: [],
-                class2_timeslot: [],
-                class3_timeslot: []
-            };
-
-            document.querySelectorAll('input[name="class1_timeslot[]"]:checked').forEach(item => formData.class1_timeslot.push(item.value));
-            document.querySelectorAll('input[name="class2_timeslot[]"]:checked').forEach(item => formData.class2_timeslot.push(item.value));
-            document.querySelectorAll('input[name="class3_timeslot[]"]:checked').forEach(item => formData.class3_timeslot.push(item.value));
-
-            fetch('https://coral-staging.onrender.com/test3', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert('Form submitted successfully!');
-                } else {
-                    alert('Failed to submit form. Please try again.');
-                }
-            })
-            .catch(error => {
-                alert('An error occurred while submitting the form.');
-                console.error('Error:', error);
-            });
-        }
-    </script>
-</head>
-<body>
-    <div class="container">
-        <h1>Class Selection</h1>
-        <div class="class-selection">
-            <fieldset>
-                <legend>Class 1</legend>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class1_timeslot[]" value="morning">
-                    Morning
-                </label>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class1_timeslot[]" value="afternoon">
-                    Afternoon
-                </label>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class1_timeslot[]" value="evening">
-                    Evening
-                </label>
-            </fieldset>
-        </div>
-
-        <div class="class-selection">
-            <fieldset>
-                <legend>Class 2</legend>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class2_timeslot[]" value="morning">
-                    Morning
-                </label>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class2_timeslot[]" value="afternoon">
-                    Afternoon
-                </label>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class2_timeslot[]" value="evening">
-                    Evening
-                </label>
-            </fieldset>
-        </div>
-
-        <div class="class-selection">
-            <fieldset>
-                <legend>Class 3</legend>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class3_timeslot[]" value="morning">
-                    Morning
-                </label>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class3_timeslot[]" value="afternoon">
-                    Afternoon
-                </label>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class3_timeslot[]" value="evening">
-                    Evening
-                </label>
-            </fieldset>
-        </div>
-
-        <div class="button-container">
-            <button class="button" onclick="submitForm()">Submit</button>
-        </div>
-    </div>
-</body>
-</html>
+// Create the HTML content of your email with the tracking pixel
+const emailContent = `
+    <p>Hello,</p>
+    <p>This is your email content.</p>
+    <img src="https://coral-demo-backend.onrender.com/track.gif?emailID=1234" width="1" height="1">
 `;
 
-// Define the mail options
-const mailOptions = {
-  from: 'support@coralacademy.com', // Sender's email address
+// Setup email data
+let mailOptions = {
+    from: 'support@coralacademy.com',
     to: 'jitender.kumar@iitgn.ac.in',
-    subject: 'Your Subject',
-    html: ampHtmlContent
+    subject: 'Email Tracking Test',
+    html: emailContent
 };
 
-// Send the email
+// Send email with Nodemailer
 transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-        console.log('Error occurred:', error.message);
-        return;
+        return console.log(error);
     }
-    console.log('Email sent successfully!');
+    console.log('Message sent: %s', info.messageId);
 });
+
 
 
   res.send('Email Sent');
@@ -260,6 +154,21 @@ app.post('/teacher/invite', async (req, res) => {
 //     res.status(500).send('Internal Server Error');
 //   });
 // });
+
+app.get('/track.gif', (req, res) => {
+  // Extract the emailID from the query parameters
+  const emailID = req.query.emailID;
+  
+  // Log the emailID
+  console.log('Email ID:', emailID);
+
+  // Set content type to image/gif
+  res.set('Content-Type', 'image/gif');
+
+  // Send a transparent pixel (1x1 gif)
+  const pixel = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+  res.send(pixel);
+});
 
 app.get('/info', async (req, res) => {
   const userTimeZone = req.query.timezone;
