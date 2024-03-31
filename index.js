@@ -108,7 +108,7 @@ const childName = 'Alice';
 const uniqueIdentifier = Date.now();
 
 // Assuming you have the recipient's email address stored in a variable called recipientEmail
-const recipientEmail = 'jitender.kumar@gmail.com'; // Example recipient email address
+const recipientEmail = 'jitender.kumar@iitgn.ac.in'; // Example recipient email address
 
 // Construct the tracking pixel URL with recipient's email, unique identifier, class ID, parent name, and child name
 const trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(recipientEmail)}&uniqueID=${uniqueIdentifier}&classID=${encodeURIComponent(classId)}&parentName=${encodeURIComponent(parentName)}&childName=${encodeURIComponent(childName)}`;
