@@ -296,13 +296,14 @@ app.get('/parent/info', async (req, res) => {
 app.get('/track.gif', async (req, res) => {
   const recipientEmail = req.query.recipientEmail || '';
   const classID = req.query.classID || '';
-  const timestamp = req.query.timestamp || '';
+  const date = new Date();
+  const formattedTimestamp = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
   const parentName = req.query.parentName || '';
   const childName = req.query.childName || '';
   const type = req.query.type || '';
 
   // Write data to Google Sheets
-  saveEmailTrackingEvent([type, classID, recipientEmail, parentName, childName, timestamp]);
+  saveEmailTrackingEvent([type, classID, recipientEmail, parentName, childName, formattedTimestamp]);
 
   // Set cache-control headers to prevent caching
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
