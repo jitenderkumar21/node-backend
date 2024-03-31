@@ -22,6 +22,7 @@ const teacherEmailReminderCron = require('./crons/teacherEmailReminderCron');
 const createWhatsappReminders = require('./createWhatsappReminders');
 const getIpInfo = require('./location/IPInfo'); // Import the module
 const saveEnrollments = require('./sheets/saveEnrollments');
+const saveEmailTrackingEvent = require('./sheets/saveEmailTrackingEvent');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 const {  getAllSystemReports } = require('./dao/systemReportDao')
 const getSubClassesInfo = require('./sheets/getSubClassesInfo');
@@ -290,6 +291,33 @@ app.get('/parent/info', async (req, res) => {
   const email = req.query.email;
   const result = await getParentInfoByEmail(email);
   res.json(result);
+});
+
+app.get('/track.gif', async (req, res) => {
+  const recipientEmail = req.query.recipientEmail;
+  const classID = req.query.classID;
+  const timestamp = req.query.timestamp;
+  const parentName = req.query.parentName;
+  const childName = req.query.childName;
+  const type = req.query.type;
+
+  // Write data to Google Sheets
+  saveEmailTrackingEvent([type, classID, recipientEmail, parentName, childName, timestamp]);
+
+  // Set cache-control headers to prevent caching
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+
+  // Set content type to image/gif
+  res.set('Content-Type', 'image/gif');
+
+  // Return a transparent 1x1 pixel GIF response
+  res.send(Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64'));
+});
+
+app.listen(port, () => {
+  console.log(`Server is listening at http://localhost:${port}`);
 });
 
 

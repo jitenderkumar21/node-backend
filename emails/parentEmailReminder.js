@@ -41,10 +41,15 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
           pass: 'xcvf sxnm yctg jvte',
         },
       });
+      const date = new Date();
+      const formattedTimestamp = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
+      
 
       let emailContent;
+      let trackingPixelUrl;
       let emailSubject = 'Reminder!';
       if(reminder_type==='MORNING_8_EMAIL' || reminder_type==='MORNING_8'){
+        trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(additionalInfo.email)}&classID=${encodeURIComponent(classid)}&timestamp=${formattedTimestamp}&parentName=${encodeURIComponent(parentName)}&childName=${encodeURIComponent(childName)}&type=PARENT_REMINDER_MORNING`;
         emailSubject=`Reminder for ${formattedNames}'s class today : ${className}`;
         emailContent = `
         <html>
@@ -122,12 +127,13 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
 
             <p>Best,</p>
             <p>Coral Academy</p>
-          
+            <img src="${trackingPixelUrl}" width="1" height="1">
           </div>
         </body>
         </html>
         `;
       }else{
+        trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(additionalInfo.email)}&classID=${encodeURIComponent(classid)}&timestamp=${formattedTimestamp}&parentName=${encodeURIComponent(parentName)}&childName=${encodeURIComponent(childName)}&type=PARENT_REMINDER_BEFORE_CLASS`;
         emailSubject=`${formattedNames}'s class in 15 minutes : ${className}`;
 
         emailContent = `
@@ -207,7 +213,7 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
 
           <p>Best,</p>
           <p>Coral Academy</p>
-        
+          <img src="${trackingPixelUrl}" width="1" height="1">
         </div>
       </body>
       </html>

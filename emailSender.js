@@ -146,6 +146,10 @@ const sendEmail = async (personDetails,userTimeZone) => {
           message = `We noticed that you have requested additional time slots for some classes - ${personDetails.want_another_slot}.  We will try our best to schedule classes that work for you.</p>`;
         }
       }
+      const date = new Date();
+      const formattedTimestamp = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
+
+      const trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(personDetails.email)}&timestamp=${formattedTimestamp}&parentName=${encodeURIComponent(personDetails.parentName)}&childName=${encodeURIComponent(personDetails.childName)}`;
       
       const emailContent = `
       <html>
@@ -236,6 +240,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
 
           <p>Best,</p>
           <p>Coral Academy</p>
+          <img src="${trackingPixelUrl}" width="1" height="1">
         </div>
       </body>
       </html>
