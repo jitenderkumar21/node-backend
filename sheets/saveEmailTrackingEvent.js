@@ -20,7 +20,7 @@ const saveEmailTrackingEvent = async (data) => {
         range: 'Email-Tracking!A:P', // Adjust the range as needed
         valueInputOption: 'USER_ENTERED',
         resource: {
-          values: data,
+          values: [data],
         },
       });
 
