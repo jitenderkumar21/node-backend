@@ -124,7 +124,7 @@ const emailContent = `
 let mailOptions = {
     from: 'support@coralacademy.com',
     to: recipientEmail,
-    subject: 'Email Tracking Test 2',
+    subject: 'Email Tracking Test 3',
     html: emailContent
 };
 
