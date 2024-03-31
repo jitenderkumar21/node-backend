@@ -294,12 +294,12 @@ app.get('/parent/info', async (req, res) => {
 });
 
 app.get('/track.gif', async (req, res) => {
-  const recipientEmail = req.query.recipientEmail;
-  const classID = req.query.classID;
-  const timestamp = req.query.timestamp;
-  const parentName = req.query.parentName;
-  const childName = req.query.childName;
-  const type = req.query.type;
+  const recipientEmail = req.query.recipientEmail || '';
+  const classID = req.query.classID || '';
+  const timestamp = req.query.timestamp || '';
+  const parentName = req.query.parentName || '';
+  const childName = req.query.childName || '';
+  const type = req.query.type || '';
 
   // Write data to Google Sheets
   saveEmailTrackingEvent([type, classID, recipientEmail, parentName, childName, timestamp]);
