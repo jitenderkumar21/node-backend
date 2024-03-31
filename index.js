@@ -180,6 +180,11 @@ app.get('/track.gif', (req, res) => {
   console.log('Child Name',req.query.childName);
 
 
+  // Set cache-control headers to prevent caching
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+
   // Set content type to image/gif
   res.set('Content-Type', 'image/gif');
 
