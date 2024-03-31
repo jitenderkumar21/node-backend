@@ -99,18 +99,32 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Create the HTML content of your email with the tracking pixel
+// Assuming you have the class ID, parent name, and child name stored in variables
+const classId = 'class123';
+const parentName = 'John Doe';
+const childName = 'Alice';
+
+// Generate a unique identifier (for example, a timestamp)
+const uniqueIdentifier = Date.now();
+
+// Assuming you have the recipient's email address stored in a variable called recipientEmail
+const recipientEmail = 'jitender.kumar@gmail.com'; // Example recipient email address
+
+// Construct the tracking pixel URL with recipient's email, unique identifier, class ID, parent name, and child name
+const trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(recipientEmail)}&uniqueID=${uniqueIdentifier}&classID=${encodeURIComponent(classId)}&parentName=${encodeURIComponent(parentName)}&childName=${encodeURIComponent(childName)}`;
+
+// Update the email content to include the tracking pixel URL and variables
 const emailContent = `
-    <p>Hello,</p>
-    <p>This is your email content.</p>
-    <img src="https://coral-demo-backend.onrender.com/track.gif?emailID=1234" width="1" height="1">
+    <p>Hello ${parentName},</p>
+    <p>This is your email content for your child ${childName} in class ${classId}.</p>
+    <img src="${trackingPixelUrl}" width="1" height="1">
 `;
 
 // Setup email data
 let mailOptions = {
     from: 'support@coralacademy.com',
-    to: 'jitender.kumar@iitgn.ac.in',
-    subject: 'Email Tracking Test',
+    to: recipientEmail,
+    subject: 'Email Tracking Test 2',
     html: emailContent
 };
 
@@ -157,10 +171,14 @@ app.post('/teacher/invite', async (req, res) => {
 
 app.get('/track.gif', (req, res) => {
   // Extract the emailID from the query parameters
-  const emailID = req.query.emailID;
+  const emailID = req.query.recipientEmail;
   
   // Log the emailID
   console.log('Email ID:', emailID);
+  console.log('Class ID',req.query.classID);
+  console.log('Parent Name',req.query.parentName);
+  console.log('Child Name',req.query.childName);
+
 
   // Set content type to image/gif
   res.set('Content-Type', 'image/gif');
