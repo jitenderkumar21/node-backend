@@ -178,6 +178,11 @@ class subClassUtility {
         }
         return modifiedTimeZone;
       }
+      static getClassTimingInIST(classIdTimings,subClassId){
+        const classsTiming =classIdTimings.get(subClassId)[0];
+        const formattedTimestamp = moment(classsTiming).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
+        return formattedTimestamp;
+      }
 
     
 }

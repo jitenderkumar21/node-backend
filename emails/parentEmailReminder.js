@@ -5,16 +5,20 @@ const { Client } = require('pg');
 const {  insertSystemReport } = require('../dao/systemReportDao');
 require('dotenv').config();
 const moment = require('moment-timezone');
+const ClassUtility = require('../utils/subClassUtility');
+const classIdTimingMap = require('../sheets/classIdTimingMap');
 
 const connectionString = process.env.DATABASE_URL;
 
 const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => {
         try{
         const subClassesInfo = await getSubClassesInfo();
+        const classIdTimings = await classIdTimingMap();
         const subClassDTO = subClassesInfo[additionalInfo.subClassId];
         const parentName = additionalInfo.parentName;
         const kidName = additionalInfo.kidName;
         const classid = additionalInfo.classId;
+        const classTimingIST = ClassUtility.getClassTimingInIST(classIdTimings,additionalInfo.subClassId);
 
         const namesArray = kidName.split(',').map(name => name.trim());
         let formattedNames;
@@ -50,7 +54,7 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
       let trackingPixelUrl;
       let emailSubject = 'Reminder!';
       if(reminder_type==='MORNING_8_EMAIL' || reminder_type==='MORNING_8'){
-        trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(additionalInfo.email)}&classID=${encodeURIComponent(classid)}&emailSentAt=${formattedTimestamp}&parentName=${encodeURIComponent(parentName)}&childName=${encodeURIComponent(kidName)}&className=${encodeURIComponent(className)}&classTiming=${encodeURIComponent(classTiming)}&type=PARENT_REMINDER_MORNING`;
+        trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(additionalInfo.email)}&classID=${encodeURIComponent(classid)}&emailSentAt=${formattedTimestamp}&parentName=${encodeURIComponent(parentName)}&childName=${encodeURIComponent(kidName)}&className=${encodeURIComponent(className)}&classTiming=${encodeURIComponent(classTimingIST)}&type=PARENT_REMINDER_MORNING`;
         emailSubject=`Reminder for ${formattedNames}'s class today : ${className}`;
         emailContent = `
         <html>
@@ -134,7 +138,7 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
         </html>
         `;
       }else{
-        trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(additionalInfo.email)}&classID=${encodeURIComponent(classid)}&emailSentAt=${formattedTimestamp}&parentName=${encodeURIComponent(parentName)}&childName=${encodeURIComponent(kidName)}&className=${encodeURIComponent(className)}&classTiming=${encodeURIComponent(classTiming)}&type=PARENT_REMINDER_BEFORE_CLASS`;
+        trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(additionalInfo.email)}&classID=${encodeURIComponent(classid)}&emailSentAt=${formattedTimestamp}&parentName=${encodeURIComponent(parentName)}&childName=${encodeURIComponent(kidName)}&className=${encodeURIComponent(className)}&classTiming=${encodeURIComponent(classTimingIST)}&type=PARENT_REMINDER_BEFORE_CLASS`;
         emailSubject=`${formattedNames}'s class in 15 minutes : ${className}`;
 
         emailContent = `
