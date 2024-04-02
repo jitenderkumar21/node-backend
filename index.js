@@ -170,29 +170,29 @@ app.post('/teacher/invite', async (req, res) => {
 //   });
 // });
 
-app.get('/track.gif', (req, res) => {
-  // Extract the emailID from the query parameters
-  const emailID = req.query.recipientEmail;
+// app.get('/track.gif', (req, res) => {
+//   // Extract the emailID from the query parameters
+//   const emailID = req.query.recipientEmail;
   
-  // Log the emailID
-  console.log('Email ID:', emailID);
-  console.log('Class ID',req.query.classID);
-  console.log('Parent Name',req.query.parentName);
-  console.log('Child Name',req.query.childName);
+//   // Log the emailID
+//   console.log('Email ID:', emailID);
+//   console.log('Class ID',req.query.classID);
+//   console.log('Parent Name',req.query.parentName);
+//   console.log('Child Name',req.query.childName);
 
 
-  // Set cache-control headers to prevent caching
-  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
-  res.set('Pragma', 'no-cache');
-  res.set('Expires', '0');
+//   // Set cache-control headers to prevent caching
+//   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+//   res.set('Pragma', 'no-cache');
+//   res.set('Expires', '0');
 
-  // Set content type to image/gif
-  res.set('Content-Type', 'image/gif');
+//   // Set content type to image/gif
+//   res.set('Content-Type', 'image/gif');
 
-  // Send a transparent pixel (1x1 gif)
-  const pixel = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
-  res.send(pixel);
-});
+//   // Send a transparent pixel (1x1 gif)
+//   const pixel = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+//   res.send(pixel);
+// });
 
 app.get('/info', async (req, res) => {
   const userTimeZone = req.query.timezone;

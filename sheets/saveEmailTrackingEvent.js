@@ -2,6 +2,7 @@ const { google } = require('googleapis');
 require('dotenv').config();
 
 const saveEmailTrackingEvent = async (data) => {
+  console.log('Event received -> ',data);
   try {
     const auth = new google.auth.GoogleAuth({
         keyFile: 'credentials.json',
