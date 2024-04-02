@@ -148,9 +148,9 @@ const sendEmail = async (personDetails,userTimeZone) => {
         }
       }
       const date = new Date();
-      const formattedTimestamp = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
+      const emailSentAt = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
 
-      const trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(personDetails.email)}&timestamp=${formattedTimestamp}&parentName=${encodeURIComponent(personDetails.parentName)}&childName=${encodeURIComponent(personDetails.childName)}&type=PARENT_CONFIRMATION`;
+      const trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(personDetails.email)}&emailSentAt=${emailSentAt}&parentName=${encodeURIComponent(personDetails.parentName)}&childName=${encodeURIComponent(personDetails.childName)}&type=PARENT_CONFIRMATION`;
       
       const emailContent = `
       <html>

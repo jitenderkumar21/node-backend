@@ -233,9 +233,12 @@ app.get('/track.gif', async (req, res) => {
   const parentName = req.query.parentName || '';
   const childName = req.query.childName || '';
   const type = req.query.type || '';
+  const emailSentAt = req.query.emailSentAt || '';
+  const className = req.query.className || '';
+  const classTiming = req.query.classTiming || '';
 
   // Write data to Google Sheets
-  saveEmailTrackingEvent([type, classID, recipientEmail, parentName, childName, formattedTimestamp]);
+  saveEmailTrackingEvent([type, classID, className, classTiming, recipientEmail, parentName, childName, emailSentAt, formattedTimestamp]);
 
   // Set cache-control headers to prevent caching
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
