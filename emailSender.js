@@ -4,6 +4,7 @@ const {  insertSystemReport } = require('./dao/systemReportDao')
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 const getSubClassesInfo = require('./sheets/getSubClassesInfo');
 const { v4: uuidv4 } = require('uuid');
+const moment = require('moment-timezone');
 
 const sendEmail = async (personDetails,userTimeZone) => {
     const subClassesInfo = await getSubClassesInfo();
@@ -146,6 +147,10 @@ const sendEmail = async (personDetails,userTimeZone) => {
           message = `We noticed that you have requested additional time slots for some classes - ${personDetails.want_another_slot}.  We will try our best to schedule classes that work for you.</p>`;
         }
       }
+      const date = new Date();
+      const emailSentAt = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
+
+      const trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(personDetails.email)}&emailSentAt=${emailSentAt}&parentName=${encodeURIComponent(personDetails.parentName)}&childName=${encodeURIComponent(personDetails.childName)}&type=PARENT_CONFIRMATION`;
       
       const emailContent = `
       <html>
@@ -236,6 +241,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
 
           <p>Best,</p>
           <p>Coral Academy</p>
+          <img src="${trackingPixelUrl}" width="1" height="1">
         </div>
       </body>
       </html>
@@ -257,11 +263,11 @@ const sendEmail = async (personDetails,userTimeZone) => {
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           console.error('Error sending email to parent:', error);
-          const reportData = { channel: 'EMAIL', type: 'Parent Confimation', status: 'FAILURE', reason: error.message, parentEmail: personDetails.email};
+          const reportData = { channel: 'EMAIL', type: 'Parent Confimation', status: 'FAILURE', reason: error.message, parentEmail: personDetails.email, childName: personDetails.childName};
           insertSystemReport(reportData);
         } else {
           console.log('Email sent to parent:', personDetails.email);
-          const reportData = { channel: 'EMAIL', type: 'Parent Confimation', status: 'SUCCESS', parentEmail: personDetails.email};
+          const reportData = { channel: 'EMAIL', type: 'Parent Confimation', status: 'SUCCESS', parentEmail: personDetails.email, childName: personDetails.childName};
           insertSystemReport(reportData);
         }
       });

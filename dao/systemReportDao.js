@@ -1,6 +1,7 @@
 const { Pool } = require('pg');
 require('dotenv').config();
 const moment = require('moment-timezone');
+const sendAlert = require('../emails/sendAlert')
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -8,7 +9,10 @@ const pool = new Pool({
 const pageSize = 10;
 
 async function insertSystemReport(systemReportData) {
-
+  const { type, status } = systemReportData;
+  if( status === 'FAILURE' && type !== 'Parent Reminder'){
+    sendAlert(systemReportData);
+  }
   const client = await pool.connect();
   try {
     try {        
@@ -28,11 +32,12 @@ async function insertSystemReport(systemReportData) {
 }
 
 async function insertSystemReportData(client, reportData) {
-  const { classId, channel, type, status, reason, parentEmail, reminderId } = reportData;
-  const responseTime = moment(new Date()).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
+  const { classId, channel, type, status, reason, parentEmail,childName, reminderId } = reportData;
+  const date = new Date();
+  const responseTime = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
   await client.query(`
-    INSERT INTO system_report (response_time, class_id, channel, type, status, reason, parent_email, reminder_id)
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    INSERT INTO system_report (response_time, class_id, channel, type, status, reason, parent_email, reminder_id, child_name)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
   `, [
     responseTime,
     classId,
@@ -42,6 +47,7 @@ async function insertSystemReportData(client, reportData) {
     reason,
     parentEmail,
     reminderId,
+    childName,
   ]);
 }
 
@@ -97,6 +103,10 @@ async function getAllSystemReports(filters = {}, pageNumber = 1) {
 
       const totalPages = Math.ceil(totalRecords / pageSize);
       const systemReport = result.rows;
+      systemReport.forEach(row => {
+        const responseTime = moment(row.response_time).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
+        row.response_time = responseTime; // Update the response_time with formatted value
+    });
 
       return {
         total: totalRecords,

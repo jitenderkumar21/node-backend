@@ -37,10 +37,10 @@ const sendReminder = async (reminderId,reminder_type, additionalInfo) => {
             });
             if(statusToUpdate==='FAILURE'){
                 console.log('WA reminder failed, sending email reminder for ID:', reminderId);
-                const reportData = { channel: 'WHATSAPP', type: 'Parent Reminder', status: 'FAILURE', reason: 'Internal Server Error', parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId};
+                const reportData = { channel: 'WHATSAPP', type: 'Parent Reminder', status: 'FAILURE', reason: 'Internal Server Error', parentEmail: additionalInfo.email, classId:additionalInfo.classId, childName:additionalInfo.kidName, reminderId:reminderId};
                 insertSystemReport(reportData);
             }else{
-                const reportData = { channel: 'WHATSAPP', type: 'Parent Reminder', status: 'SUCCESS', parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId};
+                const reportData = { channel: 'WHATSAPP', type: 'Parent Reminder', status: 'SUCCESS', parentEmail: additionalInfo.email, classId:additionalInfo.classId, childName:additionalInfo.kidName, reminderId:reminderId};
                 insertSystemReport(reportData);
             }
         });

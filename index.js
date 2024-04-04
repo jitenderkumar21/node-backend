@@ -6,7 +6,7 @@ const cors = require('cors');
 const sendEmail = require('./emailSender');
 const sendEmailToUs = require('./emailSenderUs');
 const googleSheets = require('./googleSheet'); // Import the module
-const classesInfo = require('./classesInfo'); // Import the module
+const {classesInfo,cachedClassesInfo} = require('./classesInfo'); // Import the module
 const maxLearners = require('./maxLearners'); // Import the module
 const defaultTimeZone = require('./defaultTimeSlot'); // Import the module
 const calendarInvite = require('./calender'); // Import the module
@@ -22,6 +22,7 @@ const teacherEmailReminderCron = require('./crons/teacherEmailReminderCron');
 const createWhatsappReminders = require('./createWhatsappReminders');
 const getIpInfo = require('./location/IPInfo'); // Import the module
 const saveEnrollments = require('./sheets/saveEnrollments');
+const saveEmailTrackingEvent = require('./sheets/saveEmailTrackingEvent');
 const classIdTimingMap = require('./sheets/classIdTimingMap');
 const {  getAllSystemReports } = require('./dao/systemReportDao')
 const getSubClassesInfo = require('./sheets/getSubClassesInfo');
@@ -37,6 +38,8 @@ const {
 } = require('./dao/parentsInfoDao')
 
 const {getEnrollmentsByClassId} = require('./dao/enrollmentsDao');
+
+const unenroll = require('./service/unenrollService');
 
 
 app.use(express.json());
@@ -65,8 +68,8 @@ app.post('/test', async (req, res) => {
   // saveEnrollments(req.body,'152.59.194.85');
   // createWhatsappReminders(req.body,req.query.timezone);
   // const result = await getParentInfoByEmail('jitender.kumar@iitgn.ac.in');
-  const result = await getSubClassesInfo();
-  res.send(result);
+  await unenroll(req.body);
+  res.send('DONE');
 });
 // Middleware to parse JSON and urlencoded form data
 // app.use(bodyParser.json());
@@ -97,135 +100,43 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Define the AMP HTML content of your email
-const ampHtmlContent = `
-<!DOCTYPE html>
-<html ⚡4email>
-<head>
-    <meta charset="utf-8">
-    <style amp4email-boilerplate>
-        body { visibility: hidden; }
-        .container { max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif; font-size: 16px; color: #000000; }
-        .class-selection { margin-bottom: 20px; }
-        .class-selection legend { font-weight: bold; }
-        .timeslot-label { display: block; margin-bottom: 10px; }
-        .button { display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px; cursor: pointer; }
-    </style>
-    <script async src="https://cdn.ampproject.org/v0.js"></script>
-    <script>
-        function submitForm() {
-            var formData = {
-                class1_timeslot: [],
-                class2_timeslot: [],
-                class3_timeslot: []
-            };
+// Assuming you have the class ID, parent name, and child name stored in variables
+const classId = 'class123';
+const parentName = 'John Doe';
+const childName = 'Alice';
 
-            document.querySelectorAll('input[name="class1_timeslot[]"]:checked').forEach(item => formData.class1_timeslot.push(item.value));
-            document.querySelectorAll('input[name="class2_timeslot[]"]:checked').forEach(item => formData.class2_timeslot.push(item.value));
-            document.querySelectorAll('input[name="class3_timeslot[]"]:checked').forEach(item => formData.class3_timeslot.push(item.value));
+// Generate a unique identifier (for example, a timestamp)
+const uniqueIdentifier = Date.now();
 
-            fetch('https://coral-staging.onrender.com/test3', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(formData)
-            })
-            .then(response => {
-                if (response.ok) {
-                    alert('Form submitted successfully!');
-                } else {
-                    alert('Failed to submit form. Please try again.');
-                }
-            })
-            .catch(error => {
-                alert('An error occurred while submitting the form.');
-                console.error('Error:', error);
-            });
-        }
-    </script>
-</head>
-<body>
-    <div class="container">
-        <h1>Class Selection</h1>
-        <div class="class-selection">
-            <fieldset>
-                <legend>Class 1</legend>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class1_timeslot[]" value="morning">
-                    Morning
-                </label>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class1_timeslot[]" value="afternoon">
-                    Afternoon
-                </label>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class1_timeslot[]" value="evening">
-                    Evening
-                </label>
-            </fieldset>
-        </div>
+// Assuming you have the recipient's email address stored in a variable called recipientEmail
+const recipientEmail = 'jitender.kumar@iitgn.ac.in'; // Example recipient email address
 
-        <div class="class-selection">
-            <fieldset>
-                <legend>Class 2</legend>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class2_timeslot[]" value="morning">
-                    Morning
-                </label>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class2_timeslot[]" value="afternoon">
-                    Afternoon
-                </label>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class2_timeslot[]" value="evening">
-                    Evening
-                </label>
-            </fieldset>
-        </div>
+// Construct the tracking pixel URL with recipient's email, unique identifier, class ID, parent name, and child name
+const trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(recipientEmail)}&uniqueID=${uniqueIdentifier}&classID=${encodeURIComponent(classId)}&parentName=${encodeURIComponent(parentName)}&childName=${encodeURIComponent(childName)}`;
 
-        <div class="class-selection">
-            <fieldset>
-                <legend>Class 3</legend>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class3_timeslot[]" value="morning">
-                    Morning
-                </label>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class3_timeslot[]" value="afternoon">
-                    Afternoon
-                </label>
-                <label class="timeslot-label">
-                    <input type="checkbox" name="class3_timeslot[]" value="evening">
-                    Evening
-                </label>
-            </fieldset>
-        </div>
-
-        <div class="button-container">
-            <button class="button" onclick="submitForm()">Submit</button>
-        </div>
-    </div>
-</body>
-</html>
+// Update the email content to include the tracking pixel URL and variables
+const emailContent = `
+    <p>Hello ${parentName},</p>
+    <p>This is your email content for your child ${childName} in class ${classId}.</p>
+    <img src="${trackingPixelUrl}" width="1" height="1">
 `;
 
-// Define the mail options
-const mailOptions = {
-  from: 'support@coralacademy.com', // Sender's email address
-    to: 'jitender.kumar@iitgn.ac.in',
-    subject: 'Your Subject',
-    html: ampHtmlContent
+// Setup email data
+let mailOptions = {
+    from: 'support@coralacademy.com',
+    to: recipientEmail,
+    subject: 'Email Tracking Test 3',
+    html: emailContent
 };
 
-// Send the email
+// Send email with Nodemailer
 transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-        console.log('Error occurred:', error.message);
-        return;
+        return console.log(error);
     }
-    console.log('Email sent successfully!');
+    console.log('Message sent: %s', info.messageId);
 });
+
 
 
   res.send('Email Sent');
@@ -259,9 +170,34 @@ app.post('/teacher/invite', async (req, res) => {
 //   });
 // });
 
+// app.get('/track.gif', (req, res) => {
+//   // Extract the emailID from the query parameters
+//   const emailID = req.query.recipientEmail;
+  
+//   // Log the emailID
+//   console.log('Email ID:', emailID);
+//   console.log('Class ID',req.query.classID);
+//   console.log('Parent Name',req.query.parentName);
+//   console.log('Child Name',req.query.childName);
+
+
+//   // Set cache-control headers to prevent caching
+//   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+//   res.set('Pragma', 'no-cache');
+//   res.set('Expires', '0');
+
+//   // Set content type to image/gif
+//   res.set('Content-Type', 'image/gif');
+
+//   // Send a transparent pixel (1x1 gif)
+//   const pixel = Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64');
+//   res.send(pixel);
+// });
+
+
 app.get('/info', async (req, res) => {
   const userTimeZone = req.query.timezone;
-  const classes = await classesInfo(userTimeZone);
+  const classes = await cachedClassesInfo(req.query.timezone);
   res.json(classes);
 });
 
@@ -279,6 +215,10 @@ app.get('/cms/enrollments', async (req, res) => {
   res.json(systemReport);
 });
 
+app.post('/cms/unenroll', async (req, res) => {
+  await unenroll(req.body);
+  res.json('Students unrenrolled');
+});
 
 app.get('/parent/info', async (req, res) => {
   const email = req.query.email;
@@ -286,6 +226,32 @@ app.get('/parent/info', async (req, res) => {
   res.json(result);
 });
 
+app.get('/track.gif', async (req, res) => {
+  const recipientEmail = req.query.recipientEmail || '';
+  const classID = req.query.classID || '';
+  const date = new Date();
+  const formattedTimestamp = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
+  const parentName = req.query.parentName || '';
+  const childName = req.query.childName || '';
+  const type = req.query.type || '';
+  const emailSentAt = req.query.emailSentAt || '';
+  const className = req.query.className || '';
+  const classTiming = req.query.classTiming || '';
+
+  // Write data to Google Sheets
+  saveEmailTrackingEvent([type, classID, className, classTiming, recipientEmail, parentName, childName, emailSentAt, formattedTimestamp]);
+
+  // Set cache-control headers to prevent caching
+  res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+
+  // Set content type to image/gif
+  res.set('Content-Type', 'image/gif');
+
+  // Return a transparent 1x1 pixel GIF response
+  res.send(Buffer.from('R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7', 'base64'));
+});
 
 
 app.post('/save', async (req, res) => {

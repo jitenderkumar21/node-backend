@@ -4,16 +4,21 @@ const path = require('path');
 const { Client } = require('pg');
 const {  insertSystemReport } = require('../dao/systemReportDao');
 require('dotenv').config();
+const moment = require('moment-timezone');
+const ClassUtility = require('../utils/subClassUtility');
+const classIdTimingMap = require('../sheets/classIdTimingMap');
 
 const connectionString = process.env.DATABASE_URL;
 
 const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => {
         try{
         const subClassesInfo = await getSubClassesInfo();
+        const classIdTimings = await classIdTimingMap();
         const subClassDTO = subClassesInfo[additionalInfo.subClassId];
         const parentName = additionalInfo.parentName;
         const kidName = additionalInfo.kidName;
         const classid = additionalInfo.classId;
+        const classTimingIST = ClassUtility.getClassTimingInIST(classIdTimings,additionalInfo.subClassId);
 
         const namesArray = kidName.split(',').map(name => name.trim());
         let formattedNames;
@@ -41,10 +46,15 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
           pass: 'xcvf sxnm yctg jvte',
         },
       });
+      const date = new Date();
+      const formattedTimestamp = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
+      
 
       let emailContent;
+      let trackingPixelUrl;
       let emailSubject = 'Reminder!';
       if(reminder_type==='MORNING_8_EMAIL' || reminder_type==='MORNING_8'){
+        trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(additionalInfo.email)}&classID=${encodeURIComponent(classid)}&emailSentAt=${formattedTimestamp}&parentName=${encodeURIComponent(parentName)}&childName=${encodeURIComponent(kidName)}&className=${encodeURIComponent(className)}&classTiming=${encodeURIComponent(classTimingIST)}&type=PARENT_REMINDER_MORNING`;
         emailSubject=`Reminder for ${formattedNames}'s class today : ${className}`;
         emailContent = `
         <html>
@@ -122,12 +132,13 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
 
             <p>Best,</p>
             <p>Coral Academy</p>
-          
+            <img src="${trackingPixelUrl}" width="1" height="1">
           </div>
         </body>
         </html>
         `;
       }else{
+        trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(additionalInfo.email)}&classID=${encodeURIComponent(classid)}&emailSentAt=${formattedTimestamp}&parentName=${encodeURIComponent(parentName)}&childName=${encodeURIComponent(kidName)}&className=${encodeURIComponent(className)}&classTiming=${encodeURIComponent(classTimingIST)}&type=PARENT_REMINDER_BEFORE_CLASS`;
         emailSubject=`${formattedNames}'s class in 15 minutes : ${className}`;
 
         emailContent = `
@@ -207,7 +218,7 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
 
           <p>Best,</p>
           <p>Coral Academy</p>
-        
+          <img src="${trackingPixelUrl}" width="1" height="1">
         </div>
       </body>
       </html>
@@ -229,19 +240,19 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
         if (error) {
           console.error('Error sending email reminder to parent for ID::', reminderId);
           updateReminderStatus(reminderId, 'FAILURE', 'Error sending email: ' + error.message);
-          const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'FAILURE', reason: error.message, parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId};
+          const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'FAILURE', reason: error.message, parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId, childName:additionalInfo.kidName};
           insertSystemReport(reportData);
         } else {
           console.log('Reminder Email sent to parent for ID:', reminderId);
           updateReminderStatus(reminderId, 'SUCCESS', 'Email sent successfully');
-          const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'SUCCESS', parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId};
+          const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'SUCCESS', parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId, childName:additionalInfo.kidName};
           insertSystemReport(reportData);
         }
       });
     }catch(err) {
       console.error('Error sending email reminder to parent for ID::', reminderId);
       updateReminderStatus(reminderId, 'FAILURE', 'Unexpected Error sending email: ' + err.message);
-      const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'FAILURE', reason: err.message, parentEmail: additionalInfo.email, classId:additionalInfo.classId, reminderId:reminderId};
+      const reportData = { channel: 'EMAIL', type: 'Parent Reminder', status: 'FAILURE', reason: err.message, parentEmail: additionalInfo.email, classId:additionalInfo.classId, childName:additionalInfo.kidName, reminderId:reminderId};
       insertSystemReport(reportData);
     }
 
