@@ -5,6 +5,9 @@ const classIdTimingMap = require('./sheets/classIdTimingMap');
 const getSubClassesInfo = require('./sheets/getSubClassesInfo');
 const { v4: uuidv4 } = require('uuid');
 const moment = require('moment-timezone');
+require('dotenv').config();
+
+const serviceBaseUrl = process.env.SERVICE_BASE_URL;
 
 const sendEmail = async (personDetails,userTimeZone) => {
     const subClassesInfo = await getSubClassesInfo();
@@ -150,7 +153,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
       const date = new Date();
       const emailSentAt = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
 
-      const trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(personDetails.email)}&emailSentAt=${emailSentAt}&parentName=${encodeURIComponent(personDetails.parentName)}&childName=${encodeURIComponent(personDetails.childName)}&type=PARENT_CONFIRMATION`;
+      const trackingPixelUrl = `${serviceBaseUrl}/track.gif?recipientEmail=${encodeURIComponent(personDetails.email)}&emailSentAt=${emailSentAt}&parentName=${encodeURIComponent(personDetails.parentName)}&childName=${encodeURIComponent(personDetails.childName)}&type=PARENT_CONFIRMATION`;
       
       const emailContent = `
       <html>
