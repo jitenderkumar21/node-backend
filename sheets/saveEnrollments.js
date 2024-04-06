@@ -15,7 +15,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
     const ipInfo = await getIpInfo(ipAddress);
 
     const date = new Date();
-    const formattedTimestamp = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
+    // const formattedTimestamp = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
 
     const rows = personDetails.classDetails.flatMap((classDetail) => {
       const timeslots = classDetail.timeslots || [];
@@ -52,7 +52,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
           personDetails.knowabout,
           personDetails.additionalInfo,
           personDetails.comments,
-          classIdFomatted,
+          subClassId,
           classDetail.classTag,
           classDetail.className,
           timing.split(':')[1].trim(),
