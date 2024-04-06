@@ -19,6 +19,7 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
       });
 
       const classDetails = personDetails.classDetails;
+      let classIdArray = [];
 
       let classes = `
                 <table class="class-table">
@@ -70,6 +71,7 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
   
               futureTimeslots.forEach((timeslot) => {
                   let { timing,subClassId } = timeslot;
+                  classIdArray.push(subClassId);
                   let subClassInfo = subClassesInfo[subClassId];
                   const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
                   const userEndDateTime = classIdTimings.get(subClassId)[1]; 
@@ -184,11 +186,11 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
           console.error('Error sending confirmation email to us:', error);
-          const reportData = { channel: 'EMAIL', type: 'Coral Confimation', status: 'FAILURE', reason: error.message, parentEmail: personDetails.email, childName: personDetails.childName};
+          const reportData = { channel: 'EMAIL', type: 'Coral Confimation', status: 'FAILURE', reason: error.message, parentEmail: personDetails.email, childName: personDetails.childName, classId:classIdArray};
           insertSystemReport(reportData);
         } else {
           console.log('Confirmation Email sent to us for parent:', personDetails.email);
-          const reportData = { channel: 'EMAIL', type: 'Coral Confimation', status: 'SUCCESS', parentEmail: personDetails.email, childName: personDetails.childName};
+          const reportData = { channel: 'EMAIL', type: 'Coral Confimation', status: 'SUCCESS', parentEmail: personDetails.email, childName: personDetails.childName, classId:classIdArray};
           insertSystemReport(reportData);
         }
       });

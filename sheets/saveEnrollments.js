@@ -17,6 +17,8 @@ const saveEnrollments = async (personDetails,ipAddress) => {
     const date = new Date();
     // const formattedTimestamp = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
 
+    let classIdArray = [];
+
     const rows = personDetails.classDetails.flatMap((classDetail) => {
       const timeslots = classDetail.timeslots || [];
       const { classid } = classDetail;
@@ -38,6 +40,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
       .filter((timeslot) => !timeslot.isPast)  // Filter out timeslots where isPast is true
       .map((timeslot) => {
         const { subClassId, timing, isPast } = timeslot;
+        classIdArray.push(subClassId);
         let subClassInfo = subClassesInfo[subClassId];
         const classIdFomatted = ClassUtility.getClassId(subClassId, classDetail.classTag);
         const values = [
@@ -126,7 +129,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
     });
     console.log('Enrollments Saved in Format 1 successfully');
     bulkInsertEnrollments(rows);
-    const reportData = { channel: 'SHEETS', type: 'Save Enrollments', status: 'SUCCESS', parentEmail: personDetails.email, childName: personDetails.childName};
+    const reportData = { channel: 'SHEETS', type: 'Save Enrollments', status: 'SUCCESS', parentEmail: personDetails.email, childName: personDetails.childName, classId:classIdArray};
     insertSystemReport(reportData);
   } catch (err) {
     console.error('Error writing to Format 1 Sheets:', err);

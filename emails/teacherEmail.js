@@ -4,7 +4,7 @@ const nodemailer = require('nodemailer');
 const path = require('path');
 const {  insertSystemReport } = require('../dao/systemReportDao')
 
-const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassName) => {
+const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassName,classIdArray) => {
 
     const ATTACHMENT_PATH = path.join(process.cwd(), 'assets/Coral Academy Background.png');
    
@@ -140,11 +140,11 @@ const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassN
       // Send the email
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          const reportData = { channel: 'EMAIL', type: 'Teacher Confimation', status: 'FAILURE', reason: error.message};
+          const reportData = { channel: 'EMAIL', type: 'Teacher Confimation', status: 'FAILURE', reason: error.message, classId:classIdArray};
           insertSystemReport(reportData);
           console.error('Error sending email to teacher:', error);
         } else {
-          const reportData = { channel: 'EMAIL', type: 'Teacher Confimation', status: 'SUCCESS'};
+          const reportData = { channel: 'EMAIL', type: 'Teacher Confimation', status: 'SUCCESS', classId:classIdArray};
           insertSystemReport(reportData);
           console.log('Confirmation Email sent to teacher:', subClassDTO.teacherEmail.split(',')[0]);
         }
@@ -194,7 +194,7 @@ function createTableAndSendEmail(timeslot,classTag,className,subClassDTO,classId
           </tr>`;
   classes += `</table>`;
   // console.log('Created classes: ', classes);
-  sendEmailToTeacher(teacherName,teacherEmail,classes,'class has',classNameWithNumber);
+  sendEmailToTeacher(teacherName,teacherEmail,classes,'class has',classNameWithNumber,[subClassId]);
 }
 
 function createTableForCoursesAndSendEmail(timeslots,className,subClassesInfo,classIdTimings){
@@ -207,7 +207,8 @@ function createTableForCoursesAndSendEmail(timeslots,className,subClassesInfo,cl
                       <th>Zoom Details</th>
                   </tr>
           `;
-  
+  let classIdArray = [];
+
   if (timeslots && timeslots.length > 0) {
       // Filter out timeslots where isPast is true
       const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
@@ -215,6 +216,7 @@ function createTableForCoursesAndSendEmail(timeslots,className,subClassesInfo,cl
       let teacherName = '';
       futureTimeslots.forEach((timeslot) => {
           const { timing, subClassId } = timeslot;
+          classIdArray.push(subClassId);
           let subClassDTO = subClassesInfo[subClassId];
           teacherEmail = subClassDTO.teacherEmail;
           teacherName = subClassDTO.teacherName;
@@ -245,7 +247,7 @@ function createTableForCoursesAndSendEmail(timeslots,className,subClassesInfo,cl
       });
       classes += `</table>`;
     // console.log('Created classes: ', classes);
-      sendEmailToTeacher(teacherName,teacherEmail,classes,'classes have',className);
+      sendEmailToTeacher(teacherName,teacherEmail,classes,'classes have',className,classIdArray);
   }
 }
 

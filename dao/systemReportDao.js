@@ -33,6 +33,12 @@ async function insertSystemReport(systemReportData) {
 
 async function insertSystemReportData(client, reportData) {
   const { classId, channel, type, status, reason, parentEmail,childName, reminderId } = reportData;
+  let classIdArray;
+  if (Array.isArray(classId)) {
+    classIdArray = classId;
+  } else {
+    classIdArray = [classId]; // Convert to an array with a single element
+  }
   const date = new Date();
   const responseTime = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
   await client.query(`
@@ -40,7 +46,7 @@ async function insertSystemReportData(client, reportData) {
     VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
   `, [
     responseTime,
-    classId,
+    classIdArray,
     channel,
     type,
     status,
@@ -59,7 +65,7 @@ async function getAllSystemReports(filters = {}, pageNumber = 1) {
   let paramCount = 1;
 
   if (classId !== undefined && classId !== '') {
-    conditions.push(`class_id = $${paramCount}`);
+    conditions.push(`$${paramCount}::text = ANY(class_id)`);
     queryParams.push(classId);
     paramCount++;
   }
@@ -96,7 +102,7 @@ async function getAllSystemReports(filters = {}, pageNumber = 1) {
       const totalRecords = parseInt(countResult.rows[0].count, 10);
 
       const result = await client.query(`
-        SELECT * FROM system_report
+        SELECT * FROM system_report order by response_time desc
         ${whereClause}
         LIMIT ${pageSize} OFFSET $${paramCount}::bigint
       `, [...queryParams, offset]);

@@ -154,12 +154,12 @@ const sendTeacherReminderEmail = async (reminderId,teacherReminderInfo) => {
     if (error) {
       console.error('Error sending reminder email to teacher:', error);
       updateReminderStatus(reminderId, 'FAILURE', error.message);
-      const reportData = { channel: 'EMAIL', type: 'Teacher Reminder', status: 'FAILURE', reason: error.message, parentEmail: teacherReminderInfo.email, classId:teacherReminderInfo.classId, reminderId:reminderId};
+      const reportData = { channel: 'EMAIL', type: 'Teacher Reminder', status: 'FAILURE', reason: error.message, parentEmail: teacherReminderInfo.email, classId:teacherReminderInfo.subClassId, reminderId:reminderId};
       insertSystemReport(reportData);
     } else {
       console.log('Reminder email sent to teacher:', teacherReminderInfo.email);
       updateReminderStatus(reminderId, 'SUCCESS', 'Teacher Reminder Email sent successfully');
-      const reportData = { channel: 'EMAIL', type: 'Teacher Reminder', status: 'SUCCESS', parentEmail: teacherReminderInfo.email, classId:teacherReminderInfo.classId, reminderId:reminderId};
+      const reportData = { channel: 'EMAIL', type: 'Teacher Reminder', status: 'SUCCESS', parentEmail: teacherReminderInfo.email, classId:teacherReminderInfo.subClassId, reminderId:reminderId};
       insertSystemReport(reportData);
     }
   });
