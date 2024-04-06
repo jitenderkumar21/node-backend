@@ -111,7 +111,7 @@ async function getAllSystemReports(filters = {}, pageNumber = 1) {
       const systemReport = result.rows;
       console.log('systemReport',systemReport);
       systemReport.forEach(row => {
-        const responseTime = moment(row.response_time).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
+        const responseTime = moment.utc(row.response_time, 'DD MMM YYYY HH:mm');
         row.response_time = responseTime; // Update the response_time with formatted value
         const classIdArray = row.class_id;
         row.class_id = classIdArray.join(',');
