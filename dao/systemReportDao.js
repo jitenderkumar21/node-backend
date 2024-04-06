@@ -102,9 +102,9 @@ async function getAllSystemReports(filters = {}, pageNumber = 1) {
       const totalRecords = parseInt(countResult.rows[0].count, 10);
 
       const result = await client.query(`
-        SELECT * FROM system_report order by response_time desc
+        SELECT * FROM system_report
         ${whereClause}
-        LIMIT ${pageSize} OFFSET $${paramCount}::bigint
+        order by response_time desc LIMIT ${pageSize} OFFSET $${paramCount}::bigint 
       `, [...queryParams, offset]);
 
       const totalPages = Math.ceil(totalRecords / pageSize);
