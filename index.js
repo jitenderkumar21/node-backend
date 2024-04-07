@@ -88,59 +88,7 @@ app.post('/test3', (req, res) => {
 });
 // https://coral-staging.onrender.com
 
-app.get('/test2', async (req, res) => {
-  const nodemailer = require('nodemailer');
 
-// Create a Nodemailer transporter
-const transporter = nodemailer.createTransport({
-  service: 'Gmail', // Use your email service provider
-  auth: {
-    user: 'support@coralacademy.com',
-    pass: 'xcvf sxnm yctg jvte',
-  },
-});
-
-// Assuming you have the class ID, parent name, and child name stored in variables
-const classId = 'class123';
-const parentName = 'John Doe';
-const childName = 'Alice';
-
-// Generate a unique identifier (for example, a timestamp)
-const uniqueIdentifier = Date.now();
-
-// Assuming you have the recipient's email address stored in a variable called recipientEmail
-const recipientEmail = 'jitender.kumar@iitgn.ac.in'; // Example recipient email address
-
-// Construct the tracking pixel URL with recipient's email, unique identifier, class ID, parent name, and child name
-const trackingPixelUrl = `https://coral-demo-backend.onrender.com/track.gif?recipientEmail=${encodeURIComponent(recipientEmail)}&uniqueID=${uniqueIdentifier}&classID=${encodeURIComponent(classId)}&parentName=${encodeURIComponent(parentName)}&childName=${encodeURIComponent(childName)}`;
-
-// Update the email content to include the tracking pixel URL and variables
-const emailContent = `
-    <p>Hello ${parentName},</p>
-    <p>This is your email content for your child ${childName} in class ${classId}.</p>
-    <img src="${trackingPixelUrl}" width="1" height="1">
-`;
-
-// Setup email data
-let mailOptions = {
-    from: 'support@coralacademy.com',
-    to: recipientEmail,
-    subject: 'Email Tracking Test 3',
-    html: emailContent
-};
-
-// Send email with Nodemailer
-transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-        return console.log(error);
-    }
-    console.log('Message sent: %s', info.messageId);
-});
-
-
-
-  res.send('Email Sent');
-});
 
 app.post('/teacher/invite', async (req, res) => {
   const array =  [

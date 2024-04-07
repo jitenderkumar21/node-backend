@@ -1,4 +1,8 @@
 const nodemailer = require('nodemailer');
+require('dotenv').config();
+
+const supportEmailPassword = process.env.SUPPORT_EMAIL_PASSWORD;
+
 
 const sendAlert = async (reportData) => {
   try {
@@ -7,7 +11,7 @@ const sendAlert = async (reportData) => {
       service: 'Gmail',
       auth: {
         user: 'support@coralacademy.com',
-        pass: 'xcvf sxnm yctg jvte',
+        pass: supportEmailPassword,
       },
     });
 

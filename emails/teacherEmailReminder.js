@@ -7,6 +7,7 @@ const {  insertSystemReport } = require('../dao/systemReportDao');
 require('dotenv').config();
 
 const connectionString = process.env.DATABASE_URL;
+const supportEmailPassword = process.env.SUPPORT_EMAIL_PASSWORD;
 
 const sendTeacherReminderEmail = async (reminderId,teacherReminderInfo) => {
  console.log('Sending reminder email for',reminderId,teacherReminderInfo);
@@ -15,7 +16,7 @@ const sendTeacherReminderEmail = async (reminderId,teacherReminderInfo) => {
     service: 'Gmail', // Use your email service provider
     auth: {
       user: 'support@coralacademy.com',
-      pass: 'xcvf sxnm yctg jvte',
+      pass: supportEmailPassword,
     },
   });
 

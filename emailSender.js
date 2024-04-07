@@ -8,6 +8,7 @@ const moment = require('moment-timezone');
 require('dotenv').config();
 
 const serviceBaseUrl = process.env.SERVICE_BASE_URL;
+const supportEmailPassword = process.env.SUPPORT_EMAIL_PASSWORD;
 
 const sendEmail = async (personDetails,userTimeZone) => {
     const subClassesInfo = await getSubClassesInfo();
@@ -17,7 +18,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
         service: 'Gmail', // Use your email service provider
         auth: {
           user: 'support@coralacademy.com',
-          pass: 'xcvf sxnm yctg jvte',
+          pass: supportEmailPassword,
         },
       });
       const commPref = personDetails.commPref;

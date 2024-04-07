@@ -3,6 +3,10 @@ const ClassUtility = require('../utils/subClassUtility');
 const nodemailer = require('nodemailer');
 const path = require('path');
 const {  insertSystemReport } = require('../dao/systemReportDao')
+require('dotenv').config();
+
+const supportEmailPassword = process.env.SUPPORT_EMAIL_PASSWORD;
+
 
 const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassName,classIdArray) => {
 
@@ -12,7 +16,7 @@ const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassN
         service: 'Gmail', // Use your email service provider
         auth: {
           user: 'support@coralacademy.com',
-          pass: 'xcvf sxnm yctg jvte',
+          pass: supportEmailPassword,
         },
       });
 

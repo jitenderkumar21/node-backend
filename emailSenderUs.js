@@ -4,6 +4,9 @@ const ClassUtility = require('./utils/subClassUtility');
 const getSubClassesInfo = require('./sheets/getSubClassesInfo');
 const getIpInfo = require('./location/IPInfo'); // Import the module
 const {  insertSystemReport } = require('./dao/systemReportDao')
+require('dotenv').config();
+
+const supportEmailPassword = process.env.SUPPORT_EMAIL_PASSWORD;
 
 const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
   try{
@@ -14,7 +17,7 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
         service: 'Gmail', // Use your email service provider
         auth: {
           user: 'support@coralacademy.com',
-          pass: 'xcvf sxnm yctg jvte',
+          pass: supportEmailPassword,
         },
       });
 

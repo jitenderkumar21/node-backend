@@ -10,6 +10,8 @@ const classIdTimingMap = require('../sheets/classIdTimingMap');
 
 const connectionString = process.env.DATABASE_URL;
 const serviceBaseUrl = process.env.SERVICE_BASE_URL;
+const supportEmailPassword = process.env.SUPPORT_EMAIL_PASSWORD;
+
 
 const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => {
         let reportType = (reminder_type === 'MORNING_8_EMAIL') ? 'Parent Reminder 8AM' : 'Parent Reminder 15MIN';
@@ -45,7 +47,7 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
         service: 'Gmail', // Use your email service provider
         auth: {
           user: 'support@coralacademy.com',
-          pass: 'xcvf sxnm yctg jvte',
+          pass: supportEmailPassword,
         },
       });
       const date = new Date();
