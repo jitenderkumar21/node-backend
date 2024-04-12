@@ -52,8 +52,10 @@ async function bulkInsertEnrollments(enrollments) {
         'shagun@coralacademy.com',
         'rkongara.sap@gmail.com'];
       const emailNotInExcludedList = enrollment[3] && !excludedEmails.includes(enrollment[3].toLowerCase());
+
+      const isWaitlist = enrollment[25] && enrollment[25].toLowerCase() === 'waitlist';
     
-      return !parentNameContainsTest && !childNameContainsTest && emailNotInExcludedList;
+      return !parentNameContainsTest && !childNameContainsTest && emailNotInExcludedList && !isWaitlist;
     });
     // console.log('filteredEnrollments',filteredEnrollments);
 

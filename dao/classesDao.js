@@ -32,6 +32,7 @@ async function updateCounts(classDetails) {
 
 async function updateCountsForClassDetail(client, classDetail) {
   for (const timeslot of classDetail.timeslots) {
+    if (!timeslot.isWaitlist) 
     await client.query(`
       INSERT INTO classes_count (class_id, sub_class_id, count)
       VALUES ($1, $2, 1)

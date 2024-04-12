@@ -104,7 +104,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
             // For other class types
           if (timeslots && timeslots.length > 0) {
               // Filter out timeslots where isPast is true
-              const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast && !timeslot.isWaitlist);
+              const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
   
               futureTimeslots.forEach((timeslot) => {
                   let { timing,subClassId, isWaitlist } = timeslot;
@@ -115,7 +115,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
                   let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
                   const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
                   const modifiedClassTag = ClassUtility.getModifiedClassTag(classTag);
-                  if(isWaitlist){
+                  if(isWaitlist === true) {
                     waitlistClassesFlag = true;
                     waitlistClasses += `
                             <tr>
@@ -174,16 +174,19 @@ const sendEmail = async (personDetails,userTimeZone) => {
         if(isCoursePresent == true){
           confirmedClassMessage2 = `* We recommend that ${personDetails.childName} attends all classes throughout the playlist/course to get the most out of them.`;
         }
+      }else{
+        classes = '';
       }
-      if(waitlistClasses === true){
+
+      if(waitlistClassesFlag === true){
         subject = `Let the Learning Begin! ${personDetails.childName} is Enrolled!`;
         waitListMessage1 = `We noticed that you have been waitlisted for some classes. We're doing our best to accommodate your child into these classes. You'll receive a confirmation email once your waitlisted classes are confirmed.`;
         waitListMessage2 = `Here are the classes you're waitlisted for: `;
+      }else{
+        waitlistClasses = '';
       }
       
       if(confirmedClassesFlag === false && waitlistClassesFlag === false){
-        classes = '';
-        waitlistClasses = '';
         subject = 'Welcome aboard! Thank You for Your Timing Preferences';
         if(personDetails.want_another_slot!== undefined && personDetails.want_another_slot !== ''){
           message = `We noticed that you have requested additional time slots for some classes - ${personDetails.want_another_slot}.  We will try our best to schedule classes that work for you.</p>`;
