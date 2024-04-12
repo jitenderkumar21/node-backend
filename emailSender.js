@@ -34,10 +34,12 @@ const sendEmail = async (personDetails,userTimeZone) => {
       const prefix = "want another slot:";
       let flag = true;
       let confirmedClassesFlag = false;
+      let waitlistClassesFlag = false;
       let isCoursePresent = false;
       let subject = "";
       
       let classes = '';
+      let waitlistClasses = '';
       let classes2 = '';
 
       let classIdArray = [];
@@ -52,12 +54,22 @@ const sendEmail = async (personDetails,userTimeZone) => {
                         <th>Zoom Details</th>
                     </tr>
             `;
+      
+      waitlistClasses += `
+            <table class="class-table">
+                <tr>
+                    <th>Class Name</th>
+                    <th>Date and Time</th>
+                    <th>Class Type</th>
+                </tr>
+            `;
+
       classDetails.forEach((classDetail) => {
         let { classid, className, classTag, timeslots } = classDetail;
         if (classTag.toLowerCase() === 'course' || classTag.toLowerCase() === 'playlist-1' || classTag.toLowerCase() === 'playlist-2') {
             if (timeslots && timeslots.length > 0) {
                 // Filter out timeslots where isPast is true
-                const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
+                const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast && !timeslot.isWaitlist);
     
                 if (futureTimeslots.length > 0) {
                     isCoursePresent = true;
@@ -92,10 +104,10 @@ const sendEmail = async (personDetails,userTimeZone) => {
             // For other class types
           if (timeslots && timeslots.length > 0) {
               // Filter out timeslots where isPast is true
-              const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
+              const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast && !timeslot.isWaitlist);
   
               futureTimeslots.forEach((timeslot) => {
-                  let { timing,subClassId } = timeslot;
+                  let { timing,subClassId, isWaitlist } = timeslot;
                   classIdArray.push(subClassId);
                   let subClassInfo = subClassesInfo[subClassId];
                   const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
@@ -103,24 +115,37 @@ const sendEmail = async (personDetails,userTimeZone) => {
                   let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
                   const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
                   const modifiedClassTag = ClassUtility.getModifiedClassTag(classTag);
-                  confirmedClassesFlag = true;
-                  classes += `
-                          <tr>
-                              <td>${modifiedClassName}</td>
-                              <td>${classDisplayTiming}</td>
-                              <td>${modifiedClassTag}</td>
-                              <td>
-                                  <p class="custom-para"><a href=${subClassInfo.zoomMeetingLink}>Zoom Link</a></p>
-                                  <p class="custom-para">Meeting ID: ${subClassInfo.meetingId}</p>
-                                  <p class="custom-para">Passcode: ${subClassInfo.passcode}</p>
-                              </td>
-                          </tr>
-                  `;
+                  if(isWaitlist){
+                    waitlistClassesFlag = true;
+                    waitlistClasses += `
+                            <tr>
+                                <td>${modifiedClassName}</td>
+                                <td>${classDisplayTiming}</td>
+                                <td>${modifiedClassTag}</td>
+                            </tr>
+                    `;
+
+                  }else{
+                    confirmedClassesFlag = true;
+                    classes += `
+                            <tr>
+                                <td>${modifiedClassName}</td>
+                                <td>${classDisplayTiming}</td>
+                                <td>${modifiedClassTag}</td>
+                                <td>
+                                    <p class="custom-para"><a href=${subClassInfo.zoomMeetingLink}>Zoom Link</a></p>
+                                    <p class="custom-para">Meeting ID: ${subClassInfo.meetingId}</p>
+                                    <p class="custom-para">Passcode: ${subClassInfo.passcode}</p>
+                                </td>
+                            </tr>
+                    `;
+                  }
               });
           }
     });
 
       classes+=`</table>`;
+      waitlistClasses+=`</table>`;
     
       let message = '';
       if(personDetails.want_another_slot!== undefined && personDetails.want_another_slot !== ''){
@@ -129,6 +154,8 @@ const sendEmail = async (personDetails,userTimeZone) => {
       let confirmedClassMessage1 = '';
       let confirmedClassMessage2 = '';
       let confirmedClassMessage3 = '';
+      let waitListMessage1 = '';
+      let waitListMessage2 = '';
       if(confirmedClassesFlag==true){
         subject = `Let the Learning Begin! ${personDetails.childName} is Enrolled!`;
         confirmedClassMessage1 = 'Here are your confirmed classes :';
@@ -147,8 +174,16 @@ const sendEmail = async (personDetails,userTimeZone) => {
         if(isCoursePresent == true){
           confirmedClassMessage2 = `* We recommend that ${personDetails.childName} attends all classes throughout the playlist/course to get the most out of them.`;
         }
-      }else{
+      }
+      if(waitlistClasses === true){
+        subject = `Let the Learning Begin! ${personDetails.childName} is Enrolled!`;
+        waitListMessage1 = `We noticed that you have been waitlisted for some classes. We're doing our best to accommodate your child into these classes. You'll receive a confirmation email once your waitlisted classes are confirmed.`;
+        waitListMessage2 = `Here are the classes you're waitlisted for: `;
+      }
+      
+      if(confirmedClassesFlag === false && waitlistClassesFlag === false){
         classes = '';
+        waitlistClasses = '';
         subject = 'Welcome aboard! Thank You for Your Timing Preferences';
         if(personDetails.want_another_slot!== undefined && personDetails.want_another_slot !== ''){
           message = `We noticed that you have requested additional time slots for some classes - ${personDetails.want_another_slot}.  We will try our best to schedule classes that work for you.</p>`;
@@ -238,6 +273,9 @@ const sendEmail = async (personDetails,userTimeZone) => {
           <p>${confirmedClassMessage1}</p>
             ${classes}
           <p><i>${confirmedClassMessage2}</i></p>  
+          <p>${waitListMessage1}</p>
+          <p>${waitListMessage2}</p>
+          <p>${waitlistClasses}</p>
           <p>${message}</p>
           <p>
           ${confirmedClassMessage3}

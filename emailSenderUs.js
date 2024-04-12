@@ -23,7 +23,9 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
 
       const classDetails = personDetails.classDetails;
       let classIdArray = [];
-
+      let waitlistClassesFlag = false;
+      let confirmedClassesFlag = false;
+      let confirm
       let classes = `
                 <table class="class-table">
                     <tr>
@@ -33,6 +35,15 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
                         <th>Teacher Name</th>
                     </tr>
             `;
+      let waitlistClasses = `
+        <table class="class-table">
+            <tr>
+                <th>Class Name</th>
+                <th>Date and Time</th>
+                <th>Class Type</th>
+                <th>Teacher Name</th>
+            </tr>
+        `;
       classDetails.forEach((classDetail) => {
         let { classid, className, classTag, timeslots } = classDetail;
       
@@ -73,7 +84,7 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
               const futureTimeslots = timeslots.filter((timeslot) => !timeslot.isPast);
   
               futureTimeslots.forEach((timeslot) => {
-                  let { timing,subClassId } = timeslot;
+                  let { timing,subClassId, isWaitlist } = timeslot;
                   classIdArray.push(subClassId);
                   let subClassInfo = subClassesInfo[subClassId];
                   const userStartDateTime =classIdTimings.get(subClassId)[0];  // Replace this with the user's input
@@ -81,20 +92,34 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
                   let classDisplayTiming = ClassUtility.getClassDisplayTiming(userTimeZone,userStartDateTime,userEndDateTime);
                   const modifiedClassName = ClassUtility.getModifiedClassName(subClassId,className,classTag);
                   const modifiedClassTag = ClassUtility.getModifiedClassTag(classTag);
-                  confirmedClassesFlag = true;
-                  classes += `
-                          <tr>
-                              <td>${modifiedClassName}</td>
-                              <td>${classDisplayTiming}</td>
-                              <td>${modifiedClassTag}</td>
-                              <td>${subClassInfo.teacherName}</td>
-                          </tr>
-                  `;
+                  if(isWaitlist){
+                    waitlistClassesFlag = true;
+                    waitlistClasses += `
+                            <tr>
+                                <td>${modifiedClassName}</td>
+                                <td>${classDisplayTiming}</td>
+                                <td>${modifiedClassTag}</td>
+                                <td>${subClassInfo.teacherName}</td>
+                            </tr>
+                    `;
+
+                  }else{
+                      confirmedClassesFlag = true;
+                      classes += `
+                              <tr>
+                                  <td>${modifiedClassName}</td>
+                                  <td>${classDisplayTiming}</td>
+                                  <td>${modifiedClassTag}</td>
+                                  <td>${subClassInfo.teacherName}</td>
+                              </tr>
+                      `;
+                  }
               });
           }
     });
 
       classes+=`</table>`;
+      waitlistClasses+=`</table>`;
 
 
 
@@ -169,6 +194,10 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
 
             <p><strong>Enrolled classes below: </strong></p>
             <p>${classes}</p>
+
+            <p>Waitlisted classes below :</p>
+            <p>${waitlistClasses}</p>
+
           </ul>
           <p>Thank you!</p>
         

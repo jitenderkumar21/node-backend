@@ -39,7 +39,11 @@ const saveEnrollments = async (personDetails,ipAddress) => {
       return timeslots
       .filter((timeslot) => !timeslot.isPast)  // Filter out timeslots where isPast is true
       .map((timeslot) => {
-        const { subClassId, timing, isPast } = timeslot;
+        const { subClassId, timing, isPast, isWaitlist } = timeslot;
+        let isTimeSlotWaitlist = '';
+        if(isWaitlist){
+          isTimeSlotWaitlist = 'WAITLIST';
+        }
         classIdArray.push(subClassId);
         let subClassInfo = subClassesInfo[subClassId];
         const classIdFomatted = ClassUtility.getClassId(subClassId, classDetail.classTag);
@@ -66,7 +70,8 @@ const saveEnrollments = async (personDetails,ipAddress) => {
           ipInfo.city,
           moment.tz([2023, 0], ipInfo.timezone).zoneAbbr(),
           subClassInfo.subClassName,
-          ipInfo.postal
+          ipInfo.postal,
+          isTimeSlotWaitlist
         ];
     
         return values;
@@ -100,6 +105,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
         '',
         '',
         '',
+        ''
       ];
       rows.push(additionalRow);
     }

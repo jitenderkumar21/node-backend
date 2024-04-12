@@ -13,7 +13,7 @@ function createAdditionalInfo(data,userTimeZone, subClassesInfo,classIdTimings) 
     
     data.classDetails.forEach(detail => {
     
-        detail.timeslots.filter(timeslot => !timeslot.isPast)
+        detail.timeslots.filter(timeslot => !timeslot.isPast && !timeslot.isWaitlist)
         .forEach(timeslot => {
         const subClassId = timeslot.subClassId;
         const subClassDTO = subClassesInfo[subClassId];

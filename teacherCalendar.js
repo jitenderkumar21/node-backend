@@ -99,7 +99,7 @@ try{
         if(classid!=undefined){
             let timeslots = classDetail.timeslots;
             let courseTimeslots = [];
-            timeslots.filter((timeslot1) => !timeslot1.isPast)
+            timeslots.filter((timeslot1) => !timeslot1.isPast && !timeslot1.isWaitlist)
                 .forEach((timeslot) => {
                     const { timing, subClassId } = timeslot;
                     try{
