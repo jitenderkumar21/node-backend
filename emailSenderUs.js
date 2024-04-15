@@ -209,7 +209,7 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
       // Email content
       const mailOptions = {
         from: 'support@coralacademy.com', // Sender's email address
-        to:'jitender.kumar@iitgn.ac.in',
+        to:'support@coralacademy.com',
         subject: 'New Registration For Demo',
         html:emailContent,
       };
