@@ -37,7 +37,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
       ];
 
       return timeslots
-      .filter((timeslot) => !timeslot.isPast && !isWaitlist)  // Filter out timeslots where isPast is true
+      .filter((timeslot) => !timeslot.isPast && !timeslot.isWaitlist)  // Filter out timeslots where isPast is true
       .map((timeslot) => {
         const { subClassId, timing, isPast, isWaitlist } = timeslot;
         let isTimeSlotWaitlist = '';
@@ -95,7 +95,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
       ];
 
       return timeslots
-      .filter((timeslot) => !timeslot.isPast && isWaitlist)  // Filter out timeslots where isPast is true
+      .filter((timeslot) => !timeslot.isPast && timeslot.isWaitlist)  // Filter out timeslots where isPast is true
       .map((timeslot) => {
         const { subClassId, timing, isPast, isWaitlist } = timeslot;
         let isTimeSlotWaitlist = '';
