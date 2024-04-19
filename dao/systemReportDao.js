@@ -10,7 +10,7 @@ const pageSize = 10;
 
 async function insertSystemReport(systemReportData) {
   const { type, status } = systemReportData;
-  if( status === 'FAILURE' && type !== 'Parent Reminder'){
+  if( status === 'FAILURE' && type !== 'Parent Reminder' && type!='Parent Reminder 8AM' && type !== 'Parent Reminder 15MIN'){
     sendAlert(systemReportData);
   }
   const client = await pool.connect();
