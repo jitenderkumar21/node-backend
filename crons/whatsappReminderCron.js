@@ -173,11 +173,17 @@ const whatsappReminderCron = cron.schedule('*/15 * * * *', async () => {
         const result = await currentClient.query('SELECT * FROM REMINDERS WHERE reminder_time <= $1 AND reminder_time > $2 AND reminder_status = $3 and reminder_type!=$4 ORDER BY created_on', [currentTimeUTC,currentTimeMinus20Minutes, 'NOT_SENT','TEACHER_REMINDER']);
 
         // // Process each entry, send reminders, and update reminder status
+        let i = 0;
         for (const row of result.rows) {
             const reminderId = row.id;
             const additionalInfo = row.additional_info;
             // console.log(reminderId, row.class_id, additionalInfo)
+            if (i % 10 === 0 && i !== 0) {
+                console.log("Waiting for 10 seconds...");
+                await waitForSeconds(10);
+            }
             await sendReminder(reminderId,row.reminder_type, additionalInfo);
+            i++;
         }
     } catch (error) {
         console.error('Error in cron job:', error);
@@ -186,5 +192,13 @@ const whatsappReminderCron = cron.schedule('*/15 * * * *', async () => {
         await currentClient.end();
     }
 });
+
+  
+function waitForSeconds(seconds) {
+    return new Promise(resolve => {
+        setTimeout(resolve, seconds * 1000);
+    });
+}
+  
 
 module.exports = whatsappReminderCron;
