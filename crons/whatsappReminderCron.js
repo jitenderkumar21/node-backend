@@ -20,30 +20,30 @@ const sendReminder = async (reminderId,reminder_type, additionalInfo) => {
     else{
         console.log('Not Sending Whatsapp Reminder for reminderId: ', reminderId);
     // Send WhatsApp reminder with callback to handle success and response body
-        await sendWhatsappReminder(reminderId,reminder_type, additionalInfo, (success, responseBody) => {
-            // After sending the reminder, update the reminder_status and save response body
-            const updateClient = new Client({
-                connectionString: connectionString,
-            });
-            updateClient.connect();
-            const statusToUpdate = success ? 'SUCCESS' : 'FAILURE';
-            updateClient.query('UPDATE reminders SET reminder_status = $1, response_body = $2 WHERE id = $3', [statusToUpdate, responseBody, reminderId], (err, result) => {
-                updateClient.end();
-                if (err) {
-                    console.error('Error updating reminder status:', err);
-                } else {
-                    console.log('Reminder status updated successfully for ID:', reminderId);
-                }
-            });
-            if(statusToUpdate==='FAILURE'){
-                console.log('WA reminder failed, sending email reminder for ID:', reminderId);
-                const reportData = { channel: 'WHATSAPP', type: 'Parent Reminder', status: 'FAILURE', reason: 'Internal Server Error', parentEmail: additionalInfo.email, classId:additionalInfo.classId, childName:additionalInfo.kidName, reminderId:reminderId};
-                insertSystemReport(reportData);
-            }else{
-                const reportData = { channel: 'WHATSAPP', type: 'Parent Reminder', status: 'SUCCESS', parentEmail: additionalInfo.email, classId:additionalInfo.classId, childName:additionalInfo.kidName, reminderId:reminderId};
-                insertSystemReport(reportData);
-            }
-        });
+        // await sendWhatsappReminder(reminderId,reminder_type, additionalInfo, (success, responseBody) => {
+        //     // After sending the reminder, update the reminder_status and save response body
+        //     const updateClient = new Client({
+        //         connectionString: connectionString,
+        //     });
+        //     updateClient.connect();
+        //     const statusToUpdate = success ? 'SUCCESS' : 'FAILURE';
+        //     updateClient.query('UPDATE reminders SET reminder_status = $1, response_body = $2 WHERE id = $3', [statusToUpdate, responseBody, reminderId], (err, result) => {
+        //         updateClient.end();
+        //         if (err) {
+        //             console.error('Error updating reminder status:', err);
+        //         } else {
+        //             console.log('Reminder status updated successfully for ID:', reminderId);
+        //         }
+        //     });
+        //     if(statusToUpdate==='FAILURE'){
+        //         console.log('WA reminder failed, sending email reminder for ID:', reminderId);
+        //         const reportData = { channel: 'WHATSAPP', type: 'Parent Reminder', status: 'FAILURE', reason: 'Internal Server Error', parentEmail: additionalInfo.email, classId:additionalInfo.classId, childName:additionalInfo.kidName, reminderId:reminderId};
+        //         insertSystemReport(reportData);
+        //     }else{
+        //         const reportData = { channel: 'WHATSAPP', type: 'Parent Reminder', status: 'SUCCESS', parentEmail: additionalInfo.email, classId:additionalInfo.classId, childName:additionalInfo.kidName, reminderId:reminderId};
+        //         insertSystemReport(reportData);
+        //     }
+        // });
     }
 };
 
