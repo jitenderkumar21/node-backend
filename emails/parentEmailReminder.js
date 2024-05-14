@@ -235,6 +235,7 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
       const mailOptions = {
         from: 'support@coralacademy.com', // Sender's email address
         to:additionalInfo.email, // Sender's email address'
+        cc: 'anisha@coralacademy.com',
         subject: emailSubject,
         html:emailContent,
       };

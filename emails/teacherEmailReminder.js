@@ -135,7 +135,7 @@ const sendTeacherReminderEmail = async (reminderId,teacherReminderInfo) => {
   const mailOptions = {
     from: 'support@coralacademy.com',
     to: teacherReminderInfo.email,
-    cc: 'shagun@coralacademy.com',
+    cc: 'anisha@coralacademy.com',
     subject: `Reminder for class today - ${teacherReminderInfo.className}`,
     html: emailContent,
     attachments: [

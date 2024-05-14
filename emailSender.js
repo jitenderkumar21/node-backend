@@ -299,6 +299,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
       const mailOptions = {
         from: 'support@coralacademy.com', // Sender's email address
         to:personDetails.email,
+        cc: 'anisha@coralacademy.com',
         subject: subject,
         // text: 'This is the email body text.',
         html:emailContent,

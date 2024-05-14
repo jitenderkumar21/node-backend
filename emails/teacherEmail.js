@@ -130,6 +130,7 @@ const sendEmailToTeacher = (teacherName,teacherEmail,classes,text,modifiedClassN
       const mailOptions = {
         from: 'support@coralacademy.com', // Sender's email address
         to:teacherEmail.split(',')[0],
+        cc: 'anisha@coralacademy.com',
         subject: `Coral Academy: Class Confirmed - ${modifiedClassName}`,
         html:emailContent,
         attachments: [
