@@ -180,7 +180,7 @@ const whatsappReminderCron = cron.schedule('*/15 * * * *', async () => {
             // console.log(reminderId, row.class_id, additionalInfo)
             if (i % 10 === 0 && i !== 0) {
                 console.log("Waiting for 10 seconds...");
-                await waitForSeconds(10);
+                await waitForSeconds(i);
             }
             await sendReminder(reminderId,row.reminder_type, additionalInfo);
             i++;
