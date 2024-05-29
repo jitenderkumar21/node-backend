@@ -72,7 +72,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
           subClassInfo.subClassName,
           ipInfo.postal,
           personDetails.enrichment,
-          personDetails.knowabout
+          personDetails.platform
         ];
     
         return values;
@@ -132,7 +132,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
           subClassInfo.subClassName,
           ipInfo.postal,
           personDetails.enrichment,
-          personDetails.knowabout
+          personDetails.platform
         ];
     
         return values;
@@ -167,7 +167,7 @@ const saveEnrollments = async (personDetails,ipAddress) => {
         '',
         '',
         personDetails.enrichment,
-        personDetails.knowabout
+        personDetails.platform
       ];
       rows.push(additionalRow);
     }
