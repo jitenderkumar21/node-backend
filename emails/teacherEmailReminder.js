@@ -94,7 +94,7 @@ const sendTeacherReminderEmail = async (reminderId,teacherReminderInfo) => {
         <p>Time: ${teacherReminderInfo.classTime}</p>
         <p>Zoom Link: ${teacherReminderInfo.zoomMeetingLink} , Meeting ID: ${teacherReminderInfo.meetingId}, Passcode: ${teacherReminderInfo.passcode}
         <p>Please find the learner details below:</p>
-        <p>Total Enrollments: ${totalEnrollments} (This number might vary due to some expected no shows & last minute enrollments)</p>
+        <p>Total Enrollments: ${totalEnrollments} (This count might vary from the maximum number of learners you suggested, as we increased the enrollment capacity based on previous attendance rates to ensure an optimal turnout despite no-shows or last-minute cancellations.)</p>
 
         ${learnerDetailsTable}
         <p><strong>Things to note :</strong></p>
