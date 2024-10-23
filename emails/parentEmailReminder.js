@@ -127,7 +127,7 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
             emailContent+=`<p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/mwtydca7">review us on Trustpilot.</a></p>`;
         
             emailContent+=`
-            <strong>Important Information:</strong>
+            <p><strong>Important Information:</strong></p>
 
             <li><strong>Identity Verification:</strong> Ensuring learner safety as our highest priority, we request you to switch on ${formattedNames}'s camera at the start of each class for a quick identity check. While ${formattedNames} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
             <li><strong>Class Entry:</strong> We request learners to join class on time to ensure an uninterrupted learning experience. <strong>Late entries may be restricted after the initial 10 minutes, to maintain the flow of class.</strong></li>
@@ -217,7 +217,7 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
           emailContent+=`<p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/mwtydca7">review us on Trustpilot.</a></p>`;
 
           emailContent+=`
-          <strong>Important Information:</strong>
+          <p><strong>Important Information:</strong></p>
 
           <li><strong>Identity Verification:</strong> Ensuring learner safety as our highest priority, we request you to switch on ${formattedNames}'s camera at the start of each class for a quick identity check. While ${formattedNames} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
           <li><strong>Class Entry:</strong> We request learners to join class on time to ensure an uninterrupted learning experience. <strong>Late entries may be restricted after the initial 10 minutes, to maintain the flow of class.</strong></li>
