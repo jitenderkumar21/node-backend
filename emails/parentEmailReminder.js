@@ -111,8 +111,10 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
                 <li>Meeting ID: ${meetingId}</li>
                 <li>Passcode: ${passcode}</li>
               </ul>
-            <ul>
             `
+            emailContent+=`<p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/mwtydca7">review us on Trustpilot.</a></p>`;
+            emailContent+=`<ul>`;
+
             if (subClassDTO && subClassDTO.prerequisite !== undefined && subClassDTO.prerequisite !== '' && subClassDTO.prerequisite.toLowerCase() !== 'there are no prerequisites needed for the class.') {
               emailContent += `<li><strong>Prerequisite</strong>: ${subClassDTO.prerequisite}</li>`;
             }
@@ -124,7 +126,6 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
             if (subClassDTO && subClassDTO.classMaterial !== undefined && subClassDTO.classMaterial !== '') {
               emailContent += `<li><strong>Class Materials</strong>: ${subClassDTO.classMaterial}</li>`;
             }
-            emailContent+=`<p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/mwtydca7">review us on Trustpilot.</a></p>`;
         
             emailContent+=`
             <p><strong>Important Information:</strong></p>
@@ -201,8 +202,10 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
               <li>Meeting ID: ${meetingId}</li>
               <li>Passcode: ${passcode}</li>
             </ul>
-          <ul>
           `
+          emailContent+=`<p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/mwtydca7">review us on Trustpilot.</a></p>`;
+          emailContent+=`<ul>`;
+
           if (subClassDTO && subClassDTO.prerequisite !== undefined && subClassDTO.prerequisite !== '' && subClassDTO.prerequisite.toLowerCase() !== 'there are no prerequisites needed for the class.') {
             emailContent += `<li><strong>Prerequisite</strong>: ${subClassDTO.prerequisite}</li>`;
           }
@@ -214,7 +217,6 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
           if (subClassDTO && subClassDTO.classMaterial !== undefined && subClassDTO.classMaterial !== '') {
             emailContent += `<li><strong>Class Materials</strong>: ${subClassDTO.classMaterial}</li>`;
           }
-          emailContent+=`<p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/mwtydca7">review us on Trustpilot.</a></p>`;
 
           emailContent+=`
           <p><strong>Important Information:</strong></p>
