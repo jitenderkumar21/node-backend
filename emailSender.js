@@ -280,10 +280,10 @@ const sendEmail = async (personDetails,userTimeZone) => {
           <p>${waitListMessage2}</p>
           <p>${waitlistClasses}</p>
           <p>${message}</p>
+          <p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/mwtydca7">review us on Trustpilot.</a></p>
           <p>
           ${confirmedClassMessage3}
           </p>
-          <p>Your feedback is valuable to us! Please feel free to share any feedback with us <a href="https://docs.google.com/forms/d/e/1FAIpQLSflsLJJuG74V1jjS29B-R1TVPbD74e9H5CkKVQMX6CzM87AZQ/viewform">here!</a></p>
 
           <p>Happy Learning! </p>
 

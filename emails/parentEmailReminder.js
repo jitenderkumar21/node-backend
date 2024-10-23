@@ -101,13 +101,16 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
         <body>
           <div class="container">
             <p>Hello ${parentName}</p>
-            <p>Just a quick reminder that ${formattedNames}'s class is scheduled for today.</p>
+            <p>This is a reminder for ${formattedNames}'s class scheduled today.</p>
   
-            <p>Here are the details about the class:</p>
-  
-            <p>Class Name: ${className}</p>
-            <p>Class Timing: ${classTiming}</p>
-            <p>Zoom Meeting Details: <a href="${zoomMeetingLink}" target="_blank">Zoom Link</a>,&nbsp;&nbsp;&nbsp; Meeting ID: ${meetingId}, &nbsp;&nbsp;&nbsp; Passcode: ${passcode}</p>
+            <p><strong>Class Name:</strong> ${className}</p>
+            <p><strong>Date & Time:</strong> ${classTiming}</p>
+            <p><strong>Zoom Meeting Details:</strong></p>
+              <ul>
+                <li><a href="${zoomMeetingLink}" target="_blank">Zoom Link</a></li>
+                <li>Meeting ID: ${meetingId}</li>
+                <li>Passcode: ${passcode}</li>
+              </ul>
             <ul>
             `
             if (subClassDTO && subClassDTO.prerequisite !== undefined && subClassDTO.prerequisite !== '' && subClassDTO.prerequisite.toLowerCase() !== 'there are no prerequisites needed for the class.') {
@@ -121,8 +124,11 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
             if (subClassDTO && subClassDTO.classMaterial !== undefined && subClassDTO.classMaterial !== '') {
               emailContent += `<li><strong>Class Materials</strong>: ${subClassDTO.classMaterial}</li>`;
             }
+            emailContent+=`<p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/mwtydca7">review us on Trustpilot.</a></p>`;
         
             emailContent+=`
+            <strong>Important Information:</strong>
+
             <li><strong>Identity Verification:</strong> Ensuring learner safety as our highest priority, we request you to switch on ${formattedNames}'s camera at the start of each class for a quick identity check. While ${formattedNames} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
             <li><strong>Class Entry:</strong> We request learners to join class on time to ensure an uninterrupted learning experience. <strong>Late entries may be restricted after the initial 10 minutes, to maintain the flow of class.</strong></li>
             <li><strong>Class Alerts:</strong> We have blocked your calendar for class; please let us know if you are unable to see it. We will be sending you class reminders as well.</li>
@@ -130,7 +136,6 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
             <li><strong>Class Withdrawals:</strong> We understand that plans might change - In case you would like to withdraw your child's enrolment from any class, please email us at support@coralacademy.com or send a text message to (872)-222-8643.</li>
             <li><strong>Code of Conduct:</strong> Classes are recorded for student safety. The recorded classes are for internal use only and are strictly confidential. These would not be disclosed or shared without parental consent. PFA the <a href="https://docs.google.com/document/d/1kU49ck4nGge6_k4Myua_eUpBx06MADlFxm_xRdUz7Os/edit" target="_blank">Code of Conduct Policy</a> for your reference.</li>
             </ul>
-            <p>Your feedback is valuable to us! Please feel free to share any feedback with us <a href="https://docs.google.com/forms/d/e/1FAIpQLSflsLJJuG74V1jjS29B-R1TVPbD74e9H5CkKVQMX6CzM87AZQ/viewform">here!</a></p>
             
             <p>Happy Learning! </p>
 
@@ -188,11 +193,14 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
           <p>Hello ${parentName}</p>
           <p>Just a quick reminder that ${formattedNames}'s class is starting in 15 minutes.</p>
 
-          <p>Here are the details about the class:</p>
-
-          <p>Class Name: ${className}</p>
-          <p>Class Timing: ${classTiming}</p>
-          <p>Zoom Meeting Details: <a href="${zoomMeetingLink}" target="_blank">Zoom Link</a>,&nbsp;&nbsp;&nbsp; Meeting ID: ${meetingId}, &nbsp;&nbsp;&nbsp; Passcode: ${passcode}</p>
+          <p><strong>Class Name:</strong> ${className}</p>
+          <p><strong>Date & Time:</strong> ${classTiming}</p>
+          <p><strong>Zoom Meeting Details:</strong></p>
+            <ul>
+              <li><a href="${zoomMeetingLink}" target="_blank">Zoom Link</a></li>
+              <li>Meeting ID: ${meetingId}</li>
+              <li>Passcode: ${passcode}</li>
+            </ul>
           <ul>
           `
           if (subClassDTO && subClassDTO.prerequisite !== undefined && subClassDTO.prerequisite !== '' && subClassDTO.prerequisite.toLowerCase() !== 'there are no prerequisites needed for the class.') {
@@ -206,8 +214,11 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
           if (subClassDTO && subClassDTO.classMaterial !== undefined && subClassDTO.classMaterial !== '') {
             emailContent += `<li><strong>Class Materials</strong>: ${subClassDTO.classMaterial}</li>`;
           }
+          emailContent+=`<p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/mwtydca7">review us on Trustpilot.</a></p>`;
 
           emailContent+=`
+          <strong>Important Information:</strong>
+
           <li><strong>Identity Verification:</strong> Ensuring learner safety as our highest priority, we request you to switch on ${formattedNames}'s camera at the start of each class for a quick identity check. While ${formattedNames} can choose to keep it off afterward, we suggest keeping it on for a more interactive learning experience.</li>
           <li><strong>Class Entry:</strong> We request learners to join class on time to ensure an uninterrupted learning experience. <strong>Late entries may be restricted after the initial 10 minutes, to maintain the flow of class.</strong></li>
           <li><strong>Class Alerts:</strong> We have blocked your calendar for class; please let us know if you are unable to see it. We will be sending you class reminders as well. </li>
