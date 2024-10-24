@@ -77,11 +77,13 @@ app.post('/test', async (req, res) => {
 
 app.post('/test3', (req, res) => {
   // Extract form data from request body
-  const formData = req.body;
+  // const formData = req.body;
 
-  // Log form data
-  console.log('Received form data:');
-  console.log(formData);
+  // // Log form data
+  // console.log('Received form data:');
+  // console.log(formData);
+  const userTimeZone = req.query.timezone;
+  sendEmail(req.body,userTimeZone);
 
   // Respond with a success message
   res.status(200).json({ message: 'Form data received successfully!' });

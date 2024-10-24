@@ -291,6 +291,15 @@ const sendEmail = async (personDetails,userTimeZone) => {
           <p>Coral Academy</p>
           <img src="${trackingPixelUrl}" width="1" height="1">
         </div>
+        <footer style="text-align: left; margin-top: -50px; padding: 2px;">
+          <h3 style="color: #333;">Follow Us on Social Media</h3>
+          <a href="https://tinyurl.com/2ttzxbav" target="_blank" style="margin-right: 10px;">
+            <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="32" height="32" />
+          </a>
+          <a href="https://tinyurl.com/2hpk33nz" target="_blank">
+            <img src="https://cdn-icons-png.flaticon.com/512/733/733558.png" alt="Instagram" width="32" height="32" />
+          </a>
+        </footer>
       </body>
       </html>
       `;
