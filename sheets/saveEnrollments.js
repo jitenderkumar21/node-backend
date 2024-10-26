@@ -27,8 +27,8 @@ const saveEnrollments = async (personDetails,ipAddress) => {
 
       if (inviteClassInfo[3] !== undefined && inviteClassInfo[4] !== undefined) {
         // PST timings
-        classStartTime = moment(inviteClassInfo[3], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
-        classEndTime = moment(inviteClassInfo[4], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+        classStartTime = moment(inviteClassInfo[3], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+        classEndTime = moment(inviteClassInfo[4], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
       }
       const dateDayTimeColumns = [
         classStartTime ? classStartTime.format('dddd') : '',
@@ -87,8 +87,8 @@ const saveEnrollments = async (personDetails,ipAddress) => {
 
       if (inviteClassInfo[3] !== undefined && inviteClassInfo[4] !== undefined) {
         // PST timings
-        classStartTime = moment(inviteClassInfo[3], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
-        classEndTime = moment(inviteClassInfo[4], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+        classStartTime = moment(inviteClassInfo[3], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+        classEndTime = moment(inviteClassInfo[4], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
       }
       const dateDayTimeColumns = [
         classStartTime ? classStartTime.format('dddd') : '',
