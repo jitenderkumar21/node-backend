@@ -6,7 +6,7 @@ require('dotenv').config();
 const connectionString = process.env.DATABASE_URL;
 
 
-const teacherEmailReminderCron = cron.schedule('*/60 * * * *', async () => {
+const teacherEmailReminderCron = cron.schedule('*/15 * * * *', async () => {
     const currentClient = new Client({
         connectionString: connectionString,
     });
