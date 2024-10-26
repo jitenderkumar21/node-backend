@@ -117,10 +117,10 @@ try{
                                 const formattedDateTime = momentTime.utc(userDateTime, 'YYYY-MM-DD HH:mm').format();
                                 return formattedDateTime;
                             };
-                            let classStartTime = moment(userStartDateTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
-                            let classEndTime = moment(userEndDateTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+                            let classStartTime = moment(userStartDateTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+                            let classEndTime = moment(userEndDateTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
                             let displayClassTime = '';
-                            const timeZoneAbbreviation = 'PDT';
+                            const timeZoneAbbreviation = 'PST';
                             if (classStartTime.isValid() && classEndTime.isValid()) {
                                 const formattedClassStartTime = classStartTime.format('MMMM D, dddd, h:mm A');
                                 const formattedClassEndTime = classEndTime.format('h:mm A');

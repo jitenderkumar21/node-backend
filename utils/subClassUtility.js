@@ -24,7 +24,7 @@ class subClassUtility {
     }
 
     static getdateMonthAndDay(classStartTime){
-        classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+        classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
         const dayAndMonth = classStartTime.format('MMMM D, dddd');
         return dayAndMonth;
     }
@@ -60,40 +60,40 @@ class subClassUtility {
         }
     }
     static getPSTTiming(classStartTime,classEndTime){
-        classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
-        classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+        classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+        classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
         classStartTime =  classStartTime.format('h:mm A');
         classEndTime =  classEndTime.format('h:mm A');
-        return `PDT : ${classStartTime} - ${classEndTime}`;
+        return `PST : ${classStartTime} - ${classEndTime}`;
     }
     static getESTTiming(classStartTime,classEndTime){
-        classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(4, 'hours');
-        classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(4, 'hours');
-        classStartTime =  classStartTime.format('h:mm A');
-        classEndTime =  classEndTime.format('h:mm A');
-        return `EDT : ${classStartTime} - ${classEndTime}`;
-    }
-    // eg. EST : 10:00 PM - 11:00 PM
-    static getCSTTiming(classStartTime,classEndTime){
         classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
         classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
         classStartTime =  classStartTime.format('h:mm A');
         classEndTime =  classEndTime.format('h:mm A');
-        return `CDT : ${classStartTime} - ${classEndTime}`;
+        return `EST : ${classStartTime} - ${classEndTime}`;
+    }
+    // eg. EST : 10:00 PM - 11:00 PM
+    static getCSTTiming(classStartTime,classEndTime){
+        classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
+        classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
+        classStartTime =  classStartTime.format('h:mm A');
+        classEndTime =  classEndTime.format('h:mm A');
+        return `CST : ${classStartTime} - ${classEndTime}`;
     }
 
     static getClassStartTime(timeZoneAbbreviation,classStartTime,classEndTime){
-        let offset = 7;
-        let modifiedTimeZone = 'PDT';
+        let offset = 8;
+        let modifiedTimeZone = 'PST';
         if(timeZoneAbbreviation=='MST' || timeZoneAbbreviation=='MDT'){
-            offset=6;
-            modifiedTimeZone = 'MDT';
+            offset=7;
+            modifiedTimeZone = 'MST';
         }else if(timeZoneAbbreviation=='EST' || timeZoneAbbreviation=='EDT'){
-            offset=4;
-            modifiedTimeZone = 'EDT';
-        }else if(timeZoneAbbreviation=='CST' || timeZoneAbbreviation=='CDT'){
             offset=5;
-            modifiedTimeZone = 'CDT';
+            modifiedTimeZone = 'EST';
+        }else if(timeZoneAbbreviation=='CST' || timeZoneAbbreviation=='CDT'){
+            offset=6;
+            modifiedTimeZone = 'CST';
         }
         classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(offset, 'hours');
         classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(offset, 'hours');
@@ -104,24 +104,24 @@ class subClassUtility {
     }
 
     static getClassDisplayTiming(userTimeZone,classStartTime,classEndTime){
-        let timeZoneAbbreviation = 'PDT';
+        let timeZoneAbbreviation = 'PST';
         userTimeZone = moment.tz([2023, 0], userTimeZone).zoneAbbr();
         
         if(userTimeZone === 'EST'){
-            classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(4, 'hours');
-            classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(4, 'hours');
-            timeZoneAbbreviation = 'EDT';
-        }else if(userTimeZone === 'CST'){
             classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
             classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
-            timeZoneAbbreviation = 'CDT';
-        }else if(userTimeZone === 'MST'){
+            timeZoneAbbreviation = 'EST';
+        }else if(userTimeZone === 'CST'){
             classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
             classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
-            timeZoneAbbreviation = 'MDT';
-        }else{
+            timeZoneAbbreviation = 'CST';
+        }else if(userTimeZone === 'MST'){
             classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
             classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+            timeZoneAbbreviation = 'MST';
+        }else{
+            classStartTime = moment(classStartTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+            classEndTime = moment(classEndTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
         }
         let displayClassTime = '';
         if (classStartTime.isValid() && classEndTime.isValid()) {
@@ -168,13 +168,13 @@ class subClassUtility {
       }
       
       static getModifiedTimeZone(timeZoneAbbreviation) {
-        let modifiedTimeZone = 'PDT';
+        let modifiedTimeZone = 'PST';
         if(timeZoneAbbreviation=='MST' || timeZoneAbbreviation=='MDT'){
-            modifiedTimeZone = 'MDT'; 
+            modifiedTimeZone = 'MST'; 
         }else if(timeZoneAbbreviation=='EST' || timeZoneAbbreviation=='EDT'){
-            modifiedTimeZone = 'EDT'; 
+            modifiedTimeZone = 'EST'; 
         }else if(timeZoneAbbreviation=='CST' || timeZoneAbbreviation=='CDT'){
-            modifiedTimeZone = 'CDT'; 
+            modifiedTimeZone = 'CST'; 
         }
         return modifiedTimeZone;
       }

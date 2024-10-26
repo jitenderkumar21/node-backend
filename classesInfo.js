@@ -31,13 +31,13 @@ const classesInfo = async (userTimeZone) => {
   try {
 
     let timeZoneAbbreviation = moment.tz([2023, 0], userTimeZone).zoneAbbr();
-    let offset = 7;
+    let offset = 8;
     if(timeZoneAbbreviation=='MST'){
-      offset=6;
+      offset=7;
     }else if(timeZoneAbbreviation=='EST'){
-      offset=4;
-    }else if(timeZoneAbbreviation=='CST'){
       offset=5;
+    }else if(timeZoneAbbreviation=='CST'){
+      offset=6;
     }
 
     const auth = new google.auth.GoogleAuth({
@@ -89,19 +89,19 @@ const classesInfo = async (userTimeZone) => {
             // console.log(row);
             jsonObject['expand']=true;
 
-            let classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
-            let classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+            let classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
+            let classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
             
             
             if(timeZoneAbbreviation=='MST'){
-              classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
-              classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
+              classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
+              classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(7, 'hours');
             }else if(timeZoneAbbreviation=='EST'){
-              classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(4, 'hours');
-              classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(4, 'hours');
-            }else if(timeZoneAbbreviation=='CST'){
               classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
               classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(5, 'hours');
+            }else if(timeZoneAbbreviation=='CST'){
+              classStartTime = moment(row[19], 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
+              classEndTime = moment(row[20], 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
             }else{
               timeZoneAbbreviation = 'PST';
             }
