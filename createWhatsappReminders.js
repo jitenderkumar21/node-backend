@@ -136,7 +136,7 @@ function calculateMorningReminderTime(classStartTime,userTimeZone) {
         }    
         reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(14, 'hours');
     }else{
-        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(6, 'hours');
+        classStartTimeMoment = moment.utc(classStartTime, 'YYYY-MM-DD HH:mm').subtract(8, 'hours');
         reminderTimeMoment = classStartTimeMoment.clone().startOf('day').add(8, 'hours');
         if (classStartTimeMoment.isBefore(reminderTimeMoment)) {
             reminderTimeMoment.subtract(1, 'day');
