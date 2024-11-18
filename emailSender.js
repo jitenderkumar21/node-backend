@@ -280,7 +280,7 @@ const sendEmail = async (personDetails,userTimeZone) => {
           <p>${waitListMessage2}</p>
           <p>${waitlistClasses}</p>
           <p>${message}</p>
-          <p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/mwtydca7">review us on Trustpilot.</a></p>
+          <p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/3aup6nw6">review us on Trustpilot.</a></p>
           <p>
           ${confirmedClassMessage3}
           </p>
@@ -293,10 +293,10 @@ const sendEmail = async (personDetails,userTimeZone) => {
         </div>
         <footer style="text-align: left; margin-top: -50px; padding: 2px;">
           <h3 style="color: #333;">Follow Us on Social Media</h3>
-          <a href="https://tinyurl.com/2ttzxbav" target="_blank" style="margin-right: 10px;">
+          <a href="https://tinyurl.com/5cz3yzxc" target="_blank" style="margin-right: 10px;">
             <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="32" height="32" />
           </a>
-          <a href="https://tinyurl.com/2hpk33nz" target="_blank">
+          <a href="https://tinyurl.com/bdzyxwsf" target="_blank">
             <img src="https://cdn-icons-png.flaticon.com/512/733/733558.png" alt="Instagram" width="32" height="32" />
           </a>
         </footer>

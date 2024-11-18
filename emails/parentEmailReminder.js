@@ -112,7 +112,7 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
                 <li>Passcode: ${passcode}</li>
               </ul>
             `
-            emailContent+=`<p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/mwtydca7">review us on Trustpilot.</a></p>`;
+            emailContent+=`<p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/3aup6nw6">review us on Trustpilot.</a></p>`;
             emailContent+=`<ul>`;
 
             if (subClassDTO && subClassDTO.prerequisite !== undefined && subClassDTO.prerequisite !== '' && subClassDTO.prerequisite.toLowerCase() !== 'there are no prerequisites needed for the class.') {
@@ -146,10 +146,10 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
           </div>
           <footer style="text-align: left; margin-top: -50px; padding: 2px;">
           <h3 style="color: #333;">Follow Us on Social Media</h3>
-          <a href="https://tinyurl.com/2ttzxbav" target="_blank" style="margin-right: 10px;">
+          <a href="https://tinyurl.com/5cz3yzxc" target="_blank" style="margin-right: 10px;">
             <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="32" height="32" />
           </a>
-          <a href="https://tinyurl.com/2hpk33nz" target="_blank">
+          <a href="https://tinyurl.com/bdzyxwsf" target="_blank">
             <img src="https://cdn-icons-png.flaticon.com/512/733/733558.png" alt="Instagram" width="32" height="32" />
           </a>
         </footer>
@@ -212,7 +212,7 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
               <li>Passcode: ${passcode}</li>
             </ul>
           `
-          emailContent+=`<p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/mwtydca7">review us on Trustpilot.</a></p>`;
+          emailContent+=`<p>We value your feedback! If you've taken classes with us previously, please <a href="https://tinyurl.com/3aup6nw6">review us on Trustpilot.</a></p>`;
           emailContent+=`<ul>`;
 
           if (subClassDTO && subClassDTO.prerequisite !== undefined && subClassDTO.prerequisite !== '' && subClassDTO.prerequisite.toLowerCase() !== 'there are no prerequisites needed for the class.') {
@@ -247,10 +247,10 @@ const parentReminderEmail = async (reminderId,reminder_type, additionalInfo) => 
         </div>
         <footer style="text-align: left; margin-top: -50px; padding: 2px;">
           <h3 style="color: #333;">Follow Us on Social Media</h3>
-          <a href="https://tinyurl.com/2ttzxbav" target="_blank" style="margin-right: 10px;">
+          <a href="https://tinyurl.com/5cz3yzxc" target="_blank" style="margin-right: 10px;">
             <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook" width="32" height="32" />
           </a>
-          <a href="https://tinyurl.com/2hpk33nz" target="_blank">
+          <a href="https://tinyurl.com/bdzyxwsf" target="_blank">
             <img src="https://cdn-icons-png.flaticon.com/512/733/733558.png" alt="Instagram" width="32" height="32" />
           </a>
         </footer>
