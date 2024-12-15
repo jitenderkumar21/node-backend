@@ -190,6 +190,7 @@ const sendEmailToUs = async (personDetails,userTimeZone,ipAddress) => {
             <li><strong>How did you get to know about us ? :</strong> ${personDetails.knowabout}</li>
             <li><strong>Which Facebook group referred you to us ?/Could you please specify source ? : </strong> ${personDetails.additionalInfo}</li>
             <li><strong>Drop us your questions or comments! :</strong> ${personDetails.comments}</li>
+            <li><strong>Would you like to enroll in our classes for $10/week once we launch? </strong> ${personDetails.enroll_amount}</li>
             <li><strong>Parent Country & City :</strong>${ipInfo.country} - ${ipInfo.city}</li>
 
             <p><strong>Enrolled classes below: </strong></p>
