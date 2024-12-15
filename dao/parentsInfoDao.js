@@ -72,7 +72,7 @@ async function getParentInfoByEmail(email) {
         phoneNumber: parentInfo.phone_number,
         knowabout: parentInfo.source, // Map to knowabout
         additionalInfo: parentInfo.source_info, // Map to additional_info
-        launchEnroll: parentInfo.launch_enroll
+        enroll_amount: parentInfo.launch_enroll
       };
     } else {
       return {}; // Return an empty JSON object if no matching record is found
