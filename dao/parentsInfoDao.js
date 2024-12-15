@@ -13,7 +13,7 @@ async function insertParentInfo(enrollmentDetails) {
 
     await client.query(`
       INSERT INTO parent_info (email, parent_name, child_name, child_age, communication_preference, phone_number, source, source_info, launch_enroll)
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8m $9)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
       ON CONFLICT (email) DO UPDATE
         SET child_name = EXCLUDED.child_name,
             child_age = EXCLUDED.child_age,

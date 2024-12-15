@@ -177,19 +177,22 @@ app.get('/parent/info', async (req, res) => {
 });
 
 app.get('/track.gif', async (req, res) => {
-  const recipientEmail = req.query.recipientEmail || '';
-  const classID = req.query.classID || '';
-  const date = new Date();
-  const formattedTimestamp = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
-  const parentName = req.query.parentName || '';
-  const childName = req.query.childName || '';
-  const type = req.query.type || '';
-  const emailSentAt = req.query.emailSentAt || '';
-  const className = req.query.className || '';
-  const classTiming = req.query.classTiming || '';
+  // Feature deprecated
+  console.log('Email tracking request received!');
 
-  // Write data to Google Sheets
-  saveEmailTrackingEvent([type, classID, className, classTiming, recipientEmail, parentName, childName, emailSentAt, formattedTimestamp]);
+  // const recipientEmail = req.query.recipientEmail || '';
+  // const classID = req.query.classID || '';
+  // const date = new Date();
+  // const formattedTimestamp = moment(date).tz('Asia/Kolkata').format('DD MMM YYYY HH:mm');
+  // const parentName = req.query.parentName || '';
+  // const childName = req.query.childName || '';
+  // const type = req.query.type || '';
+  // const emailSentAt = req.query.emailSentAt || '';
+  // const className = req.query.className || '';
+  // const classTiming = req.query.classTiming || '';
+
+  // // Write data to Google Sheets
+  // saveEmailTrackingEvent([type, classID, className, classTiming, recipientEmail, parentName, childName, emailSentAt, formattedTimestamp]);
 
   // Set cache-control headers to prevent caching
   res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
@@ -315,6 +318,8 @@ app.post('/save', async (req, res) => {
 //   });
 //   pool1.end();
 
+
+  console.log("Parent Enrollment request -> ",req.body);
   const ipAddress = req.ip || req.connection.remoteAddress;
   updateCounts(req.body.classDetails);
   sendEmail(req.body,userTimeZone);
